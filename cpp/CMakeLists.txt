@@ -1,0 +1,72 @@
+# #require a certain version
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+
+# declare the project name
+PROJECT(aidaTT)
+
+# project version
+SET( ${PROJECT_NAME}_VERSION_MAJOR 0 )
+SET( ${PROJECT_NAME}_VERSION_MINOR 0 )
+SET( ${PROJECT_NAME}_VERSION_PATCH 0 )
+
+LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+
+include(MacroAddSharedLibrary)
+include(library_versioning)
+
+# require proper c++
+ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
+
+# include directories
+INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./fields/include ./propagations/include)
+
+INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
+
+AUX_SOURCE_DIRECTORY( ./core/src  library_sources )
+AUX_SOURCE_DIRECTORY( ./fields/src  library_sources )
+AUX_SOURCE_DIRECTORY( ./propagations/src  library_sources )
+AUX_SOURCE_DIRECTORY( ./helpers/src  library_sources )
+
+ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
+
+FIND_PACKAGE( GBL )
+FIND_PACKAGE( GSL )
+
+FOREACH( pkg  GSL GBL) # later: KalTest ? LCIO ? TGeo ? 
+    IF( ${pkg}_FOUND )
+        INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
+        TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
+        ADD_DEFINITIONS( ${${pkg}_DEFINITIONS} )
+    ENDIF()
+ENDFOREACH()
+
+INSTALL( TARGETS ${PROJECT_NAME} DESTINATION lib )
+
+# add a target to generate API documentation with Doxygen
+FIND_PACKAGE(Doxygen)
+
+if(DOXYGEN_FOUND)
+
+    INCLUDE(GlobalSVNRevision)
+    
+    CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile @ONLY)
+
+    ADD_CUSTOM_TARGET(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+ELSE()
+    MESSAGE( STATUS "Doxygen not installed or found -- API documentation can't be generated!" )
+ENDIF(DOXYGEN_FOUND)
+
+# add the examples directory; only contains executables
+# build examples with `make examples`
+add_subdirectory(examples EXCLUDE_FROM_ALL)
+
+# add the test directory that contains all the tests
+# build tests with `make tests`
+add_subdirectory(test EXCLUDE_FROM_ALL)
+
+# generate and install following configuration files
+#GENERATE_PACKAGE_CONFIGURATION_FILES( aidaTTConfig.cmake aidaTTConfigVersion.cmake )

@@ -1,0 +1,129 @@
+\documentclass[12pt]{article}
+
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings}
+\title{Requirements of Tracking Geometry\\ for a generic tracking toolkit}
+\author{Ch. Rosemann, DESY}
+\date{\today}
+
+
+
+\begin{document}
+\maketitle 
+\abstract{
+Track reconstruction requires a geometry description that provides the particular information and as little more as possible.
+The smallest set is the best, since tracking is by definition always a trade off between accuracy and speed.
+So the objective is to lose as little as possible in parts that are not contributing.\\
+The main requirements of track reconstruction in terms of geometry are the accurate calculation of intersections of the track with measurement surfaces and the inclusion of material effects like multiple scattering and energy loss.
+An important part in relation with the geometry is also the navigation; e.g. the process for track extrapolation inside the detector.
+The ideas presented here are not really mine; they are taken from two ATLAS publications.
+\cite{trackgeom} presents the tracking geometry in much more detail than I would consider trying to present.
+\cite{geomodel} describes the general outline of the geometry model of ATLAS, which is pretty similar to DD4hep.
+}
+
+\section{Introduction}
+It's common technique to build a specific reconstruction geometry apart from the detailed simulation geometry.
+DD4hep is by now capable to export a simulation geometry for GEANT4, from a single instruction set encoded in XML.
+Practically it boils down to two tasks, with different challenges:
+\begin{enumerate}
+    \item Generate a fully capable tracking (or more general {\em reconstruction}) geometry from the same instructions
+    \item Make sure that both are compatible
+\end{enumerate}
+It is very debatable what {\bf complete} means in terms of a tracking geometry.
+It will always be a balance between CPU utilization and memory footprint versus correctness, or at least accuracy.
+
+\subsection{Design principles}
+Separate between purely mathematical (geometrical) objects like surfaces or volumes and the actual usage in a specific detector.
+The mathematical base classes are extended into the actual detector objects.
+
+\section{Short instruction set}
+\subsection{Create active detectors}
+Any active detector element in DD4hep has to be replaced with a measurement surface (see below) at exactly the same position.
+It has to provide the local coordinate system, the transformation to the global coordinate system and the measurement directions of the detector.
+\begin{lstlisting}
+class measurementSurface : public iSurface{
+vector3d getLocalCoordinateSystem();
+matrix3D getLocalToGlobalTrafo();
+
+vector3d getLocalUVector();
+vector3d getLocalVVector();
+}
+\end{lstlisting}
+
+
+\subsection{Create material volumes}
+Any inactive material that can lead to scattering or energy loss has to enclosed in volumes (see below) that have their boundary surfaces at approximately the right position.
+From this volume the material composition and the radiation length has to extractable.
+\begin{lstlisting}
+class materialVolume : public iVolume{
+double getRadiationLength();
+double getMaterialZ();
+}
+\end{lstlisting}
+
+
+\subsection{Fast navigation}
+All measurement surfaces and material volumes have to be enclosed/confined in special volumes that allow fast navigation.
+E.g. to determine whether or not a certain part in the geometry is crossed by a track.
+(Please note: didn't write this yet.)
+\begin{lstlisting}
+class navigationVolume : public iVolume{
+bool AmIInside(vector3d position);
+boundarySurface getBoundaryToBeHit(aNavigatorObject );
+}
+\end{lstlisting}
+
+
+\section{Surfaces}
+The {\tt surface} class is the foundation; the minimal information it encodes is
+\begin{itemize}
+    \item a center position and a rotation w.r.t. global system
+    \item a boundary shape implemented as {\tt surfaceBounds}
+\end{itemize}
+Each surface has its own (helper) Cartesian coordinate system which helps to define the placement in the global frame.
+In addition each specific surface element has its own (natural) coordinate system.
+The table might enlighten this:\\
+\begin{tabular}{|c|c|c|}
+\hline
+surface type          & boundary shape                  & natural system \\ \hline \hline
+cylinder surface      & cylindrical, sectoral           & cylinder coordinates $(r\Phi, l_z) $ \\ \hline
+disc surface          & disc-like, sectoral, elliptical & polar coordinates $(r, \Phi) $ \\ \hline
+plane surface         & rectangular, diamond, trapezoid & Cartesian coordinates $(l_x, l_y) $ \\ \hline
+straight line surface & pseudo-cylindrical              & drift coordinates  $(r_D, l_z) $ \\ \hline
+perigee surface       & pseudo-cylindrical              & impact coordinates $(d_0,l_z) $ \\ \hline
+\end{tabular}
+
+\section{Volumes}
+Again, an abstract definition of a {\tt volume} is inherited to an actual volume describing e.g. a detector element.
+A volume is defined by a set of confining boundary surface, as mentioned in the section above.
+In total there are three implementations to describe shapes (plus two building on logical combination).
+Again a table:\\
+\begin{tabular}{|c|c|c|}
+\hline
+volume type               & geometrical base & shapes \\ \hline \hline
+boundary cylinder surface & cylinder surface & cylinder coordinates $(r\Phi, l_z) $ \\ \hline
+boundary disc surface     & disc surface     & polar coordinates $(r, \Phi) $ \\ \hline
+boundary plane surface    & plane surface    & Cartesian coordinates $(l_x, l_y) $ \\ \hline
+\end{tabular}
+
+\section{What's missing}
+\begin{itemize}
+    \item fast navigation with CuboidVolumeBounds, TrapezoidVolumeBounds and CylinderVolumeBounds
+    \item material description
+    \item the glue between the surfaces, the material and the volumes (called {\tt layers} in ATLAS)
+\end{itemize}
+
+
+
+\begin{thebibliography}{99}
+\bibitem{trackgeom} A. Salzburger et al. The ATLAS Tracking Geometry Description. ATL-SOFT-PUB-2007-004
+
+\bibitem{geomodel} J. Boudreau et al. The GeoModel toolkit for detector description. Proc. CHEP'04, p353ff.
+
+\end{thebibliography}
+
+
+
+\end{document}

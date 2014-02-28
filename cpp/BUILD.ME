@@ -1,0 +1,24 @@
+How to build the libraries:
+    1) create a new build directory, e.g.
+        `mkdir build`
+    2) change into this newly created directory
+        `cd build`
+    3) create the build instructions
+        `cmake ..` 
+    4) run make
+        `make`
+    
+    or short: 
+        `mkdir build; cd build; cmake ..; make`
+    
+    (*) building with GBL !
+		`mkdir build; cd build; cmake -DGBL_DIR="/scratch/gbl/trunk/cpp"   ..; make`
+
+[ examples ]
+To build examples: 
+    `make examples`
+
+
+[ tests ]
+To build tests, including unit tests: 
+    `make tests`

@@ -1,0 +1,47 @@
+FINDING versus FITTING
+
+fundamental question:
+	fitting is well defined:
+		- measurements: coordinates + errors
+		- material 
+		- initial parameters
+	
+	finding is not:
+		- look for "next" hit
+
+
+
+
+* rethink & rework Measurement surfaces & geometry interaction:
+
+fundamental question(s):
+	- propagateTo 
+	
+Info:
+	try to implement material integration along a track with gear
+	+++>>> time estimate on how long this takes 
+		?? how to disentagle look-up time? ?
+
+two approaches
+  1) "mine" --  do it constructively
+	hold the geometry in memory; have a navigator (TGeo-like) to follow
+	
+	
+	
+	
+
+CMS approach: 
+ (1) local patrec (CTF): layered geometry
+	a: find layers along seed trajectory
+	b: find compatible detectors in layer
+	c: find compatible measurements in detector
+
+
+
+
+basically everything:
+    - write simple test programs
+    - simple simulations
+    - define functionality
+    - unit tests & test system
+    - update documentation

@@ -1,0 +1,73 @@
+\documentclass[12pt]{article}
+
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{url}
+\title{A generic tracking toolkit}
+\author{Ch. Rosemann, DESY}
+\date{\today}
+
+
+
+\begin{document}
+\maketitle 
+\abstract{
+In the context of the AIDA European Framework programme blabla a generic tracking toolkit is developed.
+It provides the means to the most common functionality needed for tracking in particle physics detectors.  
+}
+
+\section{Introduction}
+The reconstruction of particle paths that were created in high energetic collisions is one of the central tasks in experimental particle physics.
+Since many years both the data acquisition and the data processing are done electronically with computers.
+The reconstruction of the paths, the fast and accurate computation of the kinematical properties of the produced particles is the main objective.
+
+The task is usually divided in two subsequent steps, the pattern recognition (or finding) and then the parameter estimation (or fitting).
+
+
+For the parameter estimation, the established techniques include the effects of material interaction (multiple scattering and energy loss).
+
+
+\section{Overview}
+In general tracking detectors are embedded in a magnetic field.
+Charged particles moving through the field follow a helical trajectory, possible distorted by material interactions.
+(Multiple) Scattering changes the direction, energy loss changes the curvature due to the Lorentz force.
+
+A track is used as an analogy to describe the particle trajectory.
+It consists of a set of 23 parameters -- five to parametrize a helix, 15 values to describe the covariance matrix of the parameters and another three to define the point of reference.
+
+For a tracking toolkit, three different basic modules can be identified that provide individual functionality:
+\begin{enumerate}
+    \item The propagation: the mathematical expression how the parameters change along the trajectory.
+    \item The navigation: the access to the properties of the detector, using the propagation.
+    This is for example the information about the measurement surfaces or any material that is crossed by the trajectory.
+    \item The fitting: the mathematical procedure to extract the best parameter estimation using the information from the propagation and navigation.
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{thebibliography}{99}
+\bibitem{aida2.4} \url{http://cds.cern.ch/search?p=AIDA-D2.4}
+
+\bibitem{GBL} C. Kleinwort. General Broken Lines as advanced track fitting method. NIM A673 (2012) 107-110.
+
+%\bibitem{MarlinTPC} MarlinTPC Homepage: https://znwiki3.ifh.de/MarlinTPC/
+
+%\bibitem{millepede} V. Blobel. Software Alignment for Tracking Detectors. NIM A566 (2006) 5-13.
+
+%\bibitem{l3helix}  J. Alcaraz. Helicoidal tracks. L3 Internal Note 1666 (1995)
+
+\bibitem{strandlie}  A. Strandlie, W. Wittek. Derivation of Jacobians for the propagation of covariance matrices of track parameters in homogeneous magnetic fields. NIM A566 (2006), 687-698
+
+\bibitem{geane} M.Innocente,V.Mairie,E.Nagy,GEANE: Average tracking and error propagation package, CERN Program Library,W5013-E,1991.
+
+\bibitem{genfit} C.H\"oppner, S. Neubert, B. Ketzer, S. Paul. A novel generic framework for track fitting in complex detector systems. NIM A620 (2010), 518-525
+
+\end{thebibliography}
+
+
+
+\end{document}
