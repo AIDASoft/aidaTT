@@ -1,5 +1,5 @@
 #include <iostream>
-#include "aidaTT.hh"
+#include "AidaTT.hh"
 #include "ConstantSolenoidBField.hh"
 
 
@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
 
-  aidaTT::aidaTT *a = new aidaTT::aidaTT();
+  aidaTT::AidaTT *a = new aidaTT::AidaTT();
   
   aidaTT::ConstantSolenoidBField b(3.4);
   

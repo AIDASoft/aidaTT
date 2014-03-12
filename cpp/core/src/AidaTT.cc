@@ -1,4 +1,4 @@
-#include "aidaTT.hh"
+#include "AidaTT.hh"
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
@@ -22,30 +22,33 @@ using namespace std;
 
 namespace aidaTT
 {
-    aidaTT::aidaTT()
+    AidaTT::AidaTT()
     {
         cout << " it works " << endl;
     }
 
-    aidaTT::~aidaTT()
+    AidaTT::~AidaTT()
     {
         cout << " it still works "  << endl;
     }
 
-    bool initializeTrajectory()
+    // mistake, mistake -> go back to bool to find it
+    //bool AidaTT::createTrajectory(std::vector<const trajectoryElement&> vecTE, const trackParameters& tP)
+    bool AidaTT::createTrajectory()
     {
         cout << "init traj " << endl;
         return false;
     }
+    
 //~ bool initializeTrajectory(std::vector<const trajectoryElements&>, const trackParameters);
 
-    bool initializeFitter()
+    bool AidaTT::initializeFitter()
     {
         cout << "init fit " << endl;
         return false;
     }
 
-    bool initializePropagation()
+    bool AidaTT::initializePropagation()
     {
         cout << "init prop " << endl;
         return false;

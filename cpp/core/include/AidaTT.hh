@@ -49,13 +49,14 @@
 
 namespace aidaTT
 {
-    class aidaTT
+    class AidaTT
     {
         public:
-            aidaTT();
-            ~aidaTT();
+            AidaTT();
+            ~AidaTT();
 
-            trajectory  createTrajectory(std::vector<const trajectoryElement&>, const trackParameters&);
+//            bool  createTrajectory(std::vector<const trajectoryElement&>, const trackParameters&);
+            bool  createTrajectory();
 
             // yet empty
             bool initializeFitter();
@@ -64,8 +65,8 @@ namespace aidaTT
             bool initializeBField();
 
         private:
-            aidaTT(const aidaTT&);
-            aidaTT  operator=(const aidaTT&);
+            AidaTT(const AidaTT&);
+            AidaTT  operator=(const AidaTT&);
 
     };
 }
