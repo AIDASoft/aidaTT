@@ -6,7 +6,7 @@
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
 #include "IPropagation.hh"
-#include "IGeometryAPI.hh"
+#include "IGeometry.hh"
 #include "IFittingAlgorithm.hh"
 
 namespace aidaTT
@@ -20,7 +20,7 @@ namespace aidaTT
      *        - propagation method
      *        - geometry interface
      *
-     *  @version $Id
+     *  @version $Rev$
      *  @author Ch. Rosemann, DESY
      ***/
 
@@ -30,7 +30,7 @@ namespace aidaTT
         public:
             /// A trajectory can only be constructed with full information
             trajectory(const trackParameters&, const std::vector<trajectoryElement>&,
-                       IFittingAlgorithm*, IPropagation*, IGeometryAPI*);
+                       IFittingAlgorithm*, IPropagation*, IGeometry*);
 
             ~trajectory();
 
@@ -64,7 +64,7 @@ namespace aidaTT
 
             const IFittingAlgorithm* _fittingAlgorithm;
             const IPropagation* _propagation;
-            const IGeometryAPI* _geometry;
+            const IGeometry* _geometry;
 
 
             // and go on with the legacy code:

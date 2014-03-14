@@ -1,9 +1,7 @@
 #ifndef TRAJECTORYELEMENT_H
 #define TRAJECTORYELEMENT_H
 
-#include "IMaterial.hh"
-#include "IMeasurementSurface.hh"
-
+#include "IGeometry.hh"
 #include "trackParameters.hh"
 #include "fiveByFiveMatrix.hh"
 #include <utility>
@@ -60,9 +58,7 @@ namespace aidaTT
             trajectoryElement(double, const fiveByFiveMatrix&, void*);
 
             /// the getting routines
-
-            const IMeasurementSurface& getMeasurementSurface();
-            const IMaterial& getMaterial();
+            const Surface& getSurface();
 
             const fiveByFiveMatrix& getJacobianToNextElement();
 
@@ -73,10 +69,6 @@ namespace aidaTT
             //~ const trajectoryElement& getNextElement();
             //~ const trajectoryElement& getPreviousElement();
 
-            bool hasMaterial() const
-            {
-                return _material;
-            };
             bool hasMeasurement() const
             {
                 return _measurement;
@@ -89,17 +81,13 @@ namespace aidaTT
 
             /// the setting routines
 
-            ///~ set the pointer to the material information
-            ///~ this can be used or discarded, if provided
-            void setMaterial(const IMaterial&);
-
             ///~ this sets the most important material properties (e.g. averaged):
             ///~  radiation length and Z
-            void addMaterial(double, double);
+            //~ void addMaterial(double, double);
 
             ///~ associate the measurement with a geometrical entity
             ///~ this provides access to the local measurement directions
-            void setMeasurementSurface(const IMeasurementSurface&);
+            //~ void setMeasurementSurface(const IMeasurementSurface&);
 
             ///~ set the actual values of a measurement
             ///~ they are characterized by the values of the residuals and their standard deviation
@@ -114,7 +102,6 @@ namespace aidaTT
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 
-            bool _material;
             bool _measurement;
 
 
