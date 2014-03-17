@@ -21,8 +21,8 @@
  *
  *  \section Track Fitting
  *  Implemented is the General Broken Lines package (as external dependency) by Claus Kleinwort.
- * 
- * 
+ *
+ *
  *  \section ref_sec References
  *    - V. Blobel, C. Kleinwort, F. Meier,
  *      Fast alignment of a complex tracking detector using advanced track models,

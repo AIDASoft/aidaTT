@@ -18,13 +18,14 @@ include(library_versioning)
 ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
 
 # include directories
-INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./fields/include ./propagations/include)
+INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./fields/include ./propagations/include ./fittingAlgorithms/include)
 
 INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
 
 AUX_SOURCE_DIRECTORY( ./core/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./propagations/src  library_sources )
+AUX_SOURCE_DIRECTORY( ./fittingAlgorithms/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./helpers/src  library_sources )
 
 ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )

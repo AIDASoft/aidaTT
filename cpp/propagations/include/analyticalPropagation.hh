@@ -8,10 +8,10 @@
 namespace aidaTT
 {
 
-class analyticalPropagation : public IPropagation
-{
-    bool  getJacobian(fiveByFiveMatrix& jacobian, double dw, double qop, const Vector3D& tstart, const Vector3D& tend, const Vector3D& bfield);
-};
+    class analyticalPropagation : public IPropagation
+    {
+            bool  getJacobian(fiveByFiveMatrix& jacobian, double dw, double qop, const Vector3D& tstart, const Vector3D& tend, const Vector3D& bfield);
+    };
 
 }
 

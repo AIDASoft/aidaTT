@@ -184,8 +184,8 @@ namespace aidaTT
             }
 
 
-        /// /** Output operator */
-        /// std::ostream & operator << (std::ostream & os, const Vector3D &v) ;
+            /// /** Output operator */
+            /// std::ostream & operator << (std::ostream & os, const Vector3D &v) ;
 
         protected:
 

@@ -4,17 +4,22 @@
 #include "trajectoryElement.hh"
 #include "trajectory.hh"
 
-#include "IGeometryAPI.hh"
-#include "IMaterial.hh"
-#include "IMeasurementSurface.hh"
+//~ abstracts
+#include "IGeometry.hh"
 #include "IPropagation.hh"
 #include "IFittingAlgorithm.hh"
 
-//~ #include "api2gbl.h"
-//~ #include "simpleKalman.h"
-//~
-//~ #include "propagations/analyticalPropagation.h"
-//~ #include "propagations/RungeKuttaPropagation.h"
+//~ implementations by type
+#include "analyticalPropagation.hh"
+#include "simplifiedPropagation.hh"
+#include "ConstantSolenoidBField.hh"
+#include "GBLInterface.hh"
+
+//~ and helper classes
+#include "fiveByFiveMatrix.hh"
+#include "Vector3D.hh"
+#include "Vector5.hh"
+
 
 
 
@@ -39,7 +44,7 @@ namespace aidaTT
         cout << "init traj " << endl;
         return false;
     }
-    
+
 //~ bool initializeTrajectory(std::vector<const trajectoryElements&>, const trackParameters);
 
     bool AidaTT::initializeFitter()

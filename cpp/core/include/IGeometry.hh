@@ -4,10 +4,10 @@
 namespace aidaTT
 {
     class Surface;
-    
+
     class IGeometry
     {
-        
+
     };
 
 }

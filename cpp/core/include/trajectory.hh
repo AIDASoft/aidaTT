@@ -24,6 +24,7 @@ namespace aidaTT
      *  @author Ch. Rosemann, DESY
      ***/
 
+    class IFittingAlgorithm;
 
     class trajectory
     {
@@ -48,7 +49,7 @@ namespace aidaTT
             std::vector<trajectoryElement> getFittedMeasurements();
             std::vector<trajectoryElement> getOutliers();
 
-/// quantify the results
+            /// quantify the results
             double getChiSquare();
             unsigned int getNDF();
 
@@ -62,9 +63,9 @@ namespace aidaTT
             const trackParameters          _referenceParameters;
             std::vector<trajectoryElement> _initialTrajectoryElements;
 
-            const IFittingAlgorithm* _fittingAlgorithm;
-            const IPropagation* _propagation;
-            const IGeometry* _geometry;
+            IFittingAlgorithm* _fittingAlgorithm;
+            IPropagation* _propagation;
+            IGeometry* _geometry;
 
 
             // and go on with the legacy code:

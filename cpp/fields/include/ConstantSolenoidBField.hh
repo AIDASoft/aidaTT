@@ -20,8 +20,14 @@ namespace aidaTT
                 ;
             };
 
-            Vector3D const getBField(const Vector3D&) { return Vector3D(0.,0.,_bz); };
-            Vector3D const getBField(const double x, const double y, const double z) { return Vector3D(0.,0.,_bz); };
+            Vector3D const getBField(const Vector3D&)
+            {
+                return Vector3D(0., 0., _bz);
+            };
+            Vector3D const getBField(const double x, const double y, const double z)
+            {
+                return Vector3D(0., 0., _bz);
+            };
 
             double getBx(const Vector3D&) const
             {

@@ -7,8 +7,8 @@ namespace aidaTT
 // the only constructor for a trajectory: known track parameters and trajectory elements
     trajectory::trajectory(const trackParameters& tp,
                            const vector<trajectoryElement>& elems,
-                           IFittingAlgorithm* fa, IPropagation* pm, IGeometryAPI* ga)
-        : _referenceParameters(tp) , _fittingAlgorithm(fa) , _propagation(pm), _geometry(ga)
+                           IFittingAlgorithm* fa, IPropagation* pm, IGeometry* geom)
+        : _referenceParameters(tp) , _fittingAlgorithm(fa) , _propagation(pm), _geometry(geom)
     {
         // copy the elements
         // TODO like this? trajectoryElements should know about their position?
