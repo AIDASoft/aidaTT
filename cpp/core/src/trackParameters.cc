@@ -35,7 +35,7 @@ trackParameters::trackParameters(const trackParameters& tp)
 
 trackParameters trackParameters::operator=(const trackParameters& tp)
 {
-    return trackParameters();
+    return trackParameters(tp);
 }
 
 

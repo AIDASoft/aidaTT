@@ -51,11 +51,17 @@ namespace aidaTT
     class trajectoryElement
     {
         public:
-            ///~ constructor A: only arc length plus some identification
-            trajectoryElement(double, void*);
+            ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
+            trajectoryElement(double, const Surface&, void* = NULL);
 
-            ///~ constructor B: only arc length and the jacobian to the next element plus some identification
-            trajectoryElement(double, const fiveByFiveMatrix&, void*);
+            ///~ constructor B: only the arc length is given and some identification
+            trajectoryElement(double, void* = NULL);
+
+            ///~ constructor C: only arc length and the jacobian to the next element plus some identification
+            trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
+
+            ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
+            trajectoryElement(double,  const Surface&, const fiveByFiveMatrix&, void* = NULL);
 
             /// the getting routines
             const Surface& getSurface();
@@ -82,16 +88,12 @@ namespace aidaTT
             /// the setting routines
 
             ///~ this sets the most important material properties (e.g. averaged):
-            ///~  radiation length and Z
-            //~ void addMaterial(double, double);
+            ///~  ... think again about the arguments!
+            void addMaterial();
 
-            ///~ associate the measurement with a geometrical entity
-            ///~ this provides access to the local measurement directions
-            //~ void setMeasurementSurface(const IMeasurementSurface&);
-
-            ///~ set the actual values of a measurement
-            ///~ they are characterized by the values of the residuals and their standard deviation
-            void addMeasurement(double* residuals, double* error, unsigned int dimension);
+            ///~ add values for a measurement
+            ///~ they are: the surface, the values of the residuals and their standard deviation
+            void addMeasurement(const Surface&, const double* residuals, const double* error, const unsigned int dimension);
 
             ///~ set the jacobian to the next element
             void setJacobianToNextElement(const fiveByFiveMatrix&) ;
@@ -103,8 +105,11 @@ namespace aidaTT
             trajectoryElement operator=(const trajectoryElement&);
 
             bool _measurement;
+            unsigned int _measDim;
+            double _residualU, _residualV;
+            double _dU, _dV;
 
-
+            Surface& _surface;
             double _arcLength;
             fiveByFiveMatrix _jacobianToNext;
     };

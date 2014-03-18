@@ -7,54 +7,67 @@ using namespace gbl;
 
 
 bool GBLInterface::initializeFitter(const trajectory& TRAJ)
-{}
+{
+    /* several bits of information are needed to initialize the gbl:
+     *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
+     *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
+     *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
+     */
+
+    return true;
+}
 
 
 
 bool const GBLInterface::fit()
-{}
+{
+
+    return true;
+}
 
 
 
 unsigned int const GBLInterface::getNDF()
-{}
+{
+    return 0;
+}
 
 
 
 double const GBLInterface::getChiSquare()
-{}
+{
+    return -1.;
+}
 
 
 
 double const GBLInterface::lostWeight()
-{}
+{
+    return 0.;
+}
 
 
 
 /*  ORIGINAL
 
 
-
-        Vector3D theTPCCenter(_Xcenter, _Ycenter, 0.);
-        Vector3D bfield = marlin::Global::GEAR->getBField().at(theTPCCenter);
-
-        const bool bOff(bfield.z() * _bfieldScaleFactor == 0.);
-
-        // constant magnetic field (in z direction)
-        double Bz = bfield.z() * _bfieldScaleFactor;// rho component is accessible with field.rho()
+ (1) the field information
+        Vector3D bfield = getBField();
+        double Bz = bfield.z();// rho component is accessible with field.rho()
 
 
-        // loop over the seed tracks
-        for (LCCollectionVec::iterator inputIter = seedTrackCollectionVector->begin(), endIter = seedTrackCollectionVector->end(); inputIter < endIter; ++inputIter) {
-            // dynamic cast to lcio::track
+  (2)    // loop over the seed tracks
+        for inputIter in seedTrackCollectionVector {
+
+          (a) get values from seed track --
+
             Track* seedTrack = dynamic_cast<Track *>(*inputIter);
-
             double seedD0 = seedTrack->getD0();
             double seedPhi = seedTrack->getPhi();
             double seedOmega = seedTrack->getOmega();
             double seedZ0 = seedTrack->getZ0();
             double seedTanLambda = seedTrack->getTanLambda();
-            vector<TrackerHit*> hitList = seedTrack->getTrackerHits();
+            const double seedLambda = atan(seedTanLambda);
 
             //CHK track parameters are defined at (distance of closest approach to) reference point !?
             const float* refPoint = seedTrack->getReferencePoint();
@@ -63,20 +76,20 @@ double const GBLInterface::lostWeight()
             //CHK arc-length is measured from reference point
             float rInner = seedTrack->getRadiusOfInnermostHit();
 
-            if (bOff) {
+            vector<TrackerHit*> hitList = seedTrack->getTrackerHits();
+
+
+            if (Bz == NULL) {
                 _curvature = false;
-                // current Clupatra fits curved tracks independent of magnetic field
-                // calculate  new seed from straight line defined by (radially) first and last hit
-                if (seedOmega != 0.) calcLineSeed(hitList, refPos, seedOmega, seedPhi, seedD0, seedTanLambda, seedZ0);
             } else {
                 _curvature = true;
             }
 
-            const double seedLambda = atan(seedTanLambda);
 
-            //CHK reference helix
+         (b) build reference helix
             simpleHelix hlx(-seedOmega, seedPhi, -seedD0, seedTanLambda, seedZ0, refPos, Bz * 0.0002998);
 
+         (c) order hits: first create list with arc length
             /// Order hits by arc-length
             double offset = 0.;
             vector<indexArcPair> hitWithArcList;
@@ -85,6 +98,7 @@ double const GBLInterface::lostWeight()
                 double sArc = hlx.getArcLengthXY(position) - offset;
                 hitWithArcList.push_back( make_pair(i, sArc));
             }
+            typedef std::pair<int, double> indexArcPair;
 
             // find smallest arc-length (and first/last hit)
             indexArcPair closest(hitWithArcList.front()), first(closest), last(closest);
@@ -103,6 +117,7 @@ double const GBLInterface::lostWeight()
             }
 
             sort(hitWithArcList.begin(), hitWithArcList.end(), compare);
+
 
             /// Create vector of GBL points. from helper hits.
             vector < GblPoint > theListOfPoints;
@@ -129,6 +144,7 @@ double const GBLInterface::lostWeight()
                     double phi1 = aHit.getPhi();
                     point2pointJacobian = hlx.analyticalHelixJacobian(phi1, deltaW);
                     sOld = aHit.getS();
+
                     // create a point from the jacobian
                     GblPoint point(point2pointJacobian);
                     // now add the measurement point
