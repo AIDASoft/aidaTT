@@ -1,3 +1,5 @@
+#ifdef USE_GBL
+
 #ifndef GBLINTERFACE_H
 #define GBLINTERFACE_H
 #include "IFittingAlgorithm.hh"
@@ -56,3 +58,4 @@ namespace aidaTT
 }
 
 #endif // GBLINTERFACE_H
+#endif // 

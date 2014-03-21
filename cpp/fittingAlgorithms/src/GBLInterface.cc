@@ -1,3 +1,4 @@
+#ifdef USE_GBL
 #include "GBLInterface.hh"
 
 using namespace std;
@@ -246,3 +247,5 @@ double const GBLInterface::lostWeight()
         if (_outputIsPersistent) evt->addCollection(outputTrackCollection, _outputTrackCollectionName);
 
     */
+    
+#endif

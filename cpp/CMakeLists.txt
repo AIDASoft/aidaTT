@@ -61,6 +61,12 @@ ELSE()
     MESSAGE( STATUS "Doxygen not installed or found -- API documentation can't be generated!" )
 ENDIF(DOXYGEN_FOUND)
 
+IF( GBL_FOUND )
+        ADD_DEFINITIONS( "-DUSE_GBL" )
+ELSE()
+    MESSAGE( STATUS "GBL not found, track fitting with GBL will not be available." )
+ENDIF()
+
 # add the examples directory; only contains executables
 # build examples with `make examples`
 add_subdirectory(examples EXCLUDE_FROM_ALL)
