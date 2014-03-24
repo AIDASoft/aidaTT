@@ -1,4 +1,4 @@
-How to build the libraries:
+How to build the library:
     1) create a new build directory, e.g.
         `mkdir build`
     2) change into this newly created directory
@@ -10,14 +10,18 @@ How to build the libraries:
     
     or short: 
         `mkdir build; cd build; cmake ..; make`
-    
-    (*) building with GBL !
-		`mkdir build; cd build; cmake -DGBL_DIR="/scratch/gbl/trunk/cpp"   ..; make`
+
+[ fit functionality ] 
+Fitting functionality needs the interface to a fit algorithm.
+External package is GBL, specify the path to the GBLConfig.cmake:
+		cmake -DGBL_DIR="$PATH_TO_GBLCONFIG"   ..
+
+[ geometry ]
+This needs dd4hep.
 
 [ examples ]
 To build examples: 
     `make examples`
-
 
 [ tests ]
 To build tests, including unit tests: 

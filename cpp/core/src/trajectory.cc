@@ -7,7 +7,7 @@ namespace aidaTT
 // the only constructor for a trajectory: known track parameters and trajectory elements
     trajectory::trajectory(const trackParameters& tp,
                            const vector<trajectoryElement>& elems,
-                           IFittingAlgorithm* fa, IPropagation* pm, IGeometry* geom)
+                           const IFittingAlgorithm* fa, const  IPropagation* pm, const IGeometry* geom)
         : _referenceParameters(tp) , _fittingAlgorithm(fa) , _propagation(pm), _geometry(geom)
     {
         // copy the elements

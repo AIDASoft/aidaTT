@@ -71,10 +71,6 @@ namespace aidaTT
             std::pair<trackParameters, fullCovariance> const getFullState();
             trackParameters const getStateVector();
 
-            // CR: unsure, if this is needed here....
-            //~ const trajectoryElement& getNextElement();
-            //~ const trajectoryElement& getPreviousElement();
-
             bool hasMeasurement() const
             {
                 return _measurement;
@@ -109,7 +105,7 @@ namespace aidaTT
             double _residualU, _residualV;
             double _dU, _dV;
 
-            Surface& _surface;
+            const Surface& _surface;
             double _arcLength;
             fiveByFiveMatrix _jacobianToNext;
     };
