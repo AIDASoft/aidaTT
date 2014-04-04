@@ -23,6 +23,9 @@ namespace aidaTT
             /** the default construction, it initializes all entries to zero **/
             fiveByFiveMatrix();
 
+            /** copy construction **/
+            fiveByFiveMatrix(const fiveByFiveMatrix&);
+
             /** the construction with a vector, this is ROW wise;
              * the sixth element of the vector is the first in the second row!
              **/
@@ -30,6 +33,9 @@ namespace aidaTT
 
             /** the destructor **/
             ~fiveByFiveMatrix();
+
+            /** the assignment operator **/
+            fiveByFiveMatrix operator=(const fiveByFiveMatrix&);
 
             /** direct read access to the individual matrix elements by index**/
             double operator()(unsigned int row, unsigned int column) const;

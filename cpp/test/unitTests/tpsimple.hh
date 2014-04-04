@@ -22,9 +22,9 @@ class tpsimple : public UnitTesting::UnitTest
         typedef const double cdbl;
         cdbl a, b, c, d, e;
 
-        std::vector<double> _covmatrix;
-        std::vector<double> _refpoint ;
-        std::vector<double> _helix ;
+        aidaTT::fullCovariance* _covmatrix;
+        aidaTT::Vector3D* _refpoint ;
+        aidaTT::Vector5* _helix ;
 
 };
 #endif // TPSIMPLE_HH

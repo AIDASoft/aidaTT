@@ -21,12 +21,18 @@ namespace aidaTT
             /** the default construction, it initializes all entries to zero **/
             Vector5();
 
+            /** copy constructor **/
+            Vector5(const Vector5&);
+
             /** the construction with a vector
              **/
             Vector5(const std::vector<double>&);
 
             /** the destructor **/
             ~Vector5();
+
+            /** assignment operator **/
+            Vector5 operator=(const Vector5&);
 
             /** direct read access to the individual elements by index**/
             double operator()(unsigned int index) const;

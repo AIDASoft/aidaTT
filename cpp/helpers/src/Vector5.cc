@@ -11,6 +11,14 @@ namespace aidaTT
 
 
 
+    Vector5::Vector5(const Vector5& vec)
+    {
+        _vector = gsl_vector_alloc(5);
+        gsl_vector_memcpy(_vector, vec._vector);
+    }
+
+
+
     Vector5::Vector5(const std::vector<double>& initValues)
     {
         _vector = gsl_vector_alloc(5);
@@ -33,6 +41,16 @@ namespace aidaTT
     {
         gsl_vector_free(_vector);
     }
+
+
+
+    Vector5 Vector5::operator=(const Vector5& vec)
+    {
+        _vector = gsl_vector_alloc(5);
+        gsl_vector_memcpy(_vector, vec._vector);
+        return *this;
+    }
+
 
 
     double Vector5::operator()(unsigned int index) const

@@ -3,6 +3,10 @@
 
 #include <vector>
 
+#include "fiveByFiveMatrix.hh"
+#include "Vector3D.hh"
+#include "Vector5.hh"
+
 namespace aidaTT
 {
 
@@ -45,106 +49,85 @@ namespace aidaTT
             trackParameters operator=(const trackParameters&);
 
             ///~ getter functions
-            std::vector<double> getTrackParameters() const;
+            Vector5 getTrackParameters() const;
 
             ///~ the individual values
-            double getOmega()     const
+            double getQoverP() const
             {
-                return _omega;
+                return _helixparams(0);
             };
-            double getTanLambda() const
+            double getLambda() const
             {
-                return _tanlambda;
+                return _helixparams(1);
             };
-            double getPhiZero()   const
+            double getPhi()    const
             {
-                return _phizero;
+                return _helixparams(2);
             };
-            double getDZero()     const
+            double getXPerp()  const
             {
-                return _dzero;
+                return _helixparams(3);
             };
-            double getZZero()     const
+            double getYPerp()  const
             {
-                return _zzero;
+                return _helixparams(4);
             };
 
             ///~ get the reference point in global, cartesian coordinates (x,y,z)
-            std::vector<double> getReferencePoint() const
+            Vector3D getReferencePoint() const
             {
                 return _refpoint;
             };
 
-            ///~ get the covariance matrix in lower triangle form
-            ///~ index-like structure:
-            ///~ [  0   1   3   6  10 ]
-            ///~ [  1   2   4   7  11 ]
-            ///~ [  3   4   5   8  12 ]
-            ///~ [  6   7   8   9  13 ]
-            ///~ [ 10  11  12  13  14 ]
-
-            std::vector<double> getCovarianceMatrix() const
+            fullCovariance getCovarianceMatrix() const
             {
                 return _covmatrix;
-            } ;
+            };
 
             ///~ setter functions
             ///~ set everything at once
-            void setTrackParameters(const std::vector<double>&, const std::vector<double>&, const std::vector<double>&);
+            void setTrackParameters(const Vector5&, const fullCovariance&, const Vector3D&);
 
             ///~ only set the helix parameters
-            void setTrackParameters(const std::vector<double>&);
-            void setOmega(const double& x)
+            void setTrackParameters(const Vector5&);
+
+///~ set the helix parameters individually
+            void setQoverP(double val)
             {
-                _omega = x;
-                _helixparams.at(0) = _omega;
+                _helixparams(0) = val;
             };
-            void setTanLambda(const double& x)
+            void setLambda(double val)
             {
-                _tanlambda = x;
-                _helixparams.at(1) = _tanlambda;
+                _helixparams(1) = val;
             };
-            void setPhiZero(const double& x)
+            void setPhi(double val)
             {
-                _phizero = x;
-                _helixparams.at(2) = _phizero;
+                _helixparams(2) = val;
             };
-            void setDZero(const double& x)
+            void setXPerp(double val)
             {
-                _dzero = x;
-                _helixparams.at(3) = _dzero;
+                _helixparams(3) = val;
             };
-            void setZZero(const double& x)
+            void setYPerp(double val)
             {
-                _zzero = x;
-                _helixparams.at(4) = _zzero;
+                _helixparams(4) = val;
             };
+
 
             /// set the reference point, defaults to the nominal center
-            void setReferencePoint(const std::vector<double>&);
+            void setReferencePoint(const Vector3D&);
 
             ///~ set the covariance matrix
-            void setCovarianceMatrix(const std::vector<double>& cm)
-            {
-                _covmatrix = cm;
-            };
+            void setCovarianceMatrix(const fullCovariance&);
+
+
 
             void print() const;
 
         private:
-            double _omega;
-            double _tanlambda;
-            double _phizero;
-            double _dzero;
-            double _zzero;
-
-            double _xref;
-            double _yref;
-            double _zref;
-
-            std::vector<double> _covmatrix;
-            std::vector<double> _helixparams;
-            std::vector<double> _refpoint;
+            fullCovariance _covmatrix;
+            Vector5        _helixparams;
+            Vector3D       _refpoint;
     };
 
 }

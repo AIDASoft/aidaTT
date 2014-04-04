@@ -11,6 +11,13 @@ namespace aidaTT
 
 
 
+    fiveByFiveMatrix::fiveByFiveMatrix(const fiveByFiveMatrix& fbfm)
+    {
+        _matrix = gsl_matrix_alloc(5, 5);
+        gsl_matrix_memcpy(_matrix, fbfm._matrix);
+    }
+
+
     fiveByFiveMatrix::fiveByFiveMatrix(const std::vector<double>& initValues)
     {
         _matrix = gsl_matrix_alloc(5, 5);
@@ -35,6 +42,17 @@ namespace aidaTT
     {
         gsl_matrix_free(_matrix);
     }
+
+
+
+    fiveByFiveMatrix fiveByFiveMatrix::operator=(const fiveByFiveMatrix& fbfm)
+    {
+        _matrix = gsl_matrix_alloc(5, 5);
+        gsl_matrix_memcpy(_matrix, fbfm._matrix);
+        return *this;
+    }
+
+
 
 
     double fiveByFiveMatrix::operator()(unsigned int row, unsigned int column) const

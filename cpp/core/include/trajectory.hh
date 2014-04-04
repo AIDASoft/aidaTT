@@ -29,7 +29,13 @@ namespace aidaTT
     class trajectory
     {
         public:
-            /// A trajectory can only be constructed with full information
+            /// create an empty trajectory
+            trajectory();
+
+            /// copy construct a trajectory
+            trajectory(const trajectory&);
+
+            /// trajectory that are to be fitted need full information at initialization
             trajectory(const trackParameters&, const std::vector<trajectoryElement>&,
                        const IFittingAlgorithm*, const IPropagation*, const IGeometry*);
 
@@ -46,7 +52,7 @@ namespace aidaTT
             //~ MarlinTrk:: virtual int extrapolate( const gear::Vector3D& point, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
             //~ MarlinTrk:: virtual int extrapolate( const gear::Vector3D& point, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
-			//~ MarlinTrk:: virtual int propagate( const gear::Vector3D& point, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;	
+            //~ MarlinTrk:: virtual int propagate( const gear::Vector3D& point, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
             //~ MarlinTrk:: virtual int propagate( const gear::Vector3D& point, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
             //~ MarlinTrk:: virtual int getTrackState( IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
@@ -71,9 +77,7 @@ namespace aidaTT
             unsigned int getNDF();
 
         private:
-            /* disable default and copy constructor; no assignment */
-            trajectory();
-            trajectory(const trajectory&);
+            /* disable assignment */
             trajectory operator=(const trajectory&);
 
             // the  internal parts
@@ -87,16 +91,16 @@ namespace aidaTT
 
 
             /*
-            // ? 
+            // ?
             //~ MarlinTrk::   virtual int initialise( bool fitDirection ) = 0 ;
             //~ MarlinTrk:: virtual int initialise(  const EVENT::TrackState& ts, double bfield_z, bool fitDirection ) = 0 ;
 
-			BREAKS THE CONCEPT
-			
+            BREAKS THE CONCEPT
+
             // kalmanning
             //~ MarlinTrk:: virtual int smooth( trajectoryElement* hit ) = 0 ;
 
-			// no layers available -- can't assume 
+            // no layers available -- can't assume
             //~ MarlinTrk:: virtual int propagateToLayer( int layerID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
             //~ MarlinTrk:: virtual int propagateToLayer( int layerID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
             //~ MarlinTrk:: virtual int intersectionWithLayer( int layerID, gear::Vector3D& point, int& detElementID, int mode=modeClosest ) = 0  ;
@@ -109,7 +113,7 @@ namespace aidaTT
             /// DON'T UNDERSTAND
             * Steve: "not needed"
             //~ MarlinTrk:: virtual int getTrackerHitAtPositiveNDF( trajectoryElement*& trkhit ) = 0 ;
-            
+
             * what's a detElement?
             //~ MarlinTrk:: virtual int propagateToDetElement( int detElementID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
             //~ MarlinTrk:: virtual int propagateToDetElement( int detEementID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
@@ -117,7 +121,7 @@ namespace aidaTT
             //~ MarlinTrk:: virtual int extrapolateToDetElement( int detElementID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
             //~ MarlinTrk:: virtual int intersectionWithDetElement( int detElementID, gear::Vector3D& point, int mode=modeClosest ) = 0  ;
             //~ MarlinTrk:: virtual int intersectionWithDetElement( int detEementID, trajectoryElement* hit, gear::Vector3D& point, int mode=modeClosest ) = 0  ;
-        */
+            */
     };
 }
 
