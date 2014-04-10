@@ -97,6 +97,8 @@ namespace aidaTT
         private:
             ///~ no construction without the arc length!
             trajectoryElement();
+
+            ///~ impractical: no assigment, no copying
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 

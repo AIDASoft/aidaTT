@@ -247,5 +247,5 @@ double const GBLInterface::lostWeight()
         if (_outputIsPersistent) evt->addCollection(outputTrackCollection, _outputTrackCollectionName);
 
     */
-    
+
 #endif

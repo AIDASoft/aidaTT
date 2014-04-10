@@ -3,31 +3,44 @@
  * it's based on the example1.cpp in GBL by Claus Kleinwort
  */
 
-#include "GblTrajectory.h"
+#include <iostream>
+#include "AidaTT.hh"
+#include "ConstantSolenoidBField.hh"
+#include "analyticalPropagation.hh"
+//#include "SurfaceGeometry.hh"
+#include "GBLInterface.hh"
 
-using namespace gbl;
+using namespace std;
+//using namespace aidaTT;
 
-/*
-TMatrixD gblSimpleJacobian(double ds, double cosl, double bfac) {
-	/// Simple jacobian: quadratic in arc length difference
-	/**
-	 * \param [in] ds    (3D) arc-length
-	 * \param [in] cosl  cos(lambda)
-	 * \param [in] bfac  Bz*c
-	 * \return jacobian
-	 * /
-	TMatrixD jac(5, 5);
-	jac.UnitMatrix();
-	jac[1][0] = -bfac * ds * cosl;
-	jac[3][0] = -0.5 * bfac * ds * ds * cosl;
-	jac[3][1] = ds;
-	jac[4][2] = ds;
-	return jac;
-}
-*/
 
-int main() 
+int main()
 {
+
+  // create an AidaTT master object
+  aidaTT::AidaTT *a = new aidaTT::AidaTT();
+  
+ // create the different objects needed for fitting
+ // first a constant field parallel to z, 1T 
+  aidaTT::ConstantSolenoidBField bfield(1.);
+  
+  // create the propagation object
+  aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
+  
+  // create the geometry object
+  // aidaTT::SurfaceGeometry* = new SurfaceGeometry();
+  
+  // create the fitter object
+  aidaTT::GBLInterface* fitter = new aidaTT::GBLInterface();
+  
+  // now create a list of trajectory objects for the fitter
+  
+  
+  
+}
+
+    
+    
 	/// Simple example.
 	/**
 	 * Create points on initial trajectory, create trajectory from points,
@@ -48,11 +61,9 @@ int main()
 	 * from the reference trajectory are therefore always zero and the residuals
 	 * needed (by addMeasurement) are equal to the measurements.
 	 */
-}
 /*
 
 
-//MP	MilleBinary mille; // for producing MillePede-II binary file
 	unsigned int nTry = 10000; //: number of tries
 	unsigned int nLayer = 10; //: number of detector layers
 	std::cout << " Gbltst $Rev: 93 $ " << nTry << ", " << nLayer << std::endl;
@@ -60,11 +71,15 @@ int main()
 	TRandom *r = new TRandom3();
 
 	clock_t startTime = clock();
-// track direction
+
+
+// track direction - no magnetic field
 	double sinLambda = 0.3;
 	double cosLambda = sqrt(1.0 - sinLambda * sinLambda);
 	double sinPhi = 0.;
 	double cosPhi = sqrt(1.0 - sinPhi * sinPhi);
+
+// define curvilinear coordinate system (UVT)
 // tDir = (cosLambda * cosPhi, cosLambda * sinPhi, sinLambda)
 // U = Z x T / |Z x T|, V = T x U
 	TMatrixD uvDir(2, 3);
@@ -74,17 +89,22 @@ int main()
 	uvDir[1][0] = -sinLambda * cosPhi;
 	uvDir[1][1] = -sinLambda * sinPhi;
 	uvDir[1][2] = cosLambda;
+
+
 // measurement resolution
 	TVectorD measErr(2);
 	measErr[0] = 0.001;
 	measErr[1] = 0.001;
+
 	TVectorD measPrec(2); // (independent) precisions
 	measPrec[0] = 1.0 / (measErr[0] * measErr[0]);
 	measPrec[1] = 1.0 / (measErr[1] * measErr[1]);
+
 	TMatrixDSym measInvCov(2); // inverse covariance matrix
 	measInvCov.Zero();
 	measInvCov[0][0] = measPrec[0];
 	measInvCov[1][1] = measPrec[1];
+
 // scattering error
 	TVectorD scatErr(2);
 	scatErr[0] = 0.001;
@@ -92,6 +112,7 @@ int main()
 	TVectorD scatPrec(2);
 	scatPrec[0] = 1.0 / (scatErr[0] * scatErr[0]);
 	scatPrec[1] = 1.0 / (scatErr[1] * scatErr[1]);
+
 // (RMS of) CurviLinear track parameters (Q/P, slopes, offsets)
 	TVectorD clPar(5);
 	TVectorD clErr(5);
@@ -100,19 +121,9 @@ int main()
 	clErr[2] = 0.2;
 	clErr[3] = -0.15;
 	clErr[4] = 0.25;
+
 	TMatrixDSym clCov(5), clSeed(5);
 	unsigned int seedLabel = 0;
-// additional parameters
-	TVectorD addPar(2);
-	addPar[0] = 0.0025;
-	addPar[1] = -0.005;
-	std::vector<int> globalLabels;
-	globalLabels.push_back(4711);
-	globalLabels.push_back(4712);
-// global labels for MP
-	/*MP	std::vector<int> globalLabels(2);
-	 globalLabels[0] = 11;
-	 globalLabels[1] = 12; * /
 
 	double bfac = 0.2998; // Bz*c for Bz=1
 	double step = 1.5 / cosLambda; // constant steps in RPhi
