@@ -4,7 +4,9 @@
 #include "IGeometry.hh"
 #include "trackParameters.hh"
 #include "fiveByFiveMatrix.hh"
+
 #include <utility>
+#include <vector>
 
 namespace aidaTT
 {
@@ -52,7 +54,7 @@ namespace aidaTT
     {
         public:
             ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
-            trajectoryElement(double, const Surface&, void* = NULL);
+            trajectoryElement(double, const Surface&, const std::vector<double>&, void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
@@ -61,38 +63,45 @@ namespace aidaTT
             trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
 
             ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
-            trajectoryElement(double,  const Surface&, const fiveByFiveMatrix&, void* = NULL);
+            trajectoryElement(double,  const Surface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
 
             /// the getting routines
-            const Surface& getSurface();
+            const Surface& getSurface()
+            {
+                return *_surface;
+            };
 
-            const fiveByFiveMatrix& getJacobianToNextElement();
+            const fiveByFiveMatrix& getJacobianToNextElement()
+            {
+                return _jacobianToNext;
+            };
 
             std::pair<trackParameters, fullCovariance> const getFullState();
             trackParameters const getStateVector();
 
             bool hasMeasurement() const
             {
-                return _measurement;
+                return (_measDim > 0);
             };
 
             // the following depend on the type of element:
-            unsigned int getMeasurementDimension() const;
-            const double* getMeasurementResiduals() const;
-            const double* getMeasurementErrors() const;
+            unsigned int getMeasurementDimension() const
+            {
+                return _measDim;
+            };
+            const std::vector<double>& getMeasurementResiduals() const
+            {
+                return _residuals;
+            } ;
+            const std::vector<double>& getMeasurementErrors() const
+            {
+                return _resolutions;
+            } ;
 
             /// the setting routines
 
-            ///~ this sets the most important material properties (e.g. averaged):
-            ///~  ... think again about the arguments!
-            void addMaterial();
-
-            ///~ add values for a measurement
-            ///~ they are: the surface, the values of the residuals and their standard deviation
-            void addMeasurement(const Surface&, const double* residuals, const double* error, const unsigned int dimension);
-
             ///~ set the jacobian to the next element
-            void setJacobianToNextElement(const fiveByFiveMatrix&) ;
+            void setJacobianToNextElement(const fiveByFiveMatrix&);
 
         private:
             ///~ no construction without the arc length!
@@ -102,14 +111,16 @@ namespace aidaTT
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 
-            bool _measurement;
-            unsigned int _measDim;
-            double _residualU, _residualV;
-            double _dU, _dV;
+            void _calcResiduals();
+            void _calcMaterial();
 
-            const Surface& _surface;
-            double _arcLength;
+            double _arclength;
+            const Surface* const _surface;
+            unsigned int _measDim;
+            std::vector<double> _residuals;
+            std::vector<double> _resolutions;
             fiveByFiveMatrix _jacobianToNext;
+            void* _id;
     };
 
 }
