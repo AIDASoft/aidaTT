@@ -66,18 +66,18 @@ namespace aidaTT
             trajectoryElement(double,  const Surface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
 
             /// the getting routines
-            const Surface& getSurface()
+            const Surface& getSurface() const
             {
                 return *_surface;
             };
 
-            const fiveByFiveMatrix& getJacobianToNextElement()
+            const fiveByFiveMatrix& getJacobianToNextElement() const
             {
                 return _jacobianToNext;
             };
 
-            std::pair<trackParameters, fullCovariance> const getFullState();
-            trackParameters const getStateVector();
+            std::pair<trackParameters, fullCovariance> getFullState() const;
+            trackParameters  getStateVector() const;
 
             bool hasMeasurement() const
             {
@@ -107,7 +107,7 @@ namespace aidaTT
             ///~ no construction without the arc length!
             trajectoryElement();
 
-            ///~ impractical: no assigment, no copying
+            ///~ no assigment, no copying
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 
@@ -120,7 +120,7 @@ namespace aidaTT
             std::vector<double> _residuals;
             std::vector<double> _resolutions;
             fiveByFiveMatrix _jacobianToNext;
-            void* _id;
+            const void* const _id; // just store
     };
 
 }

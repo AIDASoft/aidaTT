@@ -24,7 +24,7 @@ trajectoryElement::trajectoryElement(double arclength, const Surface& surface, c
 
 
 ///~ constructor B: only the arc length is given and some identification
-trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _surface(NULL), _measDim(0)
+trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _surface(NULL), _measDim(0), _id(id)
 {}
 
 

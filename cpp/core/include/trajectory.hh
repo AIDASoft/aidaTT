@@ -59,11 +59,11 @@ namespace aidaTT
             //~ MarlinTrk:: virtual int getTrackState( trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
             /// methods available before fitting
-            std::vector<trajectoryElement> getTrajectoryElements();
-            std::vector<trajectoryElement> getMeasurements();
+            const std::vector<trajectoryElement>& getTrajectoryElements() const;
+            const std::vector<trajectoryElement>& getMeasurements() const;
 
-            const IFittingAlgorithm* getFittingAlgorithm() const;
-            const IPropagation* getPropagationMethod() const;
+            const IFittingAlgorithm* const getFittingAlgorithm() const;
+            const IPropagation* const getPropagationMethod() const;
 
             unsigned int fit();
 
@@ -83,6 +83,7 @@ namespace aidaTT
             // the  internal parts
             const trackParameters          _referenceParameters;
             std::vector<trajectoryElement> _initialTrajectoryElements;
+            std::vector<trajectoryElement> _initialMeasurements;
 
             const IFittingAlgorithm* _fittingAlgorithm;
             const IPropagation* _propagation;

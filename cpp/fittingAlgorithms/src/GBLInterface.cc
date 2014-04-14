@@ -2,53 +2,80 @@
 #include "GBLInterface.hh"
 
 using namespace std;
-using namespace aidaTT;
-using namespace gbl;
 
-
-
-bool GBLInterface::initializeFitter(const trajectory& TRAJ)
+namespace aidaTT
 {
-    /* several bits of information are needed to initialize the gbl:
-     *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
-     *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
-     *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
-     */
+    GBLInterface::GBLInterface()
+    {}
 
-    return true;
+
+
+    GBLInterface::~GBLInterface()
+    {
+        if(_trajectory != NULL)
+            delete _trajectory;
+        if(_milleBinary != NULL)
+            delete _milleBinary;
+    }
+
+
+
+    bool const GBLInterface::fit(const trajectory& TRAJ)
+    {
+        /* several bits of information are needed to initialize the gbl:
+         *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
+         *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
+         *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
+         */
+
+        /// create vector of GBL points
+        vector < gbl::GblPoint > theListOfPoints;
+
+        for(vector<trajectoryElement>::const_iterator element =
+                    (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
+                element < last; ++element)
+            {
+                const fiveByFiveMatrix& jac = element->getJacobianToNextElement();
+
+                //GblPoint point(point2pointJacobian);
+
+                if(element->hasMeasurement())
+                    {
+                        //~ unsigned int element->getMeasurementDimension() const;
+                        //~ const std::vector<double>& element->getMeasurementResiduals() const
+                        //~ const std::vector<double>& element->getMeasurementErrors() const
+                        //~ point.addMeasurement(aHit.getLocalToMeasurementProjection(), aHit.getResiduals(), aHit.getPrecision());
+                    }
+
+                // store the point in the list that will be handed to the trajectory
+                //~ theListOfPoints.push_back(point);
+            }
+        return true;
+    }
+
+
+
+    unsigned int const GBLInterface::getNDF()
+    {
+        return 0;
+    }
+
+
+
+    double const GBLInterface::getChiSquare()
+    {
+        return -1.;
+    }
+
+
+
+    double const GBLInterface::lostWeight()
+    {
+        return 0.;
+    }
+
+
 }
-
-
-
-bool const GBLInterface::fit()
-{
-
-    return true;
-}
-
-
-
-unsigned int const GBLInterface::getNDF()
-{
-    return 0;
-}
-
-
-
-double const GBLInterface::getChiSquare()
-{
-    return -1.;
-}
-
-
-
-double const GBLInterface::lostWeight()
-{
-    return 0.;
-}
-
-
-
 /*  ORIGINAL
 
 

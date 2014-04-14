@@ -18,10 +18,10 @@ int main()
 {
 
     // create an AidaTT master object
-//  aidaTT::AidaTT *a = new aidaTT::AidaTT();
+    //  aidaTT::AidaTT *a = new aidaTT::AidaTT();
 
-// create the different objects needed for fitting
-// first a constant field parallel to z, 1T
+    // create the different objects needed for fitting
+    // first a constant field parallel to z, 1T
     aidaTT::ConstantSolenoidBField bfield(1.);
 
     // create the propagation object

@@ -19,4 +19,10 @@ namespace aidaTT
 
 
 
+
+    const vector<trajectoryElement>& trajectory::getTrajectoryElements() const
+    {
+        ;
+    }
+
 }

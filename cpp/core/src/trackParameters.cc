@@ -13,7 +13,7 @@ trackParameters::trackParameters() : _covmatrix() , _helixparams(), _refpoint()
 
 
 
-trackParameters::trackParameters(const trackParameters& tp)
+trackParameters::trackParameters(const trackParameters& tp) :  _covmatrix(tp._covmatrix) , _helixparams(tp._helixparams), _refpoint(tp._refpoint)
 {
 
 }

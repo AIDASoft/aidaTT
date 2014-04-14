@@ -29,15 +29,21 @@ namespace aidaTT
     class GBLInterface : public IFittingAlgorithm
     {
         public:
+            GBLInterface();
+            ~GBLInterface();
+
             /// inherited methods:
-            bool initializeFitter(const trajectory&);
-            bool const fit()                        ;
+            bool const fit(const trajectory&)       ;
             unsigned int const getNDF()            ;
             double const getChiSquare()             ;
             double const lostWeight()               ;
 
 
         private:
+            GBLInterface(const GBLInterface&);
+            GBLInterface operator=(const GBLInterface&);
+
+
             gbl::GblTrajectory* _trajectory; ///< GBL trajectory
             gbl::MilleBinary* _milleBinary; ///< Millepede-II binary file
             bool _curvature; ///< flag for curved track (helix, else straight line)
