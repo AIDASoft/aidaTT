@@ -27,9 +27,11 @@ namespace aidaTT
          *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
          *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
          */
-
+		
         /// create vector of GBL points
         vector < gbl::GblPoint > theListOfPoints;
+
+		const Vector5 trackParameters = TRAJ.getInitialTrackParameters().getTrackParameters();
 
         for(vector<trajectoryElement>::const_iterator element =
                     (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
@@ -47,11 +49,17 @@ namespace aidaTT
                         /// 3) the inverse resolution = precision of the measurements
                         
                         //~ 1) projection matrix -- the basis change matrix
+						// first part: get the local measurement directions
+						//~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
+						//~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
+                        
+                        //~ 2) the residuals in the measurement direction
+                        //~ const std::vector<double> residuals = element->getSurface()->getMeasurementDirections();
+						
+						//~ 3) the precision of the measurements
+                        const std::vector<double> errors = element->getMeasurementErrors();
                         
                         
-                        //~ unsigned int element->getMeasurementDimension() const;
-                        //~ const std::vector<double>& element->getMeasurementResiduals() const
-                        //~ const std::vector<double>& element->getMeasurementErrors() const
                         //~ point.addMeasurement(aHit.getLocalToMeasurementProjection(), aHit.getResiduals(), aHit.getPrecision());
                     }
 

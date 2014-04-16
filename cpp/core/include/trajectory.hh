@@ -41,6 +41,8 @@ namespace aidaTT
 
             ~trajectory();
 
+			trackParameters getInitialTrackParameters() const { return _referenceParameters; };
+
             //~ MarlinTrk:: virtual int addHit(trajectoryElement* hit) = 0 ;
             //~ MarlinTrk:: virtual int addAndFit( trajectoryElement* hit, double& chi2increment, double maxChi2Increment=DBL_MAX ) = 0 ;
             //~ MarlinTrk:: virtual int testChi2Increment( trajectoryElement* hit, double& chi2increment ) = 0 ;
@@ -81,7 +83,7 @@ namespace aidaTT
             trajectory operator=(const trajectory&);
 
             // the  internal parts
-            const trackParameters          _referenceParameters;
+            trackParameters          _referenceParameters;
             std::vector<trajectoryElement> _initialTrajectoryElements;
             std::vector<trajectoryElement> _initialMeasurements;
 
