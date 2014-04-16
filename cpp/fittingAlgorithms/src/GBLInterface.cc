@@ -41,6 +41,14 @@ namespace aidaTT
 
                 if(element->hasMeasurement())
                     {
+                        /// three elements are needed to add a measurement to a gblpoint:
+                        /// 1) the projection matrix from the local track frame to the measurement system
+                        /// 2) the residuals in the measurement directions
+                        /// 3) the inverse resolution = precision of the measurements
+                        
+                        //~ 1) projection matrix -- the basis change matrix
+                        
+                        
                         //~ unsigned int element->getMeasurementDimension() const;
                         //~ const std::vector<double>& element->getMeasurementResiduals() const
                         //~ const std::vector<double>& element->getMeasurementErrors() const
