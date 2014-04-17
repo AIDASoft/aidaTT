@@ -18,7 +18,7 @@ include(library_versioning)
 ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
 
 # include directories
-INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./fields/include ./propagations/include ./fittingAlgorithms/include)
+INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./fields/include ./propagations/include ./fittingAlgorithms/include )
 
 INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
 
@@ -32,8 +32,9 @@ ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
 
 FIND_PACKAGE( GBL )
 FIND_PACKAGE( GSL )
+FIND_PACKAGE( DD4hep )
 
-FOREACH( pkg  GSL GBL) # later: KalTest ? LCIO ? TGeo ? 
+FOREACH( pkg  GSL GBL DD4hep) # later: KalTest ? LCIO ? TGeo ? 
     IF( ${pkg}_FOUND )
         INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
@@ -65,6 +66,12 @@ IF( GBL_FOUND )
         ADD_DEFINITIONS( "-DUSE_GBL" )
 ELSE()
     MESSAGE( STATUS "GBL not found, track fitting with GBL will not be available." )
+ENDIF()
+
+IF( DD4hep_FOUND )
+        ADD_DEFINITIONS( "-DUSE_DD4HEP" )
+ELSE()
+    MESSAGE( STATUS "DD4hep not found, the geometry decription from DD4hep will not be available." )
 ENDIF()
 
 # add the examples directory; only contains executables

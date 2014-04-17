@@ -64,4 +64,4 @@ namespace aidaTT
 }
 
 #endif // GBLINTERFACE_H
-#endif // 
+#endif // USE_GBL

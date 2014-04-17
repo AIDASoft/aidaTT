@@ -8,7 +8,17 @@ MACRO( ADD_AIDATT_EXAMPLE _example )
    TARGET_LINK_LIBRARIES( ${_example} ${PROJECT_NAME}  )
 ENDMACRO( ADD_AIDATT_EXAMPLE )
 
-ADD_AIDATT_EXAMPLE( simpleton simple/simpleton.cpp)
+MACRO( ADD_AIDATT_EXAMPLE_WITH_ROOT _example )
+   ADD_EXECUTABLE( ${_example} EXCLUDE_FROM_ALL ${ARGN} )
+   ADD_DEPENDENCIES( examples  ${_example} )
+   INCLUDE_DIRECTORIES (${PROJECT_SOURCE_DIR}/core/include)
+   INCLUDE_DIRECTORIES (${PROJECT_SOURCE_DIR}/fields/include)
+   TARGET_LINK_LIBRARIES( ${_example} ${PROJECT_NAME} ${ROOT_LIBS} )
+ENDMACRO( ADD_AIDATT_EXAMPLE_WITH_ROOT )
+
+IF(DD4HEP_FOUND)
+ADD_AIDATT_EXAMPLE_WITH_ROOT( geometry_test geometry_test/geometry_test.cpp)
+ENDIF(DD4HEP_FOUND)
 
 IF( GBL_FOUND)
 ADD_AIDATT_EXAMPLE( gbl_example gbl_example/gbl_example.cpp)

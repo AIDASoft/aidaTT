@@ -17,7 +17,7 @@ using namespace std;
 //~ };
 
 ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
-trajectoryElement::trajectoryElement(double arclength, const Surface& surface, const vector<double>& resolutions, void* id)
+trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, const vector<double>& resolutions, void* id)
     : _arclength(arclength), _surface(&surface), _measDim(resolutions.size()), _resolutions(resolutions), _id(id)
 { }
 
@@ -37,7 +37,7 @@ trajectoryElement::trajectoryElement(double arclength, const fiveByFiveMatrix& j
 
 
 ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
-trajectoryElement::trajectoryElement(double arclength,  const Surface& surface, const vector<double>& resolutions, const fiveByFiveMatrix& jacob, void* id)
+trajectoryElement::trajectoryElement(double arclength,  const ISurface& surface, const vector<double>& resolutions, const fiveByFiveMatrix& jacob, void* id)
     : _arclength(arclength), _surface(&surface), _measDim(resolutions.size()), _resolutions(resolutions), _jacobianToNext(jacob), _id(id)
 {}
 

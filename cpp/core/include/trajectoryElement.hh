@@ -54,7 +54,7 @@ namespace aidaTT
     {
         public:
             ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
-            trajectoryElement(double, const Surface&, const std::vector<double>&, void* = NULL);
+            trajectoryElement(double, const ISurface&, const std::vector<double>&, void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
@@ -63,10 +63,10 @@ namespace aidaTT
             trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
 
             ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
-            trajectoryElement(double,  const Surface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
+            trajectoryElement(double,  const ISurface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
 
             /// the getting routines
-            const Surface& getSurface() const
+            const ISurface& getSurface() const
             {
                 return *_surface;
             };
@@ -115,7 +115,7 @@ namespace aidaTT
             void _calcMaterial();
 
             double _arclength;
-            const Surface* const _surface;
+            const ISurface* const _surface;
             unsigned int _measDim;
             std::vector<double> _residuals;
             std::vector<double> _resolutions;
