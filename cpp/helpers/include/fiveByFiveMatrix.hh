@@ -49,6 +49,10 @@ namespace aidaTT
                 gsl_matrix_set_identity(_matrix);
             };
 
+            /** get array to construct other matrix representations */
+            double* array() const;
+
+
         private:
             gsl_matrix* _matrix;
     };

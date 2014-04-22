@@ -27,11 +27,11 @@ namespace aidaTT
          *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
          *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
          */
-		
+
         /// create vector of GBL points
         vector < gbl::GblPoint > theListOfPoints;
 
-		const Vector5 trackParameters = TRAJ.getInitialTrackParameters().getTrackParameters();
+        const Vector5 trackParameters = TRAJ.getInitialTrackParameters().getTrackParameters();
 
         for(vector<trajectoryElement>::const_iterator element =
                     (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
@@ -39,7 +39,7 @@ namespace aidaTT
             {
                 const fiveByFiveMatrix& jac = element->getJacobianToNextElement();
 
-                //GblPoint point(point2pointJacobian);
+                gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
                 if(element->hasMeasurement())
                     {
@@ -47,24 +47,43 @@ namespace aidaTT
                         /// 1) the projection matrix from the local track frame to the measurement system
                         /// 2) the residuals in the measurement directions
                         /// 3) the inverse resolution = precision of the measurements
-                        
+
                         //~ 1) projection matrix -- the basis change matrix
-						// first part: get the local measurement directions
-						//~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
-						//~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
-                        
+                        // first part: get the local measurement directions
+                        //~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
+                        //~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
+
                         //~ 2) the residuals in the measurement direction
                         //~ const std::vector<double> residuals = element->getSurface()->getMeasurementDirections();
-						
-						//~ 3) the precision of the measurements
+                        //~ convert the vector to an array:
+                        //~ double residualarray[residuals.size()];
+                        //~ std::copy(residuals.begin(), residuals.end(), residualarray);
+
+                        //~ 3) the precision of the measurements -- the inverse of the resolution
                         const std::vector<double> errors = element->getMeasurementErrors();
-                        
-                        
-                        //~ point.addMeasurement(aHit.getLocalToMeasurementProjection(), aHit.getResiduals(), aHit.getPrecision());
+                        double precisionarray[errors.size()];
+                        for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
+                            {
+                                if(errors.at(errorid) <= 0.)
+                                    precisionarray[errorid] = 10e+99;
+                                else
+                                    precisionarray[errorid] = 1. / errors.at(errorid);
+                            }
+
+                        //~ point.gbl::addMeasurement( TMatrixD( 5,5,projectionMatrix.array()), TVectorD(residualarray), TVectorD(precisionarray) );
                     }
+                //~ now evaluate the scattering material
+                //~ the addScatterer routine will add a thin scatterer at the given position
+                //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
+                //~ -- 1.) determine whether scatterer or not
+                //~ -- 2.) if scatterer: thin or thick
+                //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
+                //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
+                //~  point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
+
 
                 // store the point in the list that will be handed to the trajectory
-                //~ theListOfPoints.push_back(point);
+                theListOfPoints.push_back(point);
             }
         return true;
     }

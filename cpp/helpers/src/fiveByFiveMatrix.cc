@@ -18,6 +18,7 @@ namespace aidaTT
     }
 
 
+
     fiveByFiveMatrix::fiveByFiveMatrix(const std::vector<double>& initValues)
     {
         _matrix = gsl_matrix_alloc(5, 5);
@@ -38,6 +39,7 @@ namespace aidaTT
     }
 
 
+
     fiveByFiveMatrix::~fiveByFiveMatrix()
     {
         gsl_matrix_free(_matrix);
@@ -51,7 +53,6 @@ namespace aidaTT
         gsl_matrix_memcpy(_matrix, fbfm._matrix);
         return *this;
     }
-
 
 
 
@@ -74,4 +75,19 @@ namespace aidaTT
         else
             return *gsl_matrix_ptr(_matrix, row, column);
     }
+
+
+    double* fiveByFiveMatrix::array() const
+    {
+        double retVal[25] =
+        {
+            gsl_matrix_get(_matrix, 0, 0), gsl_matrix_get(_matrix, 0, 1), gsl_matrix_get(_matrix, 0, 2), gsl_matrix_get(_matrix, 0, 3), gsl_matrix_get(_matrix, 0, 4),
+            gsl_matrix_get(_matrix, 1, 0), gsl_matrix_get(_matrix, 1, 1), gsl_matrix_get(_matrix, 1, 2), gsl_matrix_get(_matrix, 1, 3), gsl_matrix_get(_matrix, 1, 4),
+            gsl_matrix_get(_matrix, 2, 0), gsl_matrix_get(_matrix, 2, 1), gsl_matrix_get(_matrix, 2, 2), gsl_matrix_get(_matrix, 2, 3), gsl_matrix_get(_matrix, 2, 4),
+            gsl_matrix_get(_matrix, 3, 0), gsl_matrix_get(_matrix, 3, 1), gsl_matrix_get(_matrix, 3, 2), gsl_matrix_get(_matrix, 3, 3), gsl_matrix_get(_matrix, 3, 4),
+            gsl_matrix_get(_matrix, 4, 0), gsl_matrix_get(_matrix, 4, 1), gsl_matrix_get(_matrix, 4, 2), gsl_matrix_get(_matrix, 4, 3), gsl_matrix_get(_matrix, 4, 4)
+        };
+        return retVal;
+    }
+
 }
