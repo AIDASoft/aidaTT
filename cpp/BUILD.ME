@@ -14,11 +14,13 @@ How to build the library:
 [ fit functionality ] 
 Fitting functionality needs the interface to a fit algorithm.
 External package is GBL, specify the path to the GBLConfig.cmake:
-		cmake -DGBL_DIR="$PATH_TO_GBLCONFIG"   ..
+		cmake -DGBL_DIR=$PATH_TO_GBLCONFIG   ..
 
 [ geometry ]
-This needs dd4hep.
-
+This needs dd4hep or another implementation of the Geometry interface.
+To include the package in the compilation and thus activate the interface use
+    cmake -DDD4hep_DIR=$PATH_TO_DD4HEP_CONFIG ..
+  
 [ examples ]
 To build examples: 
     `make examples`
