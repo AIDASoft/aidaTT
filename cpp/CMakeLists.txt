@@ -31,8 +31,8 @@ AUX_SOURCE_DIRECTORY( ./geometry/src  library_sources )
 
 ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
 
+FIND_PACKAGE( GSL REQUIRED)
 FIND_PACKAGE( GBL )
-FIND_PACKAGE( GSL )
 FIND_PACKAGE( DD4hep )
 
 FOREACH( pkg  GSL GBL DD4hep) # later: KalTest ? LCIO ? TGeo ? 
