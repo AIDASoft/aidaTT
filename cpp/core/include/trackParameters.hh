@@ -19,23 +19,21 @@ namespace aidaTT
      * Five values parametrize a helix, their covariance matrix has 15 entries; w.r.t. a reference point (three values).
      *
      * There are a lot of different choices for parametrization, the choice depending on preference.
-     * The default interface uses (for now) the L3/LCIO perigee parametrization: [\Omega, \tan\lambda, \Phi_0, d_0, z_0]
      *
      * Any other parametrization can be deduced from this by using the appropriate transformation matrix.
+     * There are helper functions defined and implemented (in fiveByFiveMatrix.hh) to switch to/from/in between curvilinear and
+     *      - perigee track parametrization [ kappa, theta, Phi, epsilon, z_p ], given by Billoir & Qian, NIM A449 (2000) 344
+     *      - L3 perigee track parametrization [ Omega, tan(lambda), phi_0, d_0m z_0, ], given by Alcaraz, L3 Internal Note 1666 (1995)
      *
-     * The default internal helix parametrization for propagation is the curvilinear track parametrization, drawn from Strandlie & Wittek, NIM A 566 (2006), 678ff.
+     * The default helix parametrization for propagation is the curvilinear track parametrization, drawn from Strandlie & Wittek, NIM A 566 (2006), 678ff.
      * This is: [ q/p, lambda, Phi, x_perp, y_perp ]
      *
      * Implemented are:
-     *      - perigee track parametrization [ kappa, theta, Phi, epsilon, z_p ], given by Billoir & Qian, NIM A449 (2000) 344
-     *      - L3 perigee track parametrization [ Omega, tan(lambda), phi_0, d_0m z_0, ], given by Alcaraz, L3 Internal Note 1666 (1995)
+
      ***/
 
-    /* TODO: decide the nicenesss of using. internal switching?
-     *  use only strandlie&wittek parametrization !?
-     *  implement the automatic conversion with matrices!
+    /* TODO:
      *  implement copy construction & assignment
-     *
      */
 
     class trackParameters
@@ -91,7 +89,7 @@ namespace aidaTT
             ///~ only set the helix parameters
             void setTrackParameters(const Vector5&);
 
-///~ set the helix parameters individually
+            ///~ set the helix parameters individually
             void setQoverP(double val)
             {
                 _helixparams(0) = val;
@@ -113,14 +111,11 @@ namespace aidaTT
                 _helixparams(4) = val;
             };
 
-
             /// set the reference point, defaults to the nominal center
             void setReferencePoint(const Vector3D&);
 
             ///~ set the covariance matrix
             void setCovarianceMatrix(const fullCovariance&);
-
-
 
             void print() const;
 

@@ -77,17 +77,41 @@ namespace aidaTT
     }
 
 
-    double* fiveByFiveMatrix::array() const
+    const double* const fiveByFiveMatrix::array() const
     {
-        double retVal[25] =
-        {
-            gsl_matrix_get(_matrix, 0, 0), gsl_matrix_get(_matrix, 0, 1), gsl_matrix_get(_matrix, 0, 2), gsl_matrix_get(_matrix, 0, 3), gsl_matrix_get(_matrix, 0, 4),
-            gsl_matrix_get(_matrix, 1, 0), gsl_matrix_get(_matrix, 1, 1), gsl_matrix_get(_matrix, 1, 2), gsl_matrix_get(_matrix, 1, 3), gsl_matrix_get(_matrix, 1, 4),
-            gsl_matrix_get(_matrix, 2, 0), gsl_matrix_get(_matrix, 2, 1), gsl_matrix_get(_matrix, 2, 2), gsl_matrix_get(_matrix, 2, 3), gsl_matrix_get(_matrix, 2, 4),
-            gsl_matrix_get(_matrix, 3, 0), gsl_matrix_get(_matrix, 3, 1), gsl_matrix_get(_matrix, 3, 2), gsl_matrix_get(_matrix, 3, 3), gsl_matrix_get(_matrix, 3, 4),
-            gsl_matrix_get(_matrix, 4, 0), gsl_matrix_get(_matrix, 4, 1), gsl_matrix_get(_matrix, 4, 2), gsl_matrix_get(_matrix, 4, 3), gsl_matrix_get(_matrix, 4, 4)
-        };
-        return retVal;
+        return _matrix->data;
     }
+
+
+    fiveByFiveMatrix curvilinearToPerigeeJacobian(const fiveByFiveMatrix& curvilinearJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+
+    fiveByFiveMatrix perigeeToCurvilinearJacobian(const fiveByFiveMatrix& perigeeJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+    fiveByFiveMatrix perigeeToILDJacobian(const fiveByFiveMatrix& perigeeJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+    fiveByFiveMatrix ildToPerigeeJacobian(const fiveByFiveMatrix& ILDJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+
+    fiveByFiveMatrix curvilinearToILDJacobian(const fiveByFiveMatrix& curvilinearJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+    fiveByFiveMatrix ildToCurvilinearJacobian(const fiveByFiveMatrix& ILDJacobian)
+    {
+        return fiveByFiveMatrix();
+    }
+
+
+
+
 
 }

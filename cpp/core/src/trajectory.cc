@@ -19,10 +19,22 @@ namespace aidaTT
 
 
 
+    //~ the minimal useful constructor
+    trajectory::trajectory(const trackParameters& tp, const IGeometry* geom) : _referenceParameters(tp), _fittingAlgorithm(NULL) , _propagation(NULL), _geometry(geom)
+    {}
+
 
     const vector<trajectoryElement>& trajectory::getTrajectoryElements() const
     {
         ;
     }
+
+
+
+    const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces()
+    {
+
+    }
+
 
 }

@@ -2,6 +2,7 @@
 #define IGEOMETRY_HH
 
 #include "Vector3D.hh"
+#include <list>
 
 /* This hides the actual implementation of geometry information.
  * Geometry is needed for the calculation of
@@ -120,7 +121,8 @@ namespace aidaTT
 {
     class IGeometry
     {
-
+        public:
+            virtual const std::list<const ISurface*>& getSurfaces() = 0;
     };
 
 }

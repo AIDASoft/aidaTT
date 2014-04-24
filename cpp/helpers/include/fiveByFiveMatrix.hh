@@ -50,7 +50,7 @@ namespace aidaTT
             };
 
             /** get array to construct other matrix representations */
-            double* array() const;
+            const double* const array() const;
 
 
         private:
@@ -59,6 +59,17 @@ namespace aidaTT
 
     typedef fiveByFiveMatrix fiveByFiveMatrixSym;
     typedef fiveByFiveMatrixSym fullCovariance;
+
+    fiveByFiveMatrix curvilinearToPerigeeJacobian(const fiveByFiveMatrix&);
+    fiveByFiveMatrix perigeeToCurvilinearJacobian(const fiveByFiveMatrix&);
+
+    fiveByFiveMatrix perigeeToILDJacobian(const fiveByFiveMatrix&);
+    fiveByFiveMatrix ildToPerigeeJacobian(const fiveByFiveMatrix&);
+
+    fiveByFiveMatrix curvilinearToILDJacobian(const fiveByFiveMatrix&);
+    fiveByFiveMatrix ildToCurvilinearJacobian(const fiveByFiveMatrix&);
+
+
 }
 
 #endif // FIVEBYFIVEMATRIX_HH

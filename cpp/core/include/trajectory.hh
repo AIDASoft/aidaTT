@@ -39,9 +39,16 @@ namespace aidaTT
             trajectory(const trackParameters&, const std::vector<trajectoryElement>&,
                        const IFittingAlgorithm*, const IPropagation*, const IGeometry*);
 
+            //~ the minimal useful constructor
+            trajectory(const trackParameters&, const IGeometry*);
+
+
             ~trajectory();
 
-			trackParameters getInitialTrackParameters() const { return _referenceParameters; };
+            trackParameters getInitialTrackParameters() const
+            {
+                return _referenceParameters;
+            };
 
             //~ MarlinTrk:: virtual int addHit(trajectoryElement* hit) = 0 ;
             //~ MarlinTrk:: virtual int addAndFit( trajectoryElement* hit, double& chi2increment, double maxChi2Increment=DBL_MAX ) = 0 ;
@@ -63,6 +70,8 @@ namespace aidaTT
             /// methods available before fitting
             const std::vector<trajectoryElement>& getTrajectoryElements() const;
             const std::vector<trajectoryElement>& getMeasurements() const;
+
+            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces();
 
             const IFittingAlgorithm* const getFittingAlgorithm() const;
             const IPropagation* const getPropagationMethod() const;
@@ -87,9 +96,11 @@ namespace aidaTT
             std::vector<trajectoryElement> _initialTrajectoryElements;
             std::vector<trajectoryElement> _initialMeasurements;
 
-            const IFittingAlgorithm* _fittingAlgorithm;
-            const IPropagation* _propagation;
-            const IGeometry* _geometry;
+            std::vector<std::pair<double, const ISurface*> > _intersectionsList;
+
+            const IFittingAlgorithm* const _fittingAlgorithm;
+            const IPropagation* const _propagation;
+            const IGeometry* const _geometry;
 
 
 
