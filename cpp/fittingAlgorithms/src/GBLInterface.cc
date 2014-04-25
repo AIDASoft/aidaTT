@@ -14,8 +14,6 @@ namespace aidaTT
     {
         if(_trajectory != NULL)
             delete _trajectory;
-        if(_milleBinary != NULL)
-            delete _milleBinary;
     }
 
 

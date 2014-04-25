@@ -26,14 +26,14 @@ namespace aidaTT
 
     const vector<trajectoryElement>& trajectory::getTrajectoryElements() const
     {
-        ;
+        return _initialTrajectoryElements;
     }
 
 
 
     const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces()
     {
-
+        return _intersectionsList;
     }
 
 
