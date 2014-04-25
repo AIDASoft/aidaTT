@@ -4,6 +4,9 @@
 #include <gsl/gsl_matrix.h>
 #include <vector>
 
+#include "Vector5.hh"
+#include "Vector3D.hh"
+
 namespace aidaTT
 {
 
@@ -43,6 +46,12 @@ namespace aidaTT
             /** direct write access to the individual matrix elements by index**/
             double& operator()(unsigned int row, unsigned int column);
 
+            /** define matrix-matrix multipliation **/
+            virtual fiveByFiveMatrix operator*(const fiveByFiveMatrix&);
+
+            /** definve matrix-vector multiplication **/
+            virtual Vector5 operator*(const Vector5&);
+
             /** make a unit matrix out of the given matrix **/
             inline void Unit()
             {
@@ -52,7 +61,6 @@ namespace aidaTT
             /** get array to construct other matrix representations */
             const double* const array() const;
 
-
         private:
             gsl_matrix* _matrix;
     };
@@ -60,16 +68,15 @@ namespace aidaTT
     typedef fiveByFiveMatrix fiveByFiveMatrixSym;
     typedef fiveByFiveMatrixSym fullCovariance;
 
-    fiveByFiveMatrix curvilinearToPerigeeJacobian(const fiveByFiveMatrix&);
-    fiveByFiveMatrix perigeeToCurvilinearJacobian(const fiveByFiveMatrix&);
 
-    fiveByFiveMatrix perigeeToILDJacobian(const fiveByFiveMatrix&);
-    fiveByFiveMatrix ildToPerigeeJacobian(const fiveByFiveMatrix&);
+    fiveByFiveMatrix curvilinearToPerigeeJacobian(const Vector5&, const Vector3D&);
+    fiveByFiveMatrix perigeeToCurvilinearJacobian(const Vector5&, const Vector3D&);
 
-    fiveByFiveMatrix curvilinearToILDJacobian(const fiveByFiveMatrix&);
-    fiveByFiveMatrix ildToCurvilinearJacobian(const fiveByFiveMatrix&);
+    fiveByFiveMatrix perigeeToILDJacobian(const Vector5&);
+    fiveByFiveMatrix ildToPerigeeJacobian(const Vector5&);
 
-
+    fiveByFiveMatrix curvilinearToILDJacobian(const Vector5&, const Vector3D&);
+    fiveByFiveMatrix ildToCurvilinearJacobian(const Vector5&, const Vector3D&);
 }
 
 #endif // FIVEBYFIVEMATRIX_HH

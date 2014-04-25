@@ -17,6 +17,7 @@ namespace aidaTT
     ///~ a five element vector that abstracts the gsl vector
     class Vector5
     {
+            friend class fiveByFiveMatrix;
         public:
             /** the default construction, it initializes all entries to zero **/
             Vector5();
