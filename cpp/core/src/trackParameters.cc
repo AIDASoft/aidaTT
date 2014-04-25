@@ -20,9 +20,16 @@ trackParameters::trackParameters(const trackParameters& tp) :  _covmatrix(tp._co
 
 
 
-trackParameters trackParameters::operator=(const trackParameters& tp)
+trackParameters& trackParameters::operator=(const trackParameters& tp)
 {
-    return trackParameters(tp);
+    if(this == &tp)
+        return *this;
+
+    this->_covmatrix = tp._covmatrix;
+    this->_helixparams = tp._helixparams;
+    this->_refpoint = tp._refpoint;
+
+    return *this;
 }
 
 

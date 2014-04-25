@@ -44,7 +44,7 @@ namespace aidaTT
 
             // define copy ctor and assignment
             trackParameters(const trackParameters&);
-            trackParameters operator=(const trackParameters&);
+            trackParameters& operator=(const trackParameters&);
 
             ///~ getter functions
             Vector5 getTrackParameters() const;
