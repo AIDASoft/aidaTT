@@ -18,7 +18,7 @@ namespace aidaTT
 
 
 
-    bool const GBLInterface::fit(const trajectory& TRAJ)
+    bool GBLInterface::fit(const trajectory& TRAJ) const
     {
         /* several bits of information are needed to initialize the gbl:
          *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
@@ -88,21 +88,21 @@ namespace aidaTT
 
 
 
-    unsigned int const GBLInterface::getNDF()
+    unsigned int GBLInterface::getNDF() const
     {
         return 0;
     }
 
 
 
-    double const GBLInterface::getChiSquare()
+    double GBLInterface::getChiSquare() const
     {
         return -1.;
     }
 
 
 
-    double const GBLInterface::lostWeight()
+    double GBLInterface::lostWeight() const
     {
         return 0.;
     }

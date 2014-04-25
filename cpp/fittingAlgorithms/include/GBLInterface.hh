@@ -33,10 +33,10 @@ namespace aidaTT
             ~GBLInterface();
 
             /// inherited methods:
-            bool const fit(const trajectory&)       ;
-            unsigned int const getNDF()             ;
-            double const getChiSquare()             ;
-            double const lostWeight()               ;
+            bool fit(const trajectory&) const;
+            unsigned int getNDF()       const;
+            double getChiSquare()       const;
+            double lostWeight()         const;
 
 
         private:
