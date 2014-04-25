@@ -31,7 +31,7 @@ namespace aidaTT
 
 
 
-    const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces()
+    const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces() const
     {
         return _intersectionsList;
     }

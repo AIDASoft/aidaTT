@@ -59,13 +59,13 @@ namespace aidaTT
 
                         //~ 3) the precision of the measurements -- the inverse of the resolution
                         const std::vector<double> errors = element->getMeasurementErrors();
-                        double precisionarray[errors.size()];
+                        vector<double> precisionarray;
                         for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
                             {
                                 if(errors.at(errorid) <= 0.)
-                                    precisionarray[errorid] = 10e+99;
+                                    precisionarray.push_back(10e+99);
                                 else
-                                    precisionarray[errorid] = 1. / errors.at(errorid);
+                                    precisionarray.push_back(1. / errors.at(errorid));
                             }
 
                         //~ point.gbl::addMeasurement( TMatrixD( 5,5,projectionMatrix.array()), TVectorD(residualarray), TVectorD(precisionarray) );

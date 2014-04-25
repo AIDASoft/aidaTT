@@ -71,21 +71,21 @@ namespace aidaTT
             const std::vector<trajectoryElement>& getTrajectoryElements() const;
             const std::vector<trajectoryElement>& getMeasurements() const;
 
-            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces();
+            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces() const;
 
-            const IFittingAlgorithm* const getFittingAlgorithm() const;
-            const IPropagation* const getPropagationMethod() const;
+            IFittingAlgorithm* getFittingAlgorithm() const;
+            IPropagation* getPropagationMethod() const;
 
             unsigned int fit();
 
             /// methods after fitting
-            std::vector<trajectoryElement> getFittedTrajectoryElements();
-            std::vector<trajectoryElement> getFittedMeasurements();
-            std::vector<trajectoryElement> getOutliers();
+            std::vector<trajectoryElement> getFittedTrajectoryElements() const;
+            std::vector<trajectoryElement> getFittedMeasurements() const;
+            std::vector<trajectoryElement> getOutliers() const;
 
             /// quantify the results
-            double getChiSquare();
-            unsigned int getNDF();
+            double getChiSquare() const;
+            unsigned int getNDF() const;
 
         private:
             /* disable assignment */
