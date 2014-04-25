@@ -44,14 +44,14 @@ namespace aidaTT
 
 
 
-    Vector5 Vector5::operator=(const Vector5& vec)
+    Vector5& Vector5::operator=(const Vector5& vec)
     {
         if(this == &vec)
             return *this;
 
         _vector = gsl_vector_alloc(5);
         gsl_vector_memcpy(_vector, vec._vector);
-        return *this;
+        return (*this);
     }
 
 

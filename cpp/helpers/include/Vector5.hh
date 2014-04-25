@@ -33,7 +33,7 @@ namespace aidaTT
             ~Vector5();
 
             /** assignment operator **/
-            Vector5 operator=(const Vector5&);
+            Vector5& operator=(const Vector5&);
 
             /** direct read access to the individual elements by index**/
             double operator()(unsigned int index) const;

@@ -38,7 +38,7 @@ namespace aidaTT
             ~fiveByFiveMatrix();
 
             /** the assignment operator **/
-            fiveByFiveMatrix operator=(const fiveByFiveMatrix&);
+            fiveByFiveMatrix& operator=(const fiveByFiveMatrix&);
 
             /** direct read access to the individual matrix elements by index**/
             double operator()(unsigned int row, unsigned int column) const;

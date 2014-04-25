@@ -50,7 +50,7 @@ namespace aidaTT
 
 
 
-    fiveByFiveMatrix fiveByFiveMatrix::operator=(const fiveByFiveMatrix& fbfm)
+    fiveByFiveMatrix& fiveByFiveMatrix::operator=(const fiveByFiveMatrix& fbfm)
     {
         if(this == &fbfm)
             return *this;
