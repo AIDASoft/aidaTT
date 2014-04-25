@@ -104,7 +104,7 @@ namespace aidaTT
 
 
 
-    const double* const fiveByFiveMatrix::array() const
+    double* fiveByFiveMatrix::array() const
     {
         return _matrix->data;
     }

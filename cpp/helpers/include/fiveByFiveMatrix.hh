@@ -59,7 +59,7 @@ namespace aidaTT
             };
 
             /** get array to construct other matrix representations */
-            const double* const array() const;
+            double* array() const;
 
         private:
             gsl_matrix* _matrix;
