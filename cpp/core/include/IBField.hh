@@ -23,13 +23,13 @@ namespace aidaTT
                 ;
             };
 
-            Vector3D const getBField(const Vector3D&);
+            Vector3D getBField(const Vector3D&) const;
 
-            Vector3D const getBField(const double x, const double y, const double z);
+            Vector3D getBField(const double x, const double y, const double z) const;
 
-            double const getBx(const Vector3D&);
-            double const getBy(const Vector3D&);
-            double const getBz(const Vector3D&);
+            double getBx(const Vector3D&) const;
+            double getBy(const Vector3D&) const;
+            double getBz(const Vector3D&) const;
 
     };
 }
