@@ -5,7 +5,7 @@ using namespace std;
 
 namespace aidaTT
 {
-    GBLInterface::GBLInterface()
+    GBLInterface::GBLInterface() : _trajectory(NULL), _correctionVector(NULL), _covarianceMatrix(NULL)
     {}
 
 

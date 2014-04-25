@@ -34,7 +34,7 @@ namespace aidaTT
 
             /// inherited methods:
             bool const fit(const trajectory&)       ;
-            unsigned int const getNDF()            ;
+            unsigned int const getNDF()             ;
             double const getChiSquare()             ;
             double const lostWeight()               ;
 
@@ -43,9 +43,7 @@ namespace aidaTT
             GBLInterface(const GBLInterface&);
             GBLInterface operator=(const GBLInterface&);
 
-
             gbl::GblTrajectory* _trajectory; ///< GBL trajectory
-            gbl::MilleBinary* _milleBinary; ///< Millepede-II binary file
             bool _curvature; ///< flag for curved track (helix, else straight line)
             std::vector<unsigned int> _theLabels; ///< Labels of (global) MP-II parameters
             Vector5* _correctionVector; ///< correction vector from GBL fit (for track parameters)
@@ -58,7 +56,6 @@ namespace aidaTT
             double _Xcenter; ///< TPC center, X coordinate
             double _Ycenter; ///< TPC center, Y coordinate
 
-            //void calcLineSeed(const std::vector<TrackerHit*>, const double*, double &, double &, double &, double &, double &) const;
     };
 
 }
