@@ -2,6 +2,7 @@
 #define TRAJECTORY_H
 
 #include <vector>
+#include <list>
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
@@ -71,7 +72,7 @@ namespace aidaTT
             const std::vector<trajectoryElement>& getTrajectoryElements() const;
             const std::vector<trajectoryElement>& getMeasurements() const;
 
-            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces() const;
+            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const aidaTT::ISurface*>&);
 
             IFittingAlgorithm* getFittingAlgorithm() const;
             IPropagation* getPropagationMethod() const;
@@ -102,7 +103,9 @@ namespace aidaTT
             const IPropagation* const _propagation;
             const IGeometry* const _geometry;
 
-
+            //~ bool _intersectsWithinZCylinderBounds(const ISurface*, double&);
+            //~ bool _intersectWithinZPlaneBounds(const ISurface*, double&);
+            //~ bool _intersectWithinZDiskBounds(const ISurface*, double&);
 
             /*
             // ?

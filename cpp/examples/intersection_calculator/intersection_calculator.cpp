@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 
             if((*surf)->type().isZCylinder())
                 {
-                    //std::cout << " its a cylinder parallel to z " << std::endl;
+                    std::cout << " its a cylinder parallel to z " << std::endl;
                 }
             else if((*surf)->type().isZPlane())
                 {
@@ -73,24 +73,24 @@ int main(int argc, char** argv)
                     double xp = (*surf)->origin().x();
                     double yp = (*surf)->origin().y();
 
-                    double pv = atan2(normalX, normalY);
-                    double dp = (*surf)->distance(DDSurfaces::Vector3D(0., 0., 0.));
-                    std::cout << " the normal vector has the components nx=" << normalX << " ny=" << normalY << " nz=" << normalZ << std::endl;
-                    std::cout << " the atan2 of nx,ny is " <<  pv << std::endl;
-                    std::cout << " dp is " <<  dp << std::endl;
-                    std::cout << " it should be " << (*surf)->distance(DDSurfaces::Vector3D(0., 0., 0.)) << std::endl;
-                    std::cout << " phi0 is " << phi0 << std::endl;
-                    std::cout << " sin( pv - phi0) is " << sin(pv - phi0) << std::endl;
-                    std::cout << " omega*dp is " <<  omega*dp << std::endl;
-                    double omegaS = asin(sin(pv - phi0) + omega * dp) - pv + phi0;
-                    std::cout << " omegaS is " << omegaS << std::endl;
+                    //~ double pv = atan2(normalX, normalY);
+                    //~ double dp = (*surf)->distance(DDSurfaces::Vector3D(0., 0., 0.));
+                    //~ std::cout << " the normal vector has the components nx=" << normalX << " ny=" << normalY << " nz=" << normalZ << std::endl;
+                    //~ std::cout << " the atan2 of nx,ny is " <<  pv << std::endl;
+                    //~ std::cout << " dp is " <<  dp << std::endl;
+                    //~ std::cout << " it should be " << (*surf)->distance(DDSurfaces::Vector3D(0., 0., 0.)) << std::endl;
+                    //~ std::cout << " phi0 is " << phi0 << std::endl;
+                    //~ std::cout << " sin( pv - phi0) is " << sin(pv - phi0) << std::endl;
+                    //~ std::cout << " omega*dp is " <<  omega*dp << std::endl;
+                    //~ double omegaS = asin(sin(pv - phi0) + omega * dp) - pv + phi0;
+                    //~ std::cout << " omegaS is " << omegaS << std::endl;
 
                 }
             else if((*surf)->type().isZDisk())
                 {
-                    //~ std::cout << " its a plane perpendicular to z " << std::endl;
+                    std::cout << " its a plane perpendicular to z " << std::endl;
                     double planePositionZ = (*surf)->origin().z();
-                    //~ std::cout << " plane is at " << planePositionZ << std::endl;
+                    std::cout << " plane is at " << planePositionZ << std::endl;
                 }
             else
                 {

@@ -21,27 +21,23 @@
 #include "Vector5.hh"
 
 
-
-
-using namespace std;
-
 namespace aidaTT
 {
     AidaTT::AidaTT()
     {
-        cout << " it works " << endl;
+        std::cout << " it works " << std::endl;
     }
 
     AidaTT::~AidaTT()
     {
-        cout << " it still works "  << endl;
+        std::cout << " it still works "  << std::endl;
     }
 
     // mistake, mistake -> go back to bool to find it
     //bool AidaTT::createTrajectory(std::vector<const trajectoryElement&> vecTE, const trackParameters& tP)
     bool AidaTT::createTrajectory()
     {
-        cout << "init traj " << endl;
+        std::cout << "init traj " << std::endl;
         return false;
     }
 
@@ -49,13 +45,13 @@ namespace aidaTT
 
     bool AidaTT::initializeFitter()
     {
-        cout << "init fit " << endl;
+        std::cout << "init fit " << std::endl;
         return false;
     }
 
     bool AidaTT::initializePropagation()
     {
-        cout << "init prop " << endl;
+        std::cout << "init prop " << std::endl;
         return false;
     }
 

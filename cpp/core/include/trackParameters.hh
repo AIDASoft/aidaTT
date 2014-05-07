@@ -2,6 +2,7 @@
 #define TRACKPARAMETERS_H
 
 #include <vector>
+#include <bitset>
 
 #include "fiveByFiveMatrix.hh"
 #include "Vector3D.hh"
@@ -28,13 +29,13 @@ namespace aidaTT
      * The default helix parametrization for propagation is the curvilinear track parametrization, drawn from Strandlie & Wittek, NIM A 566 (2006), 678ff.
      * This is: [ q/p, lambda, Phi, x_perp, y_perp ]
      *
-     * Implemented are:
-
      ***/
 
     /* TODO:
      *  implement copy construction & assignment
      */
+
+    class trackParametrization;
 
     class trackParameters
     {
@@ -45,6 +46,9 @@ namespace aidaTT
             // define copy ctor and assignment
             trackParameters(const trackParameters&);
             trackParameters& operator=(const trackParameters&);
+
+            ///~ encode the type of parametrization
+            const trackParametrization& parametrization() const;
 
             ///~ getter functions
             Vector5 getTrackParameters() const;
@@ -125,5 +129,51 @@ namespace aidaTT
             Vector3D       _refpoint;
     };
 
+
+
+    class trackParametrization
+    {
+        public:
+            /// enum for the type
+            enum
+            {
+                curvilinear = 0, perigee, ildl3
+            };
+
+            trackParametrization() : _idbits(0) {}
+
+            /// set the trackparametrization to the given choice
+            trackParametrization(unsigned int parametrization) : _idbits(0)
+            {
+                _idbits.set(parametrization, true) ;
+            }
+
+            bool isCurvilinear() const
+            {
+                return _idbits[trackParametrization::curvilinear];
+            };
+            bool isPerigee() const
+            {
+                return _idbits[trackParametrization::perigee];
+            };
+            bool isILD() const
+            {
+                return _idbits[trackParametrization::ildl3];
+            };
+            bool isL3() const
+            {
+                return _idbits[trackParametrization::ildl3];
+            };
+
+            void setParametrization(unsigned int parametrization)
+            {
+                _idbits.set(parametrization , true) ;
+            }
+
+        protected:
+
+            mutable std::bitset<32> _idbits;
+
+    };
 }
 #endif // TRACKPARAMETERS_H
