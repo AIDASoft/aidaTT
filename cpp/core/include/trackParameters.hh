@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <bitset>
+#include <stdexcept>
 
 #include "fiveByFiveMatrix.hh"
 #include "Vector3D.hh"
@@ -24,7 +25,7 @@ namespace aidaTT
      * Any other parametrization can be deduced from this by using the appropriate transformation matrix.
      * There are helper functions defined and implemented (in fiveByFiveMatrix.hh) to switch to/from/in between curvilinear and
      *      - perigee track parametrization [ kappa, theta, Phi, epsilon, z_p ], given by Billoir & Qian, NIM A449 (2000) 344
-     *      - L3 perigee track parametrization [ Omega, tan(lambda), phi_0, d_0m z_0, ], given by Alcaraz, L3 Internal Note 1666 (1995)
+     *      - L3 perigee track parametrization [ Omega, tan(lambda), phi_0, d_0, z_0, ], given by Alcaraz, L3 Internal Note 1666 (1995)
      *
      * The default helix parametrization for propagation is the curvilinear track parametrization, drawn from Strandlie & Wittek, NIM A 566 (2006), 678ff.
      * This is: [ q/p, lambda, Phi, x_perp, y_perp ]
@@ -53,27 +54,8 @@ namespace aidaTT
             ///~ getter functions
             Vector5 getTrackParameters() const;
 
-            ///~ the individual values
-            double getQoverP() const
-            {
-                return _helixparams(0);
-            };
-            double getLambda() const
-            {
-                return _helixparams(1);
-            };
-            double getPhi()    const
-            {
-                return _helixparams(2);
-            };
-            double getXPerp()  const
-            {
-                return _helixparams(3);
-            };
-            double getYPerp()  const
-            {
-                return _helixparams(4);
-            };
+            ///~ direct read access to the individual elements by index
+            double operator()(unsigned int) const;
 
             ///~ get the reference point in global, cartesian coordinates (x,y,z)
             Vector3D getReferencePoint() const
@@ -93,27 +75,8 @@ namespace aidaTT
             ///~ only set the helix parameters
             void setTrackParameters(const Vector5&);
 
-            ///~ set the helix parameters individually
-            void setQoverP(double val)
-            {
-                _helixparams(0) = val;
-            };
-            void setLambda(double val)
-            {
-                _helixparams(1) = val;
-            };
-            void setPhi(double val)
-            {
-                _helixparams(2) = val;
-            };
-            void setXPerp(double val)
-            {
-                _helixparams(3) = val;
-            };
-            void setYPerp(double val)
-            {
-                _helixparams(4) = val;
-            };
+            ///~ direct write access to the individual track parameters by index
+            double& operator()(unsigned int);
 
             /// set the reference point, defaults to the nominal center
             void setReferencePoint(const Vector3D&);

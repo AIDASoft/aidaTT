@@ -103,9 +103,16 @@ namespace aidaTT
             const IPropagation* const _propagation;
             const IGeometry* const _geometry;
 
-            //~ bool _intersectsWithinZCylinderBounds(const ISurface*, double&);
-            //~ bool _intersectWithinZPlaneBounds(const ISurface*, double&);
-            //~ bool _intersectWithinZDiskBounds(const ISurface*, double&);
+            bool _intersectsWithinZCylinderBounds(const ISurface*, double&);
+            bool _intersectWithinZPlaneBounds(const ISurface*, double&);
+            bool _intersectWithinZDiskBounds(const ISurface*, double&);
+
+            double _calculateSfromXY(double, double) const;
+            double _calculateSfromXY(std::pair<double, double> k) const
+            {
+                return _calculateSfromXY(k.first, k.second);
+            }
+            double _calculateZfromS(double) const;
 
             /*
             // ?

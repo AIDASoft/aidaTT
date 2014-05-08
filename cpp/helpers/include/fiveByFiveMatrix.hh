@@ -49,7 +49,7 @@ namespace aidaTT
             /** define matrix-matrix multipliation **/
             virtual fiveByFiveMatrix operator*(const fiveByFiveMatrix&);
 
-            /** definve matrix-vector multiplication **/
+            /** define matrix-vector multiplication **/
             virtual Vector5 operator*(const Vector5&);
 
             /** make a unit matrix out of the given matrix **/
