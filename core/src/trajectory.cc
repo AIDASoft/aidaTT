@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include <iostream>
 
 #include "intersections.hh"
 #include "utilities.hh"
@@ -46,6 +47,7 @@ namespace aidaTT
         /// 2. chose the one with the smaller s (!)
         /// 3. check for every intersection if inside the bounds
         /// 4. build the vector with pairs of s and surface
+        std::cout << " INTERSECTING: " << surfaces.size() << " surfaces " << std::endl;
 
         for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
             {
@@ -82,11 +84,8 @@ namespace aidaTT
         const double __nx = surf->normal().x();
         const double __ny = surf->normal().y();
 
-#ifdef USE_DD4HEP
-        const double __dist = surf->distance(DDSurfaces::Vector3D(__refpoint.x(), __refpoint.y(), __refpoint.z()));
-#else
         const double __dist = surf->distance(__refpoint);
-#endif
+
         straightLine line(__nx, __ny, __dist);
 
         const double radius = 1.;
@@ -96,7 +95,6 @@ namespace aidaTT
 
         intersections candidates = intersectCircleStraightLine(circ, line);
 
-#ifdef USE_DD4HEP
         if(candidates.number() < 1)
             return false;
         else if(candidates.number() == 1)
@@ -140,9 +138,6 @@ namespace aidaTT
                     s = S1;
                 return true;
             }
-#else
-        return false;
-#endif
     }
 
 

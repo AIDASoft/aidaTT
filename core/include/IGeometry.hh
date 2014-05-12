@@ -1,7 +1,6 @@
 #ifndef IGEOMETRY_HH
 #define IGEOMETRY_HH
 
-#include "Vector3D.hh"
 #include <list>
 
 /* This hides the actual implementation of geometry information.
@@ -27,9 +26,10 @@ namespace aidaTT
     typedef DDSurfaces::IMaterial IMaterial;
 }
 #else
+#include "Vector3D.hh"
+
 namespace aidaTT
 {
-
     class IMaterial
     {
 
@@ -125,6 +125,6 @@ namespace aidaTT
             virtual const std::list<const ISurface*>& getSurfaces() = 0;
     };
 
-}
 
+}
 #endif // IGEOMETRY_HH
