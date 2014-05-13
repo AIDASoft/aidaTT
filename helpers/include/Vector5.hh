@@ -29,6 +29,10 @@ namespace aidaTT
              **/
             Vector5(const std::vector<double>&);
 
+            /** the construction from five doubles
+             **/
+            Vector5(double, double, double, double, double);
+
             /** the destructor **/
             ~Vector5();
 

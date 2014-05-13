@@ -37,6 +37,19 @@ namespace aidaTT
     }
 
 
+
+    Vector5::Vector5(double i, double j, double k, double m, double n)
+    {
+        _vector = gsl_vector_alloc(5);
+        gsl_vector_set(_vector, 0, i);
+        gsl_vector_set(_vector, 1, j);
+        gsl_vector_set(_vector, 2, k);
+        gsl_vector_set(_vector, 3, m);
+        gsl_vector_set(_vector, 4, n);
+    }
+
+
+
     Vector5::~Vector5()
     {
         gsl_vector_free(_vector);
