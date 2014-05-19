@@ -107,6 +107,10 @@ namespace aidaTT
             bool _intersectWithinZPlaneBounds(const ISurface*, double&);
             bool _intersectWithinZDiskBounds(const ISurface*, double&);
 
+            double _calculateRadius() const;
+            double _calculateXCenter() const;
+            double _calculateYCenter() const;
+
             double _calculateSfromXY(double, double) const;
             double _calculateSfromXY(std::pair<double, double> k) const
             {

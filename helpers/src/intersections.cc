@@ -1,5 +1,6 @@
 #include "intersections.hh"
 
+#include <iostream>
 namespace aidaTT
 {
     intersections intersectCircleCircle(const circle& circ1, const circle& circ2)
@@ -12,6 +13,7 @@ namespace aidaTT
 
     intersections intersectCircleStraightLine(const circle& c,  straightLine sL)
     {
+
         const double x0 = c.center().first;
         const double y0 = c.center().second;
         /// adjust straight line to use the same coordinates
@@ -20,7 +22,8 @@ namespace aidaTT
         // check if it does not intersect or just touch
         const double nS = sL.normalSquare();
         const double discriminant = c.r2() * nS - sL.d2();
-        if(discriminant  < sL.d2() &&  fabs(discriminant) > 1e-9)
+
+        if(discriminant  < 0. &&  fabs(discriminant) > 1e-6)
             return intersections();
 
         const double nx = sL.normal().first;

@@ -4,6 +4,7 @@
 #include <vector>
 #include <bitset>
 #include <stdexcept>
+#include <ostream>
 
 #include "fiveByFiveMatrix.hh"
 #include "Vector3D.hh"
@@ -49,21 +50,21 @@ namespace aidaTT
             trackParameters& operator=(const trackParameters&);
 
             ///~ encode the type of parametrization
-            const trackParametrization& parametrization() const;
+//            const trackParametrization& parametrization() const { return _parametrization;} ;
 
             ///~ getter functions
-            Vector5 getTrackParameters() const;
+            Vector5 parameters() const;
 
             ///~ direct read access to the individual elements by index
             double operator()(unsigned int) const;
 
             ///~ get the reference point in global, cartesian coordinates (x,y,z)
-            Vector3D getReferencePoint() const
+            Vector3D referencePoint() const
             {
                 return _refpoint;
             };
 
-            fullCovariance getCovarianceMatrix() const
+            fullCovariance covarianceMatrix() const
             {
                 return _covmatrix;
             };
@@ -84,7 +85,13 @@ namespace aidaTT
             ///~ set the covariance matrix
             void setCovarianceMatrix(const fullCovariance&);
 
-            void print() const;
+            ///~ set the parametrization type
+            //      void setParametrization(const trackParametrization& p) { _parametrization = p ;} ;
+
+//            void print() const;
+
+        protected:
+//          trackParametrization _parametrization;
 
         private:
             fullCovariance _covmatrix;
@@ -92,6 +99,13 @@ namespace aidaTT
             Vector3D       _refpoint;
     };
 
+
+    inline std::ostream & operator << (std::ostream & os, const trackParameters& tp)
+    {
+//        os << " parameters: " << tp.parameters() << " , covariance: " << tp.covarianceMatrix() << " , reference point: " << tp.referencePoint();
+        os << " parameters: ";// << tp.parameters() << " , covariance: " << tp.covarianceMatrix() << " , reference point: " << tp.referencePoint();
+        return os ;
+    }
 
 
     class trackParametrization
@@ -128,7 +142,7 @@ namespace aidaTT
                 return _idbits[trackParametrization::ildl3];
             };
 
-            void setParametrization(unsigned int parametrization)
+            void set(unsigned int parametrization)
             {
                 _idbits.set(parametrization , true) ;
             }

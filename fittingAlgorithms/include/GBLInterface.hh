@@ -41,7 +41,7 @@ namespace aidaTT
 
         private:
             GBLInterface(const GBLInterface&);
-            GBLInterface operator=(const GBLInterface&);
+            GBLInterface& operator=(const GBLInterface&);
 
             gbl::GblTrajectory* _trajectory; ///< GBL trajectory
             bool _curvature; ///< flag for curved track (helix, else straight line)

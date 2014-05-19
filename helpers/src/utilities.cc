@@ -7,7 +7,7 @@ namespace aidaTT
     double calculateX0(const trackParameters& tp)
     {
         /// L3 type only
-        return cos(tp.getTrackParameters()(2)) * tp.getTrackParameters()(3);
+        return cos(tp.parameters()(2)) * tp.parameters()(3);
     }
 
 
@@ -15,7 +15,7 @@ namespace aidaTT
     double calculateY0(const trackParameters& tp)
     {
         /// L3 type only
-        return sin(tp.getTrackParameters()(2)) * tp.getTrackParameters()(3);
+        return sin(tp.parameters()(2)) * tp.parameters()(3);
     }
 
 
@@ -23,7 +23,7 @@ namespace aidaTT
     double calculatePhi0(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.getTrackParameters()(2);
+        return tp.parameters()(2);
     }
 
 
@@ -31,7 +31,7 @@ namespace aidaTT
     double  calculateTanLambda(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.getTrackParameters()(1);
+        return tp.parameters()(1);
     }
 
 
@@ -39,6 +39,6 @@ namespace aidaTT
     double calculateZ0(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.getTrackParameters()(4);
+        return tp.parameters()(4);
     }
 }

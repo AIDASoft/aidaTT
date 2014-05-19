@@ -17,7 +17,7 @@ namespace aidaTT
     {
         // copy the elements
         // TODO like this? trajectoryElements should know about their position?
-//            _initialTrajectoryElements.resize(elems.size());
+        //            _initialTrajectoryElements.resize(elems.size());
         //~ for(vector<trajectoryElement>::const_iterator elem = elems.begin(), last = elems.end(); elem < last; ++elem)
         //~ _initialTrajectoryElements.push_back(*elem);
     }
@@ -43,16 +43,18 @@ namespace aidaTT
 
     const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces(const std::list<const aidaTT::ISurface*>& surfaces)
     {
+        /// master method for intersection calculation, subdelegates. steps:
         /// 1. calculate all intersections
-        /// 2. chose the one with the smaller s (!)
-        /// 3. check for every intersection if inside the bounds
+        /// 2. check for every intersection if inside the bounds
+        /// 3. chose the one with the smaller s (!)
         /// 4. build the vector with pairs of s and surface
-        std::cout << " INTERSECTING: " << surfaces.size() << " surfaces " << std::endl;
 
         for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
             {
-                double __s = -2.;
+                double __s = 0.; /// random value for init, never used
                 bool __intersects = false;
+
+                /// currently three different types of surfaces are available
                 if((*surf)->type().isZCylinder())
                     __intersects = _intersectsWithinZCylinderBounds(*surf, __s);
                 else if((*surf)->type().isZPlane())
@@ -61,6 +63,7 @@ namespace aidaTT
                     __intersects = _intersectWithinZDiskBounds(*surf, __s);
                 else
                     throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+
                 if(__intersects)
                     _intersectionsList.push_back(std::make_pair(__s, (*surf)));
             }
@@ -79,18 +82,19 @@ namespace aidaTT
 
     bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s)
     {
-        const Vector3D __refpoint = _referenceParameters.getReferencePoint();
+        const Vector3D refpoint = _referenceParameters.referencePoint();
         // the straight line: normals plus distance
-        const double __nx = surf->normal().x();
-        const double __ny = surf->normal().y();
+        const double nx = surf->normal().x();
+        const double ny = surf->normal().y();
 
-        const double __dist = surf->distance(__refpoint);
+        const double dist = surf->distance(refpoint);
 
-        straightLine line(__nx, __ny, __dist);
+        straightLine line(nx, ny, dist);
 
-        const double radius = 1.;
-        const double xcenter = .1;
-        const double ycenter = .1;
+        // create circle
+        const double radius  = _calculateRadius();
+        const double xcenter = _calculateXCenter();
+        const double ycenter = _calculateYCenter();
         circle circ(xcenter, ycenter, radius);
 
         intersections candidates = intersectCircleStraightLine(circ, line);
@@ -101,14 +105,27 @@ namespace aidaTT
             {
                 const double S = _calculateSfromXY(candidates[0]);
                 const double Z = _calculateZfromS(S);
+                std::cout << " s is " << S << " [x, y , z] = [" << candidates[0].first << " , " <<  candidates[0].second  << " , " << Z << "]" << std::endl;
+                Vector3D thePlace(candidates[0].first * .1, candidates[0].second * .1, Z * .1);
+                std::cout << " pass vector to function: " << thePlace << std::endl;
+                bool inside = surf->insideBounds(thePlace, 10000000000000000000.);
+                std::cout << " the distance is supposedly : " << surf->distance(thePlace) << std::endl;
 
-                if(surf->insideBounds(DDSurfaces::Vector3D(candidates[0].first, candidates[0].second, Z)))
+                if(inside)
                     {
+                        std::cout << " YES ! " << std::endl;
                         s = S;
                         return true;
                     }
+                else
+                    {
+                        std::cout << " out of bounds " << std::endl;
+                        return false;
+                    }
             }
-        // else -- the standard case: two solutions
+
+        ///  else -- the standard case: two solutions index 0 and 1
+        /// calculate all values first, then evaluate
         const double X0 = candidates[0].first;
         const double Y0 = candidates[0].second;
         const double X1 = candidates[1].first;
@@ -117,8 +134,8 @@ namespace aidaTT
         const double S1 = _calculateSfromXY(X1, Y1);
         const double Z0 = _calculateZfromS(S0);
         const double Z1 = _calculateZfromS(S1);
-        const bool insideFirst =  surf->insideBounds(DDSurfaces::Vector3D(X0, Y0, Z0));
-        const bool insideSecond =  surf->insideBounds(DDSurfaces::Vector3D(X1, Y1, Z1));
+        const bool insideFirst  =  surf->insideBounds(Vector3D(X0, Y0, Z0));
+        const bool insideSecond = surf->insideBounds(Vector3D(X1, Y1, Z1));
         if(!insideFirst && !insideSecond)
             return false;
         else if(insideFirst && !insideSecond)
@@ -169,4 +186,26 @@ namespace aidaTT
         const double z0        = calculateZ0(_referenceParameters);
         return z0 + s * tanLambda;
     }
+
+
+
+    double trajectory::_calculateRadius() const
+    {
+        return 1000.;
+    }
+
+
+
+    double trajectory::_calculateXCenter() const
+    {
+        return 10.;
+    }
+
+
+
+    double trajectory::_calculateYCenter() const
+    {
+        return 0.;
+    }
+
 }

@@ -29,7 +29,7 @@ namespace aidaTT
         /// create vector of GBL points
         vector < gbl::GblPoint > theListOfPoints;
 
-        const Vector5 trackParameters = TRAJ.getInitialTrackParameters().getTrackParameters();
+        const Vector5 trackParameters = TRAJ.getInitialTrackParameters().parameters();
 
         for(vector<trajectoryElement>::const_iterator element =
                     (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
@@ -63,7 +63,7 @@ namespace aidaTT
                         for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
                             {
                                 if(errors.at(errorid) <= 0.)
-                                    precisionarray.push_back(10e+99);
+                                    precisionarray.push_back(1e+99);
                                 else
                                     precisionarray.push_back(1. / errors.at(errorid));
                             }

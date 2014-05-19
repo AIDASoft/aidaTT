@@ -1,6 +1,7 @@
 #ifndef VECTOR5_HH
 #define VECTOR5_HH
 
+#include <ostream>
 #include <gsl/gsl_vector.h>
 #include <vector>
 
@@ -48,6 +49,12 @@ namespace aidaTT
         private:
             gsl_vector* _vector;
     };
-}
 
+
+    inline std::ostream & operator << (std::ostream & os, const Vector5& v)
+    {
+        os << " {" << v(0) << " , " << v(1) << " , " << v(2) << " , " << v(3) << " , " << v(4)  << "} "  ;
+        return os ;
+    }
+}
 #endif // VECTOR5_HH
