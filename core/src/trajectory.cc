@@ -83,14 +83,12 @@ namespace aidaTT
     bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s)
     {
         const Vector3D refpoint = _referenceParameters.referencePoint();
-        // the straight line: normals plus distance
+
+        // the straight line: normals plus distance; distance must be positive !
         const double nx = surf->normal().x();
         const double ny = surf->normal().y();
-
-        const double dist = surf->distance(refpoint);
-
+        const double dist = fabs(surf->distance(refpoint));
         straightLine line(nx, ny, dist);
-
         // create circle
         const double radius  = _calculateRadius();
         const double xcenter = _calculateXCenter();
@@ -105,55 +103,61 @@ namespace aidaTT
             {
                 const double S = _calculateSfromXY(candidates[0]);
                 const double Z = _calculateZfromS(S);
-                std::cout << " s is " << S << " [x, y , z] = [" << candidates[0].first << " , " <<  candidates[0].second  << " , " << Z << "]" << std::endl;
-                Vector3D thePlace(candidates[0].first * .1, candidates[0].second * .1, Z * .1);
-                std::cout << " pass vector to function: " << thePlace << std::endl;
-                bool inside = surf->insideBounds(thePlace, 10000000000000000000.);
-                std::cout << " the distance is supposedly : " << surf->distance(thePlace) << std::endl;
+                Vector3D thePlace(candidates[0].first, candidates[0].second, Z);
+                bool inside = surf->insideBounds(thePlace);
 
                 if(inside)
                     {
-                        std::cout << " YES ! " << std::endl;
                         s = S;
                         return true;
                     }
                 else
-                    {
-                        std::cout << " out of bounds " << std::endl;
-                        return false;
-                    }
+                    return false;
             }
 
         ///  else -- the standard case: two solutions index 0 and 1
         /// calculate all values first, then evaluate
         const double X0 = candidates[0].first;
         const double Y0 = candidates[0].second;
+        const double S0 = _calculateSfromXY(X0, Y0);
+        const double Z0 = _calculateZfromS(S0);
+
         const double X1 = candidates[1].first;
         const double Y1 = candidates[1].second;
-        const double S0 = _calculateSfromXY(X0, Y0);
         const double S1 = _calculateSfromXY(X1, Y1);
-        const double Z0 = _calculateZfromS(S0);
         const double Z1 = _calculateZfromS(S1);
-        const bool insideFirst  =  surf->insideBounds(Vector3D(X0, Y0, Z0));
-        const bool insideSecond = surf->insideBounds(Vector3D(X1, Y1, Z1));
-        if(!insideFirst && !insideSecond)
+        Vector3D sol0(X0, Y0, Z0);
+        Vector3D sol1(X1, Y1, Z1);
+
+        const bool insideFirst  = surf->insideBounds(sol0);
+        const bool insideSecond = surf->insideBounds(sol1);
+
+        if((!insideFirst && !insideSecond) || (S0 < 0. && S1 < 0.))      // discard negative or no solution
             return false;
-        else if(insideFirst && !insideSecond)
+        else if(insideFirst && S0 > 0. && !insideSecond)
             {
                 s = S0;
                 return true;
             }
-        else if(!insideFirst && insideSecond)
+        else if(!insideFirst && insideSecond &&  S1 > 0.)
             {
                 s = S1;
                 return true;
             }
         else // both are valid , choose the smaller solution
             {
-                s = S0;
-                if(S1 < S0)
+                if(S0 > 0. && S1 < 0.)
+                    s = S0;
+                else if(S0 < 0. && S1 > 0.)
                     s = S1;
+                else // both are positive
+                    {
+                        s = S0;
+                        if(S1 < S0)
+                            s = S1;
+                    }
                 return true;
+
             }
     }
 
@@ -169,13 +173,27 @@ namespace aidaTT
 
 
 
+    double  trajectory::_calculatePhifromXY(double x, double y) const
+    {
+        // x0 and y0: p.c.a. coordinates w.r.t reference point
+        const double x0   = calculateX0(_referenceParameters);
+        const double y0   = calculateY0(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+        const double curvature = calculateCurvature(_referenceParameters);
+
+        return atan2(sin(phi0) - curvature * (x - x0), cos(phi0) + curvature * (y - y0));
+    }
+
+
+
     double  trajectory::_calculateSfromXY(double x, double y) const
     {
         // x0 and y0: p.c.a. coordinates w.r.t reference point
         const double x0   = calculateX0(_referenceParameters);
         const double y0   = calculateY0(_referenceParameters);
         const double phi0 = calculatePhi0(_referenceParameters);
-        return (x - x0) * cos(phi0) + (y - y0) * sin(phi0);
+        const double phi = _calculatePhifromXY(x, y);
+        return ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(phi) / phi) ;
     }
 
 
@@ -191,20 +209,37 @@ namespace aidaTT
 
     double trajectory::_calculateRadius() const
     {
-        return 1000.;
+        const double curvature = calculateCurvature(_referenceParameters);
+
+        if(curvature != 0.)
+            return 1. / curvature;
+        return 0.;
     }
 
 
 
     double trajectory::_calculateXCenter() const
     {
-        return 10.;
+        const double curvature = calculateCurvature(_referenceParameters);
+        const double dzero = calculateDistanceFromPCA(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+
+        if(curvature != 0.)
+            return _referenceParameters.referencePoint().x() + (1. / curvature - dzero) * sin(phi0);
+        return 0.;
     }
 
 
 
     double trajectory::_calculateYCenter() const
     {
+
+        const double curvature = calculateCurvature(_referenceParameters);
+        const double dzero = calculateDistanceFromPCA(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+
+        if(curvature != 0.)
+            return _referenceParameters.referencePoint().y() - (1. / curvature - dzero) * cos(phi0);
         return 0.;
     }
 

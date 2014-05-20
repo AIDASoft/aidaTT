@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <ostream>
 
 /** simple helper class to calculate the analytical solutions of intersections
 * a helix is a circle in the projection perpendicular to the magnetic field
@@ -42,6 +43,14 @@ namespace aidaTT
 
 
 
+    inline std::ostream & operator << (std::ostream & os, const circle& c)
+    {
+        os << " [circle: center = (" << c.center().first << " , " << c.center().second << ") ; radius = " << c.radius() << " )";
+        return os ;
+    }
+
+
+
     class straightLine
     {
         public:
@@ -64,13 +73,22 @@ namespace aidaTT
             }
             void move(double d1, double d2)
             {
-                _d0 -= _n0 * d1 + _n1 * d2;
+                _d0 = _d0 - (_n0 * d1 + _n1 * d2);
             }
 
         private:
             straightLine();
             double _n0, _n1, _d0;
     };
+
+
+
+    inline std::ostream & operator << (std::ostream & os, const straightLine& sl)
+    {
+        os << " [straightLine: normal = (" << sl.normal().first << " , " << sl.normal().second << ") , distance = " << sl.distance() << " )";
+        return os ;
+    }
+
 
 
     class intersections
@@ -88,15 +106,17 @@ namespace aidaTT
             {
                 _points.push_back(std::make_pair(x, y));
             }
-            const std::pair<double, double>& operator[](unsigned int) const;
-
+            const std::pair<double, double>& operator[](unsigned int i) const
+            {
+                return _points.at(i);
+            }
         private:
             std::vector<std::pair<double, double> > _points;
     };
 
     intersections intersectCircleCircle(const circle&, const circle&);
 
-    intersections intersectCircleStraightLine(const circle&, straightLine);
+    intersections intersectCircleStraightLine(const circle&, const straightLine&);
 
     intersections intersectStraightLineStraightLine(const straightLine&, const straightLine&);
 

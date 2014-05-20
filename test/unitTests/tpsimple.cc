@@ -44,49 +44,49 @@ void tpsimple::_test()
     _one = new trackParameters();
 
     // check whether all functions return the right values
-    test_(floatCompare(_one->getQoverP() , 0.));
-    test_(floatCompare(_one->getLambda() , 0.));
-    test_(floatCompare(_one->getPhi() , 0.));
-    test_(floatCompare(_one->getXPerp() , 0.));
-    test_(floatCompare(_one->getYPerp() , 0.));
+    test_(floatCompare((*_one)(0) , 0.));
+    test_(floatCompare((*_one)(1) , 0.));
+    test_(floatCompare((*_one)(2) , 0.));
+    test_(floatCompare((*_one)(3) , 0.));
+    test_(floatCompare((*_one)(4) , 0.));
 
     for(size_t i = 0; i < 5; ++i)
-        test_(floatCompare(_one->getTrackParameters()(i) , 0.));
+        test_(floatCompare(_one->parameters()(i) , 0.));
 
     for(size_t i = 0; i < 3; ++i)
-        test_(floatCompare(_one->getReferencePoint()[i], 0.));
+        test_(floatCompare(_one->referencePoint()[i], 0.));
 
     for(size_t i = 0; i < 5; ++i)
         for(size_t j = 0; j < 5; ++j)
             {
-                test_(floatCompare(_one->getCovarianceMatrix()(i, j), 0.));
+                test_(floatCompare(_one->covarianceMatrix()(i, j), 0.));
             }
     // now use the setters
     _one->setTrackParameters(*_helix, *_covmatrix,  *_refpoint);
 
     // check the new values
     for(size_t i = 0; i < 5; ++i)
-        test_(floatCompare(_one->getTrackParameters()(i) , (*_helix)(i)));
+        test_(floatCompare(_one->parameters()(i) , (*_helix)(i)));
 
     for(size_t i = 0; i < 3; ++i)
-        test_(floatCompare(_one->getReferencePoint()[i], (*_refpoint)[i]));
+        test_(floatCompare(_one->referencePoint()[i], (*_refpoint)[i]));
 
     for(size_t i = 0; i < 5; ++i)
         for(size_t j = 0; j < 5; ++j)
             {
                 if(i != j)
-                    test_(floatCompare(_one->getCovarianceMatrix()(i, j), 0.));
+                    test_(floatCompare(_one->covarianceMatrix()(i, j), 0.));
                 else
-                    test_(floatCompare(_one->getCovarianceMatrix()(i, j), 1.));
+                    test_(floatCompare(_one->covarianceMatrix()(i, j), 1.));
 
             }
 
     // check whether all functions return the right values
-    test_(floatCompare(_one->getQoverP(),     _one->getTrackParameters()(0)));
-    test_(floatCompare(_one->getLambda(), _one->getTrackParameters()(1)));
-    test_(floatCompare(_one->getPhi(),   _one->getTrackParameters()(2)));
-    test_(floatCompare(_one->getXPerp(),     _one->getTrackParameters()(3)));
-    test_(floatCompare(_one->getYPerp(),     _one->getTrackParameters()(4)));
+    test_(floatCompare((*_one)(0),     _one->parameters()(0)));
+    test_(floatCompare((*_one)(1), _one->parameters()(1)));
+    test_(floatCompare((*_one)(2),   _one->parameters()(2)));
+    test_(floatCompare((*_one)(3),     _one->parameters()(3)));
+    test_(floatCompare((*_one)(4),     _one->parameters()(4)));
 
 }
 

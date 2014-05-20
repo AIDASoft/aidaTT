@@ -49,9 +49,6 @@ namespace aidaTT
             trackParameters(const trackParameters&);
             trackParameters& operator=(const trackParameters&);
 
-            ///~ encode the type of parametrization
-//            const trackParametrization& parametrization() const { return _parametrization;} ;
-
             ///~ getter functions
             Vector5 parameters() const;
 
@@ -85,13 +82,6 @@ namespace aidaTT
             ///~ set the covariance matrix
             void setCovarianceMatrix(const fullCovariance&);
 
-            ///~ set the parametrization type
-            //      void setParametrization(const trackParametrization& p) { _parametrization = p ;} ;
-
-//            void print() const;
-
-        protected:
-//          trackParametrization _parametrization;
 
         private:
             fullCovariance _covmatrix;
@@ -100,57 +90,11 @@ namespace aidaTT
     };
 
 
+
     inline std::ostream & operator << (std::ostream & os, const trackParameters& tp)
     {
-//        os << " parameters: " << tp.parameters() << " , covariance: " << tp.covarianceMatrix() << " , reference point: " << tp.referencePoint();
-        os << " parameters: ";// << tp.parameters() << " , covariance: " << tp.covarianceMatrix() << " , reference point: " << tp.referencePoint();
+        os << " [parameters: " << tp.parameters() << "] , { covariance: " << tp.covarianceMatrix() << " } , ( reference point: " << tp.referencePoint() << " )";
         return os ;
     }
-
-
-    class trackParametrization
-    {
-        public:
-            /// enum for the type
-            enum
-            {
-                curvilinear = 0, perigee, ildl3
-            };
-
-            trackParametrization() : _idbits(0) {}
-
-            /// set the trackparametrization to the given choice
-            trackParametrization(unsigned int parametrization) : _idbits(0)
-            {
-                _idbits.set(parametrization, true) ;
-            }
-
-            bool isCurvilinear() const
-            {
-                return _idbits[trackParametrization::curvilinear];
-            };
-            bool isPerigee() const
-            {
-                return _idbits[trackParametrization::perigee];
-            };
-            bool isILD() const
-            {
-                return _idbits[trackParametrization::ildl3];
-            };
-            bool isL3() const
-            {
-                return _idbits[trackParametrization::ildl3];
-            };
-
-            void set(unsigned int parametrization)
-            {
-                _idbits.set(parametrization , true) ;
-            }
-
-        protected:
-
-            mutable std::bitset<32> _idbits;
-
-    };
 }
 #endif // TRACKPARAMETERS_H

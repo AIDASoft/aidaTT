@@ -3,7 +3,7 @@
 namespace aidaTT
 {
 
-    /// SUPER DUMMY !!! only L3 type: [ Omega, tan(lambda), phi_0, d_0m z_0, ]
+    /// SUPER DUMMY !!! only L3 type: [ Omega, tan(lambda), phi_0, d_0, z_0 ]
     double calculateX0(const trackParameters& tp)
     {
         /// L3 type only
@@ -40,5 +40,18 @@ namespace aidaTT
     {
         /// L3 type only
         return tp.parameters()(4);
+    }
+
+
+    double calculateDistanceFromPCA(const trackParameters& tp)
+    {
+        /// L3 type only
+        return tp.parameters()(3);
+    }
+
+    double calculateCurvature(const trackParameters& tp)
+    {
+        /// L3 type only
+        return tp.parameters()(0);
     }
 }

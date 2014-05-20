@@ -4,12 +4,13 @@
 #include "trackParameters.hh"
 namespace aidaTT
 {
-
     double calculateX0(const trackParameters&);
     double calculateY0(const trackParameters&);
     double calculatePhi0(const trackParameters&);
-    double  calculateTanLambda(const trackParameters&);
+    double calculateTanLambda(const trackParameters&);
     double calculateZ0(const trackParameters&);
+    double calculateDistanceFromPCA(const trackParameters&);
+    double calculateCurvature(const trackParameters&);
 }
 
 #endif // UTITILITIES_HH

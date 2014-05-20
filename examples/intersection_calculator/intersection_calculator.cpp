@@ -33,14 +33,19 @@ int main(int argc, char** argv)
 
 
     //~ a
-    double vals[] = { 0., 0.01, 1.57, 0.001, 0.03 };
+    double vals[] = { 0.23, 0.01, 1.57, 0.00, 0. };
     std::vector<double> values;
     values.assign(vals, vals + 5);
 
     aidaTT::Vector5 ildTP(values);
 
+    std::cout << " init vector is " << ildTP << std::endl;
+
+
     aidaTT::trackParameters bla;
     bla.setTrackParameters(ildTP);
+
+    std::cout << " parameters are " << bla << std::endl;
 
     aidaTT::trajectory tryout(bla, NULL);
 
@@ -50,7 +55,7 @@ int main(int argc, char** argv)
 
     for(std::vector<std::pair<double, const aidaTT::ISurface*> >::const_iterator test = whatever.begin(), fin = whatever.end(); test < fin; ++test)
         {
-            std::cout << " some entry " << std::endl;
+            std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
         }
 
     /*

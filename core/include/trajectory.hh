@@ -43,7 +43,6 @@ namespace aidaTT
             //~ the minimal useful constructor
             trajectory(const trackParameters&, const IGeometry*);
 
-
             ~trajectory();
 
             trackParameters getInitialTrackParameters() const
@@ -111,12 +110,15 @@ namespace aidaTT
             double _calculateXCenter() const;
             double _calculateYCenter() const;
 
+            double _calculatePhifromXY(double, double) const;
             double _calculateSfromXY(double, double) const;
             double _calculateSfromXY(std::pair<double, double> k) const
             {
                 return _calculateSfromXY(k.first, k.second);
             }
             double _calculateZfromS(double) const;
+
+            std::pair<Vector3D, Vector3D> _calculateLocalCurvilinearSystem(double) const;
 
             /*
             // ?
