@@ -33,6 +33,14 @@ namespace aidaTT
         /// L3 type only
         return tp.parameters()(1);
     }
+    
+    
+    
+    double  calculateLambda(const trackParameters& tp)
+    {
+        /// L3 type only
+        return atan(tp.parameters()(1));
+    }
 
 
 

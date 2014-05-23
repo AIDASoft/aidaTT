@@ -34,7 +34,7 @@ namespace aidaTT
     {}
 
 
-    const std::vector<trajectoryElement>& trajectory::getTrajectoryElements() const
+    const std::vector<trajectoryElement>& trajectory::trajectoryElements() const
     {
         return _initialTrajectoryElements;
     }
@@ -207,6 +207,26 @@ namespace aidaTT
 
 
 
+    std::pair<Vector3D, Vector3D>* trajectory::_calculateLocalCurvilinearSystem(double s)   
+    {
+        const double omega = calculateCurvature(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+        const double lambda = calculateLambda(_referenceParameters);
+        
+        const double u0 = - sin( phi0 - omega * s );
+        const double u1 =   cos( phi0 - omega * s );
+        const double u2 = 0.;
+        
+        const double v0 = - cos( phi0 - omega * s ) * sin( lambda );
+        const double v1 = - sin( phi0 - omega * s ) * sin( lambda );
+        const double v2 = cos( lambda );
+        
+        return new std::pair<Vector3D, Vector3D> ( Vector3D(u0,u1,u2), Vector3D(v0,v1,v2) );
+    }
+
+
+
+
     double trajectory::_calculateRadius() const
     {
         const double curvature = calculateCurvature(_referenceParameters);
@@ -242,5 +262,20 @@ namespace aidaTT
             return _referenceParameters.referencePoint().y() - (1. / curvature - dzero) * cos(phi0);
         return 0.;
     }
+
+
+    void trajectory::addMeasurement(const Vector3D& position, const ISurface& surface, void* id)
+    {
+        const double s =  _calculateSfromXY( position.x(), position.y() );
+    }
+
+
+
+    void trajectory::prepareForFitting()
+    {
+        
+        ;
+    }
+    
 
 }

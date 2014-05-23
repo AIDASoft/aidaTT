@@ -59,49 +59,55 @@ namespace aidaTT
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
 
-            ///~ constructor C: only arc length and the jacobian to the next element plus some identification
-            trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
-
-            ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
-            trajectoryElement(double,  const ISurface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
+            //~ ///~ constructor C: only arc length and the jacobian from the previous element plus some identification
+            //~ trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
+//~ 
+            //~ ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
+            //~ trajectoryElement(double,  const ISurface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
 
             /// the getting routines
-            const ISurface& getSurface() const
+            const ISurface& surface() const
             {
                 return *_surface;
             };
 
-            const fiveByFiveMatrix& getJacobianToNextElement() const
+            const fiveByFiveMatrix& jacobian() const
             {
-                return _jacobianToNext;
+                return _jacobianFromPrevious;
             };
 
-            std::pair<trackParameters, fullCovariance> getFullState() const;
-            trackParameters  getStateVector() const;
+            const fiveByFiveMatrix& jacobianFromPrevious() const
+            {
+                return _jacobianFromPrevious;
+            };
+
+            trackParameters  fullState() const;
 
             bool hasMeasurement() const
             {
-                return (_measDim > 0);
+               return  _measurement;
             };
 
             // the following depend on the type of element:
-            unsigned int getMeasurementDimension() const
-            {
-                return _measDim;
-            };
-            const std::vector<double>& getMeasurementResiduals() const
-            {
-                return _residuals;
-            } ;
-            const std::vector<double>& getMeasurementErrors() const
-            {
-                return _resolutions;
-            } ;
+            unsigned int measurementDimension() const;
+            
+            const std::vector<double>& measurementResiduals() const;
+            
+            const std::vector<double>& measurementErrors() const;
+            
+            ///~ access the local curvilinear system at the given point
+            const std::pair<Vector3D,Vector3D>& localCurvilinearSystem() const;
+            
+            ///~ access the measurement direction (if available) for the corresponding surface
+            const std::vector<Vector3D>& measurementDirections() const;
+            
+            ///~ and finally: the projection matrix from the local track frame to the measurement system
+            const std::vector<Vector3D>& localToMeasurementProjection() const;
 
             /// the setting routines
 
-            ///~ set the jacobian to the next element
-            void setJacobianToNextElement(const fiveByFiveMatrix&);
+            ///~ set the jacobian from the previous element
+            void setJacobian(const fiveByFiveMatrix&);
 
         private:
             ///~ no construction without the arc length!
@@ -114,12 +120,19 @@ namespace aidaTT
             void _calcResiduals();
             void _calcMaterial();
 
+            ///~ 
             double _arclength;
             const ISurface* const _surface;
-            unsigned int _measDim;
+            fiveByFiveMatrix _jacobianFromPrevious;
+            
+            ///~ measurement variables:
+            bool _measurement;
+            
             std::vector<double> _residuals;
             std::vector<double> _resolutions;
-            fiveByFiveMatrix _jacobianToNext;
+            
+            std::vector<Vector3D>* _measDirections;
+      
             const void* const _id; // just store
     };
 

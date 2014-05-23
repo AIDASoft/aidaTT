@@ -31,11 +31,12 @@ namespace aidaTT
 
         const Vector5 trackParameters = TRAJ.getInitialTrackParameters().parameters();
 
-        for(vector<trajectoryElement>::const_iterator element =
+     /*
+      *    for(vector<trajectoryElement>::const_iterator element =
                     (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
                 element < last; ++element)
             {
-                const fiveByFiveMatrix& jac = element->getJacobianToNextElement();
+                const fiveByFiveMatrix& jac = element->jacobianToNextElement();
 
                 gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
@@ -58,7 +59,7 @@ namespace aidaTT
                         //~ std::copy(residuals.begin(), residuals.end(), residualarray);
 
                         //~ 3) the precision of the measurements -- the inverse of the resolution
-                        const std::vector<double> errors = element->getMeasurementErrors();
+                        const std::vector<double> errors = element->measurementErrors();
                         vector<double> precisionarray;
                         for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
                             {
@@ -77,12 +78,13 @@ namespace aidaTT
                 //~ -- 2.) if scatterer: thin or thick
                 //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
                 //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
-                //~  point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
+                 //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
 
 
                 // store the point in the list that will be handed to the trajectory
                 theListOfPoints.push_back(point);
-            }
+            } */
+            
         return true;
     }
 

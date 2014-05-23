@@ -68,19 +68,28 @@ namespace aidaTT
             //~ MarlinTrk:: virtual int getTrackState( trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
             /// methods available before fitting
-            const std::vector<trajectoryElement>& getTrajectoryElements() const;
-            const std::vector<trajectoryElement>& getMeasurements() const;
+            const std::vector<trajectoryElement>& trajectoryElements() const;
 
-            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const aidaTT::ISurface*>&);
+            ///~ add a measurement/hit to trajectory
+            void addMeasurement(const Vector3D& position, const ISurface& surface, void* id);
+
+            ///~ test whether/where a surface is intersected
+            bool intersectWithSurface(const ISurface* surface, Vector3D& intersect );
+
+            const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const ISurface*>&);
+  
 
             IFittingAlgorithm* getFittingAlgorithm() const;
             IPropagation* getPropagationMethod() const;
-
+            
+            
+            ///~ prepare / fit
+            void prepareForFitting();
+            
             unsigned int fit();
 
             /// methods after fitting
             std::vector<trajectoryElement> getFittedTrajectoryElements() const;
-            std::vector<trajectoryElement> getFittedMeasurements() const;
             std::vector<trajectoryElement> getOutliers() const;
 
             /// quantify the results
@@ -93,8 +102,7 @@ namespace aidaTT
 
             // the  internal parts
             trackParameters          _referenceParameters;
-            std::vector<trajectoryElement> _initialTrajectoryElements;
-            std::vector<trajectoryElement> _initialMeasurements;
+            std::vector<trajectoryElement>         _initialTrajectoryElements;
 
             std::vector<std::pair<double, const ISurface*> > _intersectionsList;
 
@@ -118,7 +126,7 @@ namespace aidaTT
             }
             double _calculateZfromS(double) const;
 
-            std::pair<Vector3D, Vector3D> _calculateLocalCurvilinearSystem(double) const;
+            std::pair<Vector3D, Vector3D>* _calculateLocalCurvilinearSystem(double);
 
             /*
             // ?

@@ -8,6 +8,7 @@ namespace aidaTT
     double calculateY0(const trackParameters&);
     double calculatePhi0(const trackParameters&);
     double calculateTanLambda(const trackParameters&);
+    double calculateLambda(const trackParameters&);
     double calculateZ0(const trackParameters&);
     double calculateDistanceFromPCA(const trackParameters&);
     double calculateCurvature(const trackParameters&);
