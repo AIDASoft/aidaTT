@@ -76,8 +76,8 @@ namespace aidaTT
 
             ///~ manually add an element to the trajectory; e.g. a point of interest
             ///~ optional: add a surface; e.g. which only contains material
-            void addElement(const Vector3D&);
-            void addElement(const Vector3D&, const ISurface&);
+            void addElement(const Vector3D&, void* id);
+            void addElement(const Vector3D&, const ISurface&, void* id);
 
             ///~ test whether/where a surface is intersected
             bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);

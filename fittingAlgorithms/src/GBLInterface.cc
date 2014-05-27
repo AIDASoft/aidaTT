@@ -23,7 +23,7 @@ namespace aidaTT
         /* several bits of information are needed to initialize the gbl:
          *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
          *  -- a measurement GblPoint needs the projection matrix, the residual vector and the precision
-         *  -- a scattering GblPoint needs residuals and the precision (expected inverse standard deviation)
+         *  -- a scattering GblPoint needs the precision (expected inverse standard deviation)
          */
 
         /// create vector of GBL points
@@ -31,60 +31,60 @@ namespace aidaTT
 
         const Vector5 trackParameters = TRAJ.getInitialTrackParameters().parameters();
 
-     /*
-      *    for(vector<trajectoryElement>::const_iterator element =
-                    (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
-                element < last; ++element)
-            {
-                const fiveByFiveMatrix& jac = element->jacobianToNextElement();
+        /*
+         *    for(vector<trajectoryElement>::const_iterator element =
+                       (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
+                   element < last; ++element)
+               {
+                   const fiveByFiveMatrix& jac = element->jacobianToNextElement();
 
-                gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
+                   gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
-                if(element->hasMeasurement())
-                    {
-                        /// three elements are needed to add a measurement to a gblpoint:
-                        /// 1) the projection matrix from the local track frame to the measurement system
-                        /// 2) the residuals in the measurement directions
-                        /// 3) the inverse resolution = precision of the measurements
+                   if(element->hasMeasurement())
+                       {
+                           /// three elements are needed to add a measurement to a gblpoint:
+                           /// 1) the projection matrix from the local track frame to the measurement system
+                           /// 2) the residuals in the measurement directions
+                           /// 3) the inverse resolution = precision of the measurements
 
-                        //~ 1) projection matrix -- the basis change matrix
-                        // first part: get the local measurement directions
-                        //~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
-                        //~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
+                           //~ 1) projection matrix -- the basis change matrix
+                           // first part: get the local measurement directions
+                           //~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
+                           //~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
 
-                        //~ 2) the residuals in the measurement direction
-                        //~ const std::vector<double> residuals = element->getSurface()->getMeasurementDirections();
-                        //~ convert the vector to an array:
-                        //~ double residualarray[residuals.size()];
-                        //~ std::copy(residuals.begin(), residuals.end(), residualarray);
+                           //~ 2) the residuals in the measurement direction
+                           //~ const std::vector<double> residuals = element->getSurface()->getMeasurementDirections();
+                           //~ convert the vector to an array:
+                           //~ double residualarray[residuals.size()];
+                           //~ std::copy(residuals.begin(), residuals.end(), residualarray);
 
-                        //~ 3) the precision of the measurements -- the inverse of the resolution
-                        const std::vector<double> errors = element->measurementErrors();
-                        vector<double> precisionarray;
-                        for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
-                            {
-                                if(errors.at(errorid) <= 0.)
-                                    precisionarray.push_back(1e+99);
-                                else
-                                    precisionarray.push_back(1. / errors.at(errorid));
-                            }
+                           //~ 3) the precision of the measurements -- the inverse of the resolution
+                           const std::vector<double> errors = element->measurementErrors();
+                           vector<double> precisionarray;
+                           for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
+                               {
+                                   if(errors.at(errorid) <= 0.)
+                                       precisionarray.push_back(1e+99);
+                                   else
+                                       precisionarray.push_back(1. / errors.at(errorid));
+                               }
 
-                        //~ point.gbl::addMeasurement( TMatrixD( 5,5,projectionMatrix.array()), TVectorD(residualarray), TVectorD(precisionarray) );
-                    }
-                //~ now evaluate the scattering material
-                //~ the addScatterer routine will add a thin scatterer at the given position
-                //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
-                //~ -- 1.) determine whether scatterer or not
-                //~ -- 2.) if scatterer: thin or thick
-                //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
-                //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
-                 //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
+                           //~ point.gbl::addMeasurement( TMatrixD( 5,5,projectionMatrix.array()), TVectorD(residualarray), TVectorD(precisionarray) );
+                       }
+                   //~ now evaluate the scattering material
+                   //~ the addScatterer routine will add a thin scatterer at the given position
+                   //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
+                   //~ -- 1.) determine whether scatterer or not
+                   //~ -- 2.) if scatterer: thin or thick
+                   //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
+                   //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
+                    //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
 
 
-                // store the point in the list that will be handed to the trajectory
-                theListOfPoints.push_back(point);
-            } */
-            
+                   // store the point in the list that will be handed to the trajectory
+                   theListOfPoints.push_back(point);
+               } */
+
         return true;
     }
 

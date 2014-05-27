@@ -54,16 +54,15 @@ namespace aidaTT
     {
         public:
             ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
-            trajectoryElement(double, const ISurface&, const std::vector<double>&, void* = NULL);
+            trajectoryElement(double, const ISurface&, const std::vector<double>&, std::pair<Vector3D, Vector3D>*, void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
 
-            //~ ///~ constructor C: only arc length and the jacobian from the previous element plus some identification
-            //~ trajectoryElement(double, const fiveByFiveMatrix&, void* = NULL);
-//~ 
-            //~ ///~ constructor D: everything is already known: arc length, surface, the jacobian to the next element and some identification
-            //~ trajectoryElement(double,  const ISurface&, const std::vector<double>&, const fiveByFiveMatrix&, void* = NULL);
+            ///~ constructor C: arc length and surface is given plus some identification
+            trajectoryElement(double, const ISurface&, void* = NULL);
+
+            ~trajectoryElement();
 
             /// the getting routines
             const ISurface& surface() const
@@ -85,24 +84,52 @@ namespace aidaTT
 
             bool hasMeasurement() const
             {
-               return  _measurement;
+                return  _measurement;
+            };
+
+            bool isScatterer() const
+            {
+                return _scatterer;
+            };
+
+            bool isThicksScatterer() const
+            {
+                return _thick;
             };
 
             // the following depend on the type of element:
-            unsigned int measurementDimension() const;
-            
-            const std::vector<double>& measurementResiduals() const;
-            
-            const std::vector<double>& measurementErrors() const;
-            
+            unsigned int measurementDimension() const
+            {
+                return _measDirections->size();
+            };
+
+            const std::vector<double>& measurementResiduals() const
+            {
+                return _residuals;
+            };
+
+            const std::vector<double>& measurementErrors() const
+            {
+                return _resolutions;
+            };
+
             ///~ access the local curvilinear system at the given point
-            const std::pair<Vector3D,Vector3D>& localCurvilinearSystem() const;
-            
+            const std::pair<Vector3D, Vector3D>& localCurvilinearSystem() const
+            {
+                return *_localCurvilinearSystem;
+            };
+
             ///~ access the measurement direction (if available) for the corresponding surface
-            const std::vector<Vector3D>& measurementDirections() const;
-            
+            const std::vector<Vector3D>& measurementDirections() const
+            {
+                return *_measDirections;
+            };
+
             ///~ and finally: the projection matrix from the local track frame to the measurement system
-            const std::vector<Vector3D>& localToMeasurementProjection() const;
+            const std::vector<Vector3D>& localToMeasurementProjection() const
+            {
+                return _localToMeasurementProjection;
+            };
 
             /// the setting routines
 
@@ -120,19 +147,30 @@ namespace aidaTT
             void _calcResiduals();
             void _calcMaterial();
 
-            ///~ 
+            ///~
             double _arclength;
             const ISurface* const _surface;
             fiveByFiveMatrix _jacobianFromPrevious;
-            
+
+
             ///~ measurement variables:
             bool _measurement;
-            
+
             std::vector<double> _residuals;
             std::vector<double> _resolutions;
-            
+
+            ///~ local curvilinear system
+            std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
+
+            void _calculateLocalToMeasurementProjectionMatrix();
+
             std::vector<Vector3D>* _measDirections;
-      
+            std::vector<Vector3D> _localToMeasurementProjection;
+
+            ///~ scattering info
+            bool _scatterer;
+            bool _thick;
+
             const void* const _id; // just store
     };
 

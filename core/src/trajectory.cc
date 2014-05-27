@@ -33,7 +33,10 @@ namespace aidaTT
 
 
     trajectory::~trajectory()
-    {}
+    {
+        for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin(), last = _initialTrajectoryElements.end(); element < last; ++element)
+            delete *element;
+    }
 
 
     const std::vector<trajectoryElement*>& trajectory::trajectoryElements() const
@@ -77,6 +80,7 @@ namespace aidaTT
 
     bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s)
     {
+        //// TODO:: MISSING IMPLEMENTATION
         return false;
     }
 
@@ -299,7 +303,23 @@ namespace aidaTT
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
         const double s =  _calculateSfromXY(position.x(), position.y());
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, resolution, id));
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, resolution, _calculateLocalCurvilinearSystem(s), id));
+    }
+
+
+
+    void trajectory::addElement(const Vector3D& point, void* id)
+    {
+        const double s =  _calculateSfromXY(point.x(), point.y());
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
+    }
+
+
+
+    void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
+    {
+        const double s =  _calculateSfromXY(point.x(), point.y());
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, id));
     }
 
 
