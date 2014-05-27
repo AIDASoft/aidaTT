@@ -23,6 +23,10 @@ ADD_AIDATT_EXAMPLE_WITH_ROOT( geometry_test geometry_test/geometry_test.cpp)
 ADD_AIDATT_EXAMPLE_WITH_ROOT( intersection_calculator intersection_calculator/intersection_calculator.cpp)
 ENDIF(DD4HEP_FOUND)
 
+IF(LCIO_FOUND)
+    ADD_AIDATT_EXAMPLE ( lcio_read_example  lcio_read_example/lcio_read_example.cpp )
+ENDIF(LCIO_FOUND)
+
 IF( GBL_FOUND)
 ADD_AIDATT_EXAMPLE( gbl_example gbl_example/gbl_example.cpp)
 ENDIF( GBL_FOUND )

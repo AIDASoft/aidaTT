@@ -34,8 +34,9 @@ ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
 FIND_PACKAGE( GSL REQUIRED)
 FIND_PACKAGE( GBL )
 FIND_PACKAGE( DD4hep )
+FIND_PACKAGE( LCIO )
 
-FOREACH( pkg  GSL GBL DD4hep) # later: KalTest ? LCIO ? TGeo ? 
+FOREACH( pkg  GSL GBL DD4hep LCIO)  # later: KalTest ? LCIO ? TGeo ? 
     IF( ${pkg}_FOUND )
         INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
@@ -73,6 +74,12 @@ IF( DD4hep_FOUND )
         ADD_DEFINITIONS( "-DUSE_DD4HEP" )
 ELSE()
     MESSAGE( STATUS "DD4hep not found, the geometry decription from DD4hep will not be available." )
+ENDIF()
+
+IF( LCIO_FOUND )
+        ADD_DEFINITIONS( "-DUSE_LCIO" )
+ELSE()
+    MESSAGE( STATUS "LCIO not found, some file reading functionality will not be available." )
 ENDIF()
 
 # add the examples directory; only contains executables
