@@ -19,14 +19,16 @@ namespace aidaTT
         // TODO like this? trajectoryElements should know about their position?
         //            _initialTrajectoryElements.resize(elems.size());
         //~ for(vector<trajectoryElement>::const_iterator elem = elems.begin(), last = elems.end(); elem < last; ++elem)
-        //~ _initialTrajectoryElements.push_back(*elem);
+        _initialTrajectoryElements.clear();
     }
 
 
 
     //~ the minimal useful constructor
     trajectory::trajectory(const trackParameters& tp, const IGeometry* geom) : _referenceParameters(tp), _fittingAlgorithm(NULL) , _propagation(NULL), _geometry(geom)
-    {}
+    {
+        _initialTrajectoryElements.clear();
+    }
 
 
 
@@ -34,7 +36,7 @@ namespace aidaTT
     {}
 
 
-    const std::vector<trajectoryElement>& trajectory::trajectoryElements() const
+    const std::vector<trajectoryElement*>& trajectory::trajectoryElements() const
     {
         return _initialTrajectoryElements;
     }
@@ -166,9 +168,13 @@ namespace aidaTT
     bool trajectory::_intersectWithinZDiskBounds(const ISurface* surf, double& s)
     {
         // the z position of the plane
-        //double __planePositionZ = surf->origin().z();
+        double planePositionZ = surf->origin().z();
+        s = (planePositionZ - calculateZ0(_referenceParameters)) / calculateTanLambda(_referenceParameters);
+        double x = _calculateXfromS(s);
+        double y = _calculateYfromS(s);
 
-        return false;
+        Vector3D thePlace = Vector3D(x, y, planePositionZ);
+        return surf->insideBounds(thePlace);
     }
 
 
@@ -198,6 +204,32 @@ namespace aidaTT
 
 
 
+    double  trajectory::_calculateXfromS(double s) const
+    {
+        const double x0   = calculateX0(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+        const double curvature = calculateCurvature(_referenceParameters);
+        if(curvature != 0.)
+            return (x0 + 2. / curvature * sin(curvature * s / 2.) * cos(phi0 - curvature * s / 2.));
+        else
+            return (x0 + s * cos(phi0));
+    }
+
+
+
+    double  trajectory::_calculateYfromS(double s) const
+    {
+        const double y0   = calculateY0(_referenceParameters);
+        const double phi0 = calculatePhi0(_referenceParameters);
+        const double curvature = calculateCurvature(_referenceParameters);
+        if(curvature != 0.)
+            return (y0 + 2. / curvature * sin(curvature * s / 2.) * sin(phi0 - curvature * s / 2.));
+        else
+            return (y0 + s * cos(phi0));
+    }
+
+
+
     double  trajectory::_calculateZfromS(double s) const
     {
         const double tanLambda = calculateTanLambda(_referenceParameters);
@@ -207,21 +239,21 @@ namespace aidaTT
 
 
 
-    std::pair<Vector3D, Vector3D>* trajectory::_calculateLocalCurvilinearSystem(double s)   
+    std::pair<Vector3D, Vector3D>* trajectory::_calculateLocalCurvilinearSystem(double s)
     {
         const double omega = calculateCurvature(_referenceParameters);
         const double phi0 = calculatePhi0(_referenceParameters);
         const double lambda = calculateLambda(_referenceParameters);
-        
-        const double u0 = - sin( phi0 - omega * s );
-        const double u1 =   cos( phi0 - omega * s );
+
+        const double u0 = - sin(phi0 - omega * s);
+        const double u1 =   cos(phi0 - omega * s);
         const double u2 = 0.;
-        
-        const double v0 = - cos( phi0 - omega * s ) * sin( lambda );
-        const double v1 = - sin( phi0 - omega * s ) * sin( lambda );
-        const double v2 = cos( lambda );
-        
-        return new std::pair<Vector3D, Vector3D> ( Vector3D(u0,u1,u2), Vector3D(v0,v1,v2) );
+
+        const double v0 = - cos(phi0 - omega * s) * sin(lambda);
+        const double v1 = - sin(phi0 - omega * s) * sin(lambda);
+        const double v2 = cos(lambda);
+
+        return new std::pair<Vector3D, Vector3D> (Vector3D(u0, u1, u2), Vector3D(v0, v1, v2));
     }
 
 
@@ -264,18 +296,18 @@ namespace aidaTT
     }
 
 
-    void trajectory::addMeasurement(const Vector3D& position, const ISurface& surface, void* id)
+    void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
-        const double s =  _calculateSfromXY( position.x(), position.y() );
+        const double s =  _calculateSfromXY(position.x(), position.y());
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, resolution, id));
     }
 
 
 
     void trajectory::prepareForFitting()
     {
-        
         ;
     }
-    
+
 
 }

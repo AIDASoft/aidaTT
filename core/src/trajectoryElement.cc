@@ -2,25 +2,10 @@
 
 namespace aidaTT
 {
-//~ class trajectoryElement::
-//~ {
-//~ private:
-//~
-//~ bool _measurement;
-//~ unsigned int _measDim;
-//~ double _residualU, _residualV;
-//~ double _dU, _dV;
-//~
-//~ const Surface& _surface;
-//~ double _arcLength;
-//~ fiveByFiveMatrix _jacobianToNext;
-//~ };
-
     ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
     trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, const std::vector<double>& resolutions, void* id)
         : _arclength(arclength), _surface(&surface), _measurement(_surface->type().isSensitive()), _resolutions(resolutions), _id(id)
     {
- 
     }
 
 

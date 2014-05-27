@@ -68,29 +68,36 @@ namespace aidaTT
             //~ MarlinTrk:: virtual int getTrackState( trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
             /// methods available before fitting
-            const std::vector<trajectoryElement>& trajectoryElements() const;
+            const std::vector<trajectoryElement*>& trajectoryElements() const;
 
-            ///~ add a measurement/hit to trajectory
-            void addMeasurement(const Vector3D& position, const ISurface& surface, void* id);
+            ///~ add a measurement/hit to trajectory; identified by:
+            ///~     a position, the resolution, the surface and some id
+            void addMeasurement(const Vector3D&, const std::vector<double>&, const ISurface&, void*);
+
+            ///~ manually add an element to the trajectory; e.g. a point of interest
+            ///~ optional: add a surface; e.g. which only contains material
+            void addElement(const Vector3D&);
+            void addElement(const Vector3D&, const ISurface&);
 
             ///~ test whether/where a surface is intersected
-            bool intersectWithSurface(const ISurface* surface, Vector3D& intersect );
+            bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);
 
             const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const ISurface*>&);
-  
 
             IFittingAlgorithm* getFittingAlgorithm() const;
             IPropagation* getPropagationMethod() const;
-            
-            
-            ///~ prepare / fit
+
+            ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
+            ///~ in the fit call this is called implicitly/automatically
             void prepareForFitting();
-            
+
+
+            ///~ the actual fit call
             unsigned int fit();
 
             /// methods after fitting
-            std::vector<trajectoryElement> getFittedTrajectoryElements() const;
-            std::vector<trajectoryElement> getOutliers() const;
+            std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
+            std::vector<trajectoryElement*> getOutliers() const;
 
             /// quantify the results
             double getChiSquare() const;
@@ -102,7 +109,7 @@ namespace aidaTT
 
             // the  internal parts
             trackParameters          _referenceParameters;
-            std::vector<trajectoryElement>         _initialTrajectoryElements;
+            std::vector<trajectoryElement*>  _initialTrajectoryElements;
 
             std::vector<std::pair<double, const ISurface*> > _intersectionsList;
 
@@ -124,6 +131,8 @@ namespace aidaTT
             {
                 return _calculateSfromXY(k.first, k.second);
             }
+            double _calculateXfromS(double) const;
+            double _calculateYfromS(double) const;
             double _calculateZfromS(double) const;
 
             std::pair<Vector3D, Vector3D>* _calculateLocalCurvilinearSystem(double);
