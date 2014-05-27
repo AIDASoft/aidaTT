@@ -1,3 +1,4 @@
+#ifdef USE_DD4HEP
 #ifdef USE_LCIO
 
 #include "lcio.h"
@@ -7,8 +8,13 @@
 #include "EVENT/SimTrackerHit.h"
 #include "UTIL/ILDConf.h"
 
+#include "DD4hepGeometry.hh"
+
+// DD4hep
+#include "DD4hep/LCDD.h"
+#include "DDRec/SurfaceManager.h"
+
 #include <map>
-#include <sstream>
 
 using namespace std ;
 using namespace lcio;
@@ -18,58 +24,11 @@ int main(int argc, char** argv)
 {
     if(argc < 2)
         {
-            std::cout << " usage: lcio_file.slcio" << std::endl ;
+            std::cout << " usage: ./example compact.xml lcio.slcio" << std::endl ;
             return 1;
         }
 
-    std::string lcioFileName = argv[1] ;
-
-    LCReader* rdr = LCFactory::getInstance()->createLCReader() ;
-    rdr->open(lcioFileName) ;
-
-    LCEvent* evt = 0 ;
-
-    std::vector< std::string > colNames ;
-    colNames.push_back("VXDCollection") ;
-
-    while((evt = rdr->readNextEvent()) != 0)
-        {
-            for(unsigned icol = 0, ncol = colNames.size() ; icol < ncol ; ++icol)
-                {
-
-                    LCCollection* col = evt->getCollection(colNames[ icol ]) ;
-
-                    int nHit = col->getNumberOfElements() ;
-
-                    std::cout << " reading data from file " << std::endl;
-                }
-        }
-
-
-    return 0;
-}
-
-/*
-
-#include <iostream>
-
-// aidaTT
-#include "DD4hepGeometry.hh"
-#include "trackParameters.hh"
-#include "trajectory.hh"
-
-// DD4hep
-#include "DD4hep/LCDD.h"
-#include "DDRec/SurfaceManager.h"
-
-int main(int argc, char** argv)
-{
-    if(argc < 2)
-        {
-            std::cout << " usage: intersection_calculator someCompactDescription.xml" << std::endl ;
-            exit(1) ;
-        }
-
+    /// dd4hep stuff
     std::string inFile =  argv[1] ;
 
     /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
@@ -83,80 +42,65 @@ int main(int argc, char** argv)
     const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
 
-    //~ a
-    double vals[] = { 0.23, 0.01, 1.57, 0.00, 0. };
-    std::vector<double> values;
-    values.assign(vals, vals + 5);
-
-    aidaTT::Vector5 ildTP(values);
-
-    std::cout << " init vector is " << ildTP << std::endl;
+    // create map of surfaces
+    std::map< long64, const aidaTT::ISurface* > surfMap ;
 
 
-    aidaTT::trackParameters bla;
-    bla.setTrackParameters(ildTP);
-
-    std::cout << " parameters are " << bla << std::endl;
-
-    aidaTT::trajectory tryout(bla, NULL);
-
-    const std::vector<std::pair<double, const aidaTT::ISurface*> >& whatever =     tryout.getIntersectionsWithSurfaces(surfaces);
-
-    std::cout << " length of intersections " << whatever.size() << std::endl;
-
-    for(std::vector<std::pair<double, const aidaTT::ISurface*> >::const_iterator test = whatever.begin(), fin = whatever.end(); test < fin; ++test)
+    for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
         {
-            std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
+            surfMap[(*surf)->id() ] = (*surf) ;
         }
 
-    /*
-     *   for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
-          {
 
-              if((*surf)->type().isZCylinder())
-                  {
-                      std::cout << " its a cylinder parallel to z " << std::endl;
-                  }
-              else if((*surf)->type().isZPlane())
-                  {
-                      double normalX = (*surf)->normal().x();
-                      double normalY = (*surf)->normal().y();
-                      double normalZ = (*surf)->normal().z();
-                      double xp = (*surf)->origin().x();
-                      double yp = (*surf)->origin().y();
 
-                      //~ double pv = atan2(normalX, normalY);
-                      //~ double dp = (*surf)->distance(Vector3D(0., 0., 0.));
-                      //~ std::cout << " the normal vector has the components nx=" << normalX << " ny=" << normalY << " nz=" << normalZ << std::endl;
-                      //~ std::cout << " the atan2 of nx,ny is " <<  pv << std::endl;
-                      //~ std::cout << " dp is " <<  dp << std::endl;
-                      //~ std::cout << " it should be " << (*surf)->distance(Vector3D(0., 0., 0.)) << std::endl;
-                      //~ std::cout << " phi0 is " << phi0 << std::endl;
-                      //~ std::cout << " sin( pv - phi0) is " << sin(pv - phi0) << std::endl;
-                      //~ std::cout << " omega*dp is " <<  omega*dp << std::endl;
-                      //~ double omegaS = asin(sin(pv - phi0) + omega * dp) - pv + phi0;
-                      //~ std::cout << " omegaS is " << omegaS << std::endl;
+/// lcio stuff
+    std::string lcioFileName = argv[2] ;
 
-                  }
-              else if((*surf)->type().isZDisk())
-                  {
-                      std::cout << " its a plane perpendicular to z " << std::endl;
-                      double planePositionZ = (*surf)->origin().z();
-                      std::cout << " plane is at " << planePositionZ << std::endl;
-                  }
-              else
-                  {
-                      std::cout << " No good, can't compute intersection. " << std::endl;
-                  }
-              //~ if( (*surf)->type().isSensitive() )
+    LCReader* rdr = LCFactory::getInstance()->createLCReader() ;
+    rdr->open(lcioFileName) ;
 
-              // getIntersectionWithSurface
-          }
+    LCEvent* evt = 0 ;
+
+    std::vector< std::string > colNames ;
+    colNames.push_back("VXDCollection") ;
+
+    UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
+
+
+    while((evt = rdr->readNextEvent()) != 0)
+        {
+            for(unsigned icol = 0, ncol = colNames.size() ; icol < ncol ; ++icol)
+                {
+
+                    LCCollection* col = evt->getCollection(colNames[ icol ]) ;
+
+                    int nHit = col->getNumberOfElements() ;
+
+                    for(int i = 0 ; i < nHit ; ++i)
+                        {
+
+                            SimTrackerHit* sHit = (SimTrackerHit*) col->getElementAt(i) ;
+
+                            long64 id = sHit->getCellID0() ;
+
+                            idDecoder.setValue(id) ;
+                            //      std::cout << " simhit with cellid : " << idDecoder << std::endl ;
+
+                            const aidaTT::ISurface* surf = surfMap[ id ] ;
+
+                            std::cout << " surface " << (*surf) << " found for id : " << std::hex << id << std::dec  ;
+                        }
+
+
+
+
+                }
+        }
+
+
     return 0;
 }
 
-    */
-
-
 
 #endif // USE_LCIO
+#endif // USE_DD4HEP
