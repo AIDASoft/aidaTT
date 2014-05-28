@@ -26,25 +26,25 @@ void constantbfield::_test()
     _bf2 = new ConstantSolenoidBField(b);
 
     // check whether all functions return the right values
-    test_(floatCompare(_bf1->getBx(_point) , 0.));
-    test_(floatCompare(_bf1->getBy(_point) , 0.));
-    test_(floatCompare(_bf1->getBz(_point) , a));
+    test_(floatCompare(_bf1->Bx(_point) , 0.));
+    test_(floatCompare(_bf1->By(_point) , 0.));
+    test_(floatCompare(_bf1->Bz(_point) , a));
 
-    test_(floatCompare(_bf2->getBx(_point) , 0.));
-    test_(floatCompare(_bf2->getBy(_point) , 0.));
-    test_(floatCompare(_bf2->getBz(_point) , b));
+    test_(floatCompare(_bf2->Bx(_point) , 0.));
+    test_(floatCompare(_bf2->By(_point) , 0.));
+    test_(floatCompare(_bf2->Bz(_point) , b));
 
-    test_(floatCompare(_bf1->getBField(_point).x() , 0.));
-    test_(floatCompare(_bf1->getBField(_point).y() , 0.));
-    test_(floatCompare(_bf1->getBField(_point).z() , a));
+    test_(floatCompare(_bf1->BField(_point).x() , 0.));
+    test_(floatCompare(_bf1->BField(_point).y() , 0.));
+    test_(floatCompare(_bf1->BField(_point).z() , a));
 
-    test_(floatCompare(_bf2->getBField(_point).x() , 0.));
-    test_(floatCompare(_bf2->getBField(_point).y() , 0.));
-    test_(floatCompare(_bf2->getBField(_point).z() , b));
+    test_(floatCompare(_bf2->BField(_point).x() , 0.));
+    test_(floatCompare(_bf2->BField(_point).y() , 0.));
+    test_(floatCompare(_bf2->BField(_point).z() , b));
 
-    test_(floatCompare(_bf1->getBField(2., 3.14, -23.4).x() , 0.));
-    test_(floatCompare(_bf1->getBField(2., 3.14, -23.4).y() , 0.));
-    test_(floatCompare(_bf1->getBField(2., 3.14, -23.4).z() , a));
+    test_(floatCompare(_bf1->BField(2., 3.14, -23.4).x() , 0.));
+    test_(floatCompare(_bf1->BField(2., 3.14, -23.4).y() , 0.));
+    test_(floatCompare(_bf1->BField(2., 3.14, -23.4).z() , a));
 
 }
 

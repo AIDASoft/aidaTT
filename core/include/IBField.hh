@@ -18,18 +18,13 @@ namespace aidaTT
     class IBField
     {
         public:
-            virtual ~IBField()
-            {
-                ;
-            };
+            virtual Vector3D BField(const Vector3D&) const = 0;
 
-            Vector3D getBField(const Vector3D&) const;
+            virtual Vector3D BField(const double x, const double y, const double z) const = 0;
 
-            Vector3D getBField(const double x, const double y, const double z) const;
-
-            double Bx(const Vector3D&) const;
-            double By(const Vector3D&) const;
-            double Bz(const Vector3D&) const;
+            virtual double Bx(const Vector3D&) const = 0;
+            virtual double By(const Vector3D&) const = 0;
+            virtual double Bz(const Vector3D&) const = 0;
     };
 }
 #endif // IBFIELD_HH
