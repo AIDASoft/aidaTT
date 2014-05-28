@@ -10,10 +10,10 @@ namespace aidaTT
     class IFittingAlgorithm
     {
         public:
-            virtual bool fit(const trajectory&) const       = 0;
-            virtual unsigned int getNDF() const             = 0;
-            virtual double getChiSquare() const             = 0;
-            virtual double lostWeight() const               = 0;
+            virtual bool fit(const trajectory&)   = 0;
+            virtual unsigned int getNDF() const  = 0;
+            virtual double getChiSquare() const   = 0;
+            virtual double lostWeight() const     = 0;
     };
 }
 

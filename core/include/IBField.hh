@@ -27,10 +27,9 @@ namespace aidaTT
 
             Vector3D getBField(const double x, const double y, const double z) const;
 
-            double getBx(const Vector3D&) const;
-            double getBy(const Vector3D&) const;
-            double getBz(const Vector3D&) const;
-
+            double Bx(const Vector3D&) const;
+            double By(const Vector3D&) const;
+            double Bz(const Vector3D&) const;
     };
 }
 #endif // IBFIELD_HH

@@ -33,9 +33,9 @@ namespace aidaTT
         /// L3 type only
         return tp.parameters()(1);
     }
-    
-    
-    
+
+
+
     double  calculateLambda(const trackParameters& tp)
     {
         /// L3 type only
@@ -62,4 +62,13 @@ namespace aidaTT
         /// L3 type only
         return tp.parameters()(0);
     }
+
+    double calculateQoverP(const trackParameters& tp, double bfield)
+    {
+        if(bfield != 0.)
+            return (- cos(calculateLambda(tp)) * calculateCurvature(tp) * 1. / bfield);
+        else
+            return 0.;
+    }
+
 }

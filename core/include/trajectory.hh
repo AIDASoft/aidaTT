@@ -8,6 +8,7 @@
 #include "trajectoryElement.hh"
 #include "IPropagation.hh"
 #include "IGeometry.hh"
+#include "IBField.hh"
 #include "IFittingAlgorithm.hh"
 
 namespace aidaTT
@@ -38,7 +39,7 @@ namespace aidaTT
 
             /// trajectory that are to be fitted need full information at initialization
             trajectory(const trackParameters&, const std::vector<trajectoryElement>&,
-                       const IFittingAlgorithm*, const IPropagation*, const IGeometry*);
+                       const IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
 
             //~ the minimal useful constructor
             trajectory(const trackParameters&, const IGeometry*);
@@ -74,6 +75,8 @@ namespace aidaTT
             ///~     a position, the resolution, the surface and some id
             void addMeasurement(const Vector3D&, const std::vector<double>&, const ISurface&, void*);
 
+
+            ///~ TODO:: needs more thought!
             ///~ manually add an element to the trajectory; e.g. a point of interest
             ///~ optional: add a surface; e.g. which only contains material
             void addElement(const Vector3D&, void* id);
@@ -88,9 +91,7 @@ namespace aidaTT
             IPropagation* getPropagationMethod() const;
 
             ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
-            ///~ in the fit call this is called implicitly/automatically
             void prepareForFitting();
-
 
             ///~ the actual fit call
             unsigned int fit();
@@ -114,8 +115,11 @@ namespace aidaTT
             std::vector<std::pair<double, const ISurface*> > _intersectionsList;
 
             const IFittingAlgorithm* const _fittingAlgorithm;
-            const IPropagation* const _propagation;
+            const IBField* const _bfield;
+            IPropagation* _propagation;
             const IGeometry* const _geometry;
+
+            double _bfieldZ;
 
             bool _intersectsWithinZCylinderBounds(const ISurface*, double&);
             bool _intersectWithinZPlaneBounds(const ISurface*, double&);
@@ -135,7 +139,10 @@ namespace aidaTT
             double _calculateYfromS(double) const;
             double _calculateZfromS(double) const;
 
+            Vector3D _calculateTangent(double);
+
             std::pair<Vector3D, Vector3D>* _calculateLocalCurvilinearSystem(double);
+
 
             /*
             // ?

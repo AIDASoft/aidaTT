@@ -7,6 +7,8 @@
 #include "fiveByFiveMatrix.hh"
 #include "Vector5.hh"
 
+#include <vector>
+
 // GBL:
 #include "GblTrajectory.h"
 #include "MilleBinary.h"
@@ -33,29 +35,51 @@ namespace aidaTT
             ~GBLInterface();
 
             /// inherited methods:
-            bool fit(const trajectory&) const;
-            unsigned int getNDF()       const;
-            double getChiSquare()       const;
-            double lostWeight()         const;
+            bool fit(const trajectory&);
+
+            unsigned int getNDF()       const
+            {
+                return _ndf;
+            };
+            double getChiSquare()       const
+            {
+                return _chisquare;
+            };
+            double lostWeight()         const
+            {
+                return _lostweight;
+            };
 
 
         private:
             GBLInterface(const GBLInterface&);
             GBLInterface& operator=(const GBLInterface&);
 
-            gbl::GblTrajectory* _trajectory; ///< GBL trajectory
-            bool _curvature; ///< flag for curved track (helix, else straight line)
-            std::vector<unsigned int> _theLabels; ///< Labels of (global) MP-II parameters
-            Vector5* _correctionVector; ///< correction vector from GBL fit (for track parameters)
-            fullCovariance* _covarianceMatrix; ///< covariance matrix from GBL
-            int _ndf; ///< number of degrees of freedom in GBL fit
-            double _chisquare; ///< chi2 from GBL fit
-            double _lostweight; ///< weight lost by down-weighting
-            double _refPointS; ///< arc-length of reference point
-            unsigned int _refPointIndex; ///< label of reference point
-            double _Xcenter; ///< TPC center, X coordinate
-            double _Ycenter; ///< TPC center, Y coordinate
+///< GBL trajectory
+            gbl::GblTrajectory* _trajectory;
+            ///< flag for curved track (helix, else straight line)
+            bool _curvature;
 
+            ///< correction vector from GBL fit (for track parameters)
+            Vector5* _correctionVector;
+
+            ///< covariance matrix from GBL
+            fullCovariance* _covarianceMatrix;
+
+            ///< number of degrees of freedom in GBL fit
+            int _ndf;
+
+            ///< chi2 from GBL fit
+            double _chisquare;
+
+            ///< weight lost by down-weighting, not used for now!
+            double _lostweight;
+
+            ///< arc-length of reference point
+            double _refPointS;
+
+            ///< label of reference point
+            unsigned int _refPointIndex;
     };
 
 }

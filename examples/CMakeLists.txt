@@ -29,5 +29,5 @@ ENDIF(DD4HEP_FOUND)
 
 
 IF( GBL_FOUND)
-ADD_AIDATT_EXAMPLE( gbl_example gbl_example/gbl_example.cpp)
+ADD_AIDATT_EXAMPLE_WITH_ROOT( gbl_example gbl_example/gbl_example.cpp)
 ENDIF( GBL_FOUND )

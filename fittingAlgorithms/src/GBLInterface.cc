@@ -1,8 +1,6 @@
 #ifdef USE_GBL
 #include "GBLInterface.hh"
 
-using namespace std;
-
 namespace aidaTT
 {
     GBLInterface::GBLInterface() : _trajectory(NULL), _correctionVector(NULL), _covarianceMatrix(NULL)
@@ -18,7 +16,7 @@ namespace aidaTT
 
 
 
-    bool GBLInterface::fit(const trajectory& TRAJ) const
+    bool GBLInterface::fit(const trajectory& TRAJ)
     {
         /* several bits of information are needed to initialize the gbl:
          *  - a vector of GblPoints, which in turn need a p2p jacobian to be instantiated
@@ -27,89 +25,90 @@ namespace aidaTT
          */
 
         /// create vector of GBL points
-        vector < gbl::GblPoint > theListOfPoints;
+        std::vector < gbl::GblPoint > theListOfPoints;
 
-        const Vector5 trackParameters = TRAJ.getInitialTrackParameters().parameters();
+        const std::vector<trajectoryElement*>& elements = TRAJ.trajectoryElements();
 
-        /*
-         *    for(vector<trajectoryElement>::const_iterator element =
-                       (TRAJ.getTrajectoryElements()).begin(), last = (TRAJ.getTrajectoryElements()).end();
-                   element < last; ++element)
-               {
-                   const fiveByFiveMatrix& jac = element->jacobianToNextElement();
+        for(std::vector<trajectoryElement*>::const_iterator element = elements.begin(), last = elements.end(); element < last; ++element)
+            {
 
-                   gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
+                const fiveByFiveMatrix& jac = (*element)->jacobian();
 
-                   if(element->hasMeasurement())
-                       {
-                           /// three elements are needed to add a measurement to a gblpoint:
-                           /// 1) the projection matrix from the local track frame to the measurement system
-                           /// 2) the residuals in the measurement directions
-                           /// 3) the inverse resolution = precision of the measurements
+                ///~ initialise point with jacobian from last to the current element
+                gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
-                           //~ 1) projection matrix -- the basis change matrix
-                           // first part: get the local measurement directions
-                           //~ const vector<Vector3D> measurementDirections = element->getMeasurementDirections();
-                           //~ const vector<Vector3D> localCurvilinearFrame = constructLocalCLFrame(*element);
+                if((*element)->hasMeasurement())
+                    {
+                        /// three elements are needed to add a measurement to a gblpoint:
+                        /// 1) the projection matrix from the local track frame to the measurement system
+                        /// 2) the residuals in the measurement directions
+                        /// 3) the inverse resolution = precision of the measurements
 
-                           //~ 2) the residuals in the measurement direction
-                           //~ const std::vector<double> residuals = element->getSurface()->getMeasurementDirections();
-                           //~ convert the vector to an array:
-                           //~ double residualarray[residuals.size()];
-                           //~ std::copy(residuals.begin(), residuals.end(), residualarray);
+                        const unsigned int mDim = (*element)->measurementDimension();
 
-                           //~ 3) the precision of the measurements -- the inverse of the resolution
-                           const std::vector<double> errors = element->measurementErrors();
-                           vector<double> precisionarray;
-                           for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
-                               {
-                                   if(errors.at(errorid) <= 0.)
-                                       precisionarray.push_back(1e+99);
-                                   else
-                                       precisionarray.push_back(1. / errors.at(errorid));
-                               }
+                        //~ 1) projection matrix -- the basis change matrix
+                        const std::vector<Vector3D>& projL2M = (*element)->localToMeasurementProjection();
 
-                           //~ point.gbl::addMeasurement( TMatrixD( 5,5,projectionMatrix.array()), TVectorD(residualarray), TVectorD(precisionarray) );
-                       }
-                   //~ now evaluate the scattering material
-                   //~ the addScatterer routine will add a thin scatterer at the given position
-                   //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
-                   //~ -- 1.) determine whether scatterer or not
-                   //~ -- 2.) if scatterer: thin or thick
-                   //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
-                   //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
-                    //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
+                        ///~ convert the data from the vector into an array in two steps:
+                        std::vector<double> projElements;
+                        for(std::vector<Vector3D>::const_iterator it = projL2M.begin(), last = projL2M.end(); it < last; ++it)
+                            {
+                                projElements.push_back(it->x());
+                                projElements.push_back(it->y());
+                                projElements.push_back(it->z());
+                            }
+                        const double* pL2M = projElements.data();
+
+                        //~ 2) the residuals in the measurement direction
+                        const std::vector<double>& residuals = (*element)->measurementResiduals();
+
+                        //~ convert the vector to an array:
+                        const double* res = residuals.data();
+
+                        //~ 3) the precision of the measurements -- the inverse of the resolution
+                        const std::vector<double>& errors = (*element)->measurementErrors();
+
+                        std::vector<double> precision;
+                        for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
+                            {
+                                if(errors.at(errorid) <= 1e-18)
+                                    precision.push_back(1e+99);
+                                else
+                                    precision.push_back(1. / errors.at(errorid));
+                            }
+                        //~ convert the vector to an array:
+                        const double* prec = precision.data();
+
+                        point.addMeasurement(TMatrixD(3, mDim, pL2M), TVectorD(mDim, res), TVectorD(mDim, prec));
+                    }
+                if((*element)->isScatterer())
+                    {
+                        //~ now evaluate the scattering material
+                        //~ the addScatterer routine will add a thin scatterer at the given position
+                        //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
+                        //~ -- 1.) determine whether scatterer or not
+                        //~ -- 2.) if scatterer: thin or thick
+                        //~ -- 3.) if thick scatterer: calculate two positions and material properties at the points!
+                        //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
+                        //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
 
 
-                   // store the point in the list that will be handed to the trajectory
-                   theListOfPoints.push_back(point);
-               } */
+                    }
+
+                // store the point in the list that will be handed to the trajectory
+                theListOfPoints.push_back(point);
+            }
+
+//~ if( !theListOfPoints.isValid() )
+        //~ throw something;
+
+        _trajectory = new gbl::GblTrajectory(theListOfPoints, true); /// TODO: pass info about magnetic field
+
+
+        _trajectory->fit(_chisquare, _ndf, _lostweight);
 
         return true;
     }
-
-
-
-    unsigned int GBLInterface::getNDF() const
-    {
-        return 0;
-    }
-
-
-
-    double GBLInterface::getChiSquare() const
-    {
-        return -1.;
-    }
-
-
-
-    double GBLInterface::lostWeight() const
-    {
-        return 0.;
-    }
-
-
 }
 /*  ORIGINAL
 

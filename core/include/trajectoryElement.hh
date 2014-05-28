@@ -70,14 +70,19 @@ namespace aidaTT
                 return *_surface;
             };
 
+            const double arcLength() const
+            {
+                return _arclength;
+            };
+
             const fiveByFiveMatrix& jacobian() const
             {
-                return _jacobianFromPrevious;
+                return *_jacobianFromPrevious;
             };
 
             const fiveByFiveMatrix& jacobianFromPrevious() const
             {
-                return _jacobianFromPrevious;
+                return *_jacobianFromPrevious;
             };
 
             trackParameters  fullState() const;
@@ -131,10 +136,11 @@ namespace aidaTT
                 return _localToMeasurementProjection;
             };
 
-            /// the setting routines
-
-            ///~ set the jacobian from the previous element
-            void setJacobian(const fiveByFiveMatrix&);
+            ///~ set the jacobian from the previous element -- ownership of the memory is transferred
+            void setJacobian(fiveByFiveMatrix* jacob)
+            {
+                _jacobianFromPrevious = jacob;
+            };
 
         private:
             ///~ no construction without the arc length!
@@ -150,7 +156,7 @@ namespace aidaTT
             ///~
             double _arclength;
             const ISurface* const _surface;
-            fiveByFiveMatrix _jacobianFromPrevious;
+            const fiveByFiveMatrix* _jacobianFromPrevious;
 
 
             ///~ measurement variables:
@@ -173,7 +179,5 @@ namespace aidaTT
 
             const void* const _id; // just store
     };
-
 }
-
 #endif // TRAJECTORYELEMENT_H

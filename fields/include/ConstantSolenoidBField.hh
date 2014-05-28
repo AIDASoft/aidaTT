@@ -29,15 +29,15 @@ namespace aidaTT
                 return Vector3D(0., 0., _bz);
             };
 
-            double getBx(const Vector3D&) const
+            double Bx(const Vector3D&) const
             {
                 return 0.;
             };
-            double getBy(const Vector3D&) const
+            double By(const Vector3D&) const
             {
                 return 0.;
             };
-            double getBz(const Vector3D&) const
+            double Bz(const Vector3D&) const
             {
                 return _bz;
             };

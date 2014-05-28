@@ -24,6 +24,8 @@ namespace aidaTT
     ///~ a five by five matrix that abstracts the gsl matrix (for now)
     class fiveByFiveMatrix
     {
+            friend class IPropagation;
+
         public:
             /** the default construction, it initializes all entries to zero **/
             fiveByFiveMatrix();

@@ -16,7 +16,6 @@ namespace aidaTT
     {}
 
 
-
     ///~ constructor C: arc length and surface is given plus some identification
     trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, void* id)
         : _arclength(arclength), _surface(&surface), _measurement(false), _id(id)
@@ -30,6 +29,8 @@ namespace aidaTT
             delete _localCurvilinearSystem;
         if(_measDirections)
             delete _measDirections;
+        if(_jacobianFromPrevious)
+            delete _jacobianFromPrevious;
     }
 
 // TO WRITE
@@ -39,15 +40,6 @@ namespace aidaTT
 
 // TO WRITE
 //~ trackParameters const trajectoryElement::getStateVector();
-
-
-
-///~ set the jacobian to the next element
-    void trajectoryElement::setJacobian(const fiveByFiveMatrix& jacob)
-    {
-        /// !!! Need to rethink this:
-        _jacobianFromPrevious = jacob;
-    }
 
 
 
@@ -66,6 +58,4 @@ namespace aidaTT
             }
 
     }
-
-
 }

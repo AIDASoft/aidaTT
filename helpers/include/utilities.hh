@@ -12,6 +12,7 @@ namespace aidaTT
     double calculateZ0(const trackParameters&);
     double calculateDistanceFromPCA(const trackParameters&);
     double calculateCurvature(const trackParameters&);
+    double calculateQoverP(const trackParameters& , double BField);
 }
 
 #endif // UTITILITIES_HH
