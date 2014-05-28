@@ -37,9 +37,8 @@ namespace aidaTT
             /// copy construct a trajectory
             trajectory(const trajectory&);
 
-            /// trajectory that are to be fitted need full information at initialization
-            trajectory(const trackParameters&, const std::vector<trajectoryElement>&,
-                       const IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
+            /// constructor (A) trajectory that needs to be fitted from a reference track
+            trajectory(const trackParameters&, const IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
 
             //~ the minimal useful constructor
             trajectory(const trackParameters&, const IGeometry*);

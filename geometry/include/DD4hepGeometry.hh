@@ -1,6 +1,5 @@
 #ifdef USE_DD4HEP
 
-
 #ifndef DD4HEPGEOMETRY_HH
 #define DD4HEPGEOMETRY_HH
 
@@ -13,9 +12,9 @@ namespace aidaTT
     {
         public:
             DD4hepGeometry(const ::DD4hep::Geometry::DetElement&);
-//~
+
             const std::list<const ISurface*>& getSurfaces();
-//~
+
         private:
             const ::DD4hep::Geometry::DetElement& _detelem;
             std::list<const ISurface* > _surfaceList;

@@ -53,14 +53,11 @@ namespace aidaTT
     class trajectoryElement
     {
         public:
-            ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
-            trajectoryElement(double, const ISurface&, const std::vector<double>&, std::pair<Vector3D, Vector3D>*, void* = NULL);
+            ///~ standard constructor A for measurements: arc length, measurement directions and resolutions, local curvilinear system and some identification
+            trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
-
-            ///~ constructor C: arc length and surface is given plus some identification
-            trajectoryElement(double, const ISurface&, void* = NULL);
 
             ~trajectoryElement();
 
@@ -155,14 +152,13 @@ namespace aidaTT
 
             ///~
             double _arclength;
-            const ISurface* const _surface;
-            const fiveByFiveMatrix* _jacobianFromPrevious;
 
+            fiveByFiveMatrix* _jacobianFromPrevious;
+            const ISurface* _surface;
 
             ///~ measurement variables:
             bool _measurement;
-
-            std::vector<double> _residuals;
+            std::vector<Vector3D>* _measDirections;
             std::vector<double> _resolutions;
 
             ///~ local curvilinear system
@@ -170,8 +166,10 @@ namespace aidaTT
 
             void _calculateLocalToMeasurementProjectionMatrix();
 
-            std::vector<Vector3D>* _measDirections;
             std::vector<Vector3D> _localToMeasurementProjection;
+
+            std::vector<double> _residuals;
+
 
             ///~ scattering info
             bool _scatterer;

@@ -11,16 +11,11 @@
 
 namespace aidaTT
 {
-// the only constructor for a trajectory: known track parameters and trajectory elements
-    trajectory::trajectory(const trackParameters& tp,
-                           const std::vector<trajectoryElement>& elems, const IFittingAlgorithm* fa,
+    // constructor (A) for a trajectory -- track found, but needs fitting
+    trajectory::trajectory(const trackParameters& tp, const IFittingAlgorithm* fa,
                            const IBField* bfield, IPropagation* pm, const IGeometry* geom)
         : _referenceParameters(tp) , _fittingAlgorithm(fa) , _bfield(bfield),  _propagation(pm), _geometry(geom)
     {
-        // copy the elements
-        // TODO like this? trajectoryElements should know about their position?
-        //            _initialTrajectoryElements.resize(elems.size());
-        //~ for(vector<trajectoryElement>::const_iterator elem = elems.begin(), last = elems.end(); elem < last; ++elem)
         _initialTrajectoryElements.clear();
 
         _bfieldZ = _bfield->Bz(_referenceParameters.referencePoint());
@@ -321,7 +316,11 @@ namespace aidaTT
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
         double s =  _calculateSfromXY(position.x(), position.y());
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, resolution, _calculateLocalCurvilinearSystem(s), id));
+        std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
+        measDir->push_back(surface.u(position));
+        measDir->push_back(surface.v(position));
+
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, _calculateLocalCurvilinearSystem(s), id));
     }
 
 
@@ -337,7 +336,7 @@ namespace aidaTT
     void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
     {
         double s =  _calculateSfromXY(point.x(), point.y());
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, id));
+// REDO!        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, id));
     }
 
 
@@ -365,7 +364,7 @@ namespace aidaTT
         /// the first jacobian is useless, just use an empty 5x5 matrix
         if(_initialTrajectoryElements.size() > 0)
             {
-                fiveByFiveMatrix* j = new fiveByFiveMatrix();
+                fiveByFiveMatrix* j = new fiveByFiveMatrix;
                 (_initialTrajectoryElements.at(0))->setJacobian(j);
             }
         /// now the rest
@@ -380,7 +379,7 @@ namespace aidaTT
                 Vector3D tstart = _calculateTangent(prevS);
                 Vector3D tend   = _calculateTangent(currS);
 
-                fiveByFiveMatrix* jacob = new fiveByFiveMatrix();
+                fiveByFiveMatrix* jacob = new fiveByFiveMatrix;
                 _propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField);
                 (*element)->setJacobian(jacob);
             }
