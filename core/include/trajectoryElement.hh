@@ -137,8 +137,7 @@ namespace aidaTT
             void setJacobian(fiveByFiveMatrix* jacob)
             {
                 _jacobianFromPrevious = jacob;
-            };
-
+            }
         private:
             ///~ no construction without the arc length!
             trajectoryElement();

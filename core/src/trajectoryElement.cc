@@ -5,7 +5,8 @@ namespace aidaTT
     ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
     trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, std::vector<Vector3D>* measDir, const std::vector<double>& resolutions,
                                          std::pair<Vector3D, Vector3D>* lCLS, void* id)
-        : _arclength(arclength), _surface(&surface), _measurement(_surface->type().isSensitive()), _measDirections(measDir), _resolutions(resolutions), _localCurvilinearSystem(lCLS),  _id(id)
+        : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(&surface), _measurement(_surface->type().isSensitive()),
+          _measDirections(measDir), _resolutions(resolutions), _localCurvilinearSystem(lCLS),  _id(id)
     {
         _calculateLocalToMeasurementProjectionMatrix();
     }
@@ -13,7 +14,7 @@ namespace aidaTT
 
 
     ///~ constructor B: only the arc length is given and some identification
-    trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _surface(NULL), _measurement(false), _id(id)
+    trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _measurement(false), _id(id)
     {}
 
 
@@ -33,6 +34,7 @@ namespace aidaTT
         if(_jacobianFromPrevious)
             delete _jacobianFromPrevious;
     }
+
 
 // TO WRITE
 //~ std::pair<trackParameters, fullCovariance> const trajectoryElement::getFullState() { return ;}
