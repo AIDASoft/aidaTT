@@ -12,7 +12,7 @@
 namespace aidaTT
 {
     // constructor (A) for a trajectory -- track found, but needs fitting
-    trajectory::trajectory(const trackParameters& tp, const IFittingAlgorithm* fa,
+    trajectory::trajectory(const trackParameters& tp, IFittingAlgorithm* fa,
                            const IBField* bfield, IPropagation* pm, const IGeometry* geom)
         : _referenceParameters(tp) , _fittingAlgorithm(fa) , _bfield(bfield),  _propagation(pm), _geometry(geom)
     {
@@ -27,6 +27,16 @@ namespace aidaTT
     trajectory::trajectory(const trackParameters& tp, const IGeometry* geom) : _referenceParameters(tp), _fittingAlgorithm(NULL) , _bfield(NULL), _propagation(NULL), _geometry(geom)
     {
         _initialTrajectoryElements.clear();
+    }
+
+
+
+    //~ copy constructor -- doesn't copy any internals!
+    trajectory::trajectory(const trajectory& traj) : _referenceParameters(traj._referenceParameters),
+        _fittingAlgorithm(traj._fittingAlgorithm), _bfield(traj._bfield), _propagation(traj._propagation), _geometry(traj._geometry)
+    {
+        _initialTrajectoryElements.clear();
+        _intersectionsList.clear();
     }
 
 
@@ -383,6 +393,13 @@ namespace aidaTT
                 _propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField);
                 (*element)->setJacobian(jacob);
             }
+    }
+
+
+
+    bool trajectory::fit()
+    {
+        return _fittingAlgorithm->fit(*this);
     }
 
 

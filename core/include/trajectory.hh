@@ -34,11 +34,11 @@ namespace aidaTT
             /// create an empty trajectory
             trajectory();
 
-            /// copy construct a trajectory
+            /// copy construct a trajectory -- NOT the internals
             trajectory(const trajectory&);
 
             /// constructor (A) trajectory that needs to be fitted from a reference track
-            trajectory(const trackParameters&, const IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
+            trajectory(const trackParameters&, IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
 
             //~ the minimal useful constructor
             trajectory(const trackParameters&, const IGeometry*);
@@ -93,7 +93,7 @@ namespace aidaTT
             void prepareForFitting();
 
             ///~ the actual fit call
-            unsigned int fit();
+            bool fit();
 
             /// methods after fitting
             std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
@@ -113,7 +113,7 @@ namespace aidaTT
 
             std::vector<std::pair<double, const ISurface*> > _intersectionsList;
 
-            const IFittingAlgorithm* const _fittingAlgorithm;
+            IFittingAlgorithm* _fittingAlgorithm;
             const IBField* const _bfield;
             IPropagation* _propagation;
             const IGeometry* const _geometry;

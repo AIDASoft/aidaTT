@@ -104,10 +104,12 @@ namespace aidaTT
 
         _trajectory = new gbl::GblTrajectory(theListOfPoints, true); /// TODO: pass info about magnetic field
 
+        unsigned int returnValue = _trajectory->fit(_chisquare, _ndf, _lostweight);
 
-        _trajectory->fit(_chisquare, _ndf, _lostweight);
-
-        return true;
+        if(returnValue == 0)
+            return true;
+        else
+            return false;
     }
 }
 /*  ORIGINAL

@@ -37,19 +37,10 @@ namespace aidaTT
             /// inherited methods:
             bool fit(const trajectory&);
 
-            unsigned int getNDF()       const
+            fitResults getResults() const
             {
-                return _ndf;
+                return _theResults;
             };
-            double getChiSquare()       const
-            {
-                return _chisquare;
-            };
-            double lostWeight()         const
-            {
-                return _lostweight;
-            };
-
 
         private:
             GBLInterface(const GBLInterface&);
@@ -80,6 +71,8 @@ namespace aidaTT
 
             ///< label of reference point
             unsigned int _refPointIndex;
+
+            fitResults _theResults;
     };
 
 }

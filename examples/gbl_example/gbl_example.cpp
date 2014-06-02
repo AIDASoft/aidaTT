@@ -100,8 +100,6 @@ int main(int argc, char** argv)
 
     // now create a list of trajectory objects for the fitter
     aidaTT::trajectory theMaster(bogusTP, fitter, bfield, propagation, &geom);
-    //trajectory(const trackParameters&, const IFittingAlgorithm*, const IBField*, IPropagation*, const IGeometry*);
-
 
     while((evt = rdr->readNextEvent()) != 0)
         {
@@ -126,10 +124,8 @@ int main(int argc, char** argv)
                                     theMaster.addMeasurement(sHit->getPosition(), resolutionDummy, *surf, sHit);
                                 }
                         }
-
-
-
-
+                    theMaster.prepareForFitting();
+                    theMaster.fit();
                 }
         }
 
