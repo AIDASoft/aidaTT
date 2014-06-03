@@ -656,14 +656,16 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/fields/src
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/fields/include
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/fittingAlgorithms/src
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/fittingAlgorithms/include
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/geometryAPIs/src
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/geometryAPIs/include
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/geometry/src
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/geometry/include
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/propagations/src
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/propagations/include
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/helpers/src
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/helpers/include
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/src
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/include
+#INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/gbl_example
+#INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/geometry_test
+#INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/intersection_calculator
+#INPUT += @CMAKE_CURRENT_SOURCE_DIR@/examples/lcio_read_example
 
 
 # This tag can be used to specify the character encoding of the source files
