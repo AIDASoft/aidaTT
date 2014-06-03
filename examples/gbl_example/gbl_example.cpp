@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 {
     if(argc < 2)
         {
-            std::cout << " usage: ./example compact.xml lcio.slcio" << std::endl ;
+            std::cout << " usage: ./gbl_example ILDEx.xml ILDExSimu.slcio" << std::endl ;
             return 1;
         }
 
@@ -136,8 +136,6 @@ int main(int argc, char** argv)
                     const aidaTT::fitResults& result = theMaster.getFitResults();
                     std::cout << " result chi2 " << result.chiSquare() << " with ndf " << result.ndf() << std::endl;
                     std::cout << " fitted parameters are " << result.estimatedParameters() << std::endl;
-                    //~ if( result.valid() )
-                    //~ result =
                 }
         }
 

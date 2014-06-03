@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
     if(argc < 2)
         {
-            std::cout << " usage: geometry_test compact.xml" << std::endl ;
+            std::cout << " usage: ./geometry_test ILDEx.xml " << std::endl ;
             exit(1) ;
         }
 

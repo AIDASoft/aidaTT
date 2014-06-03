@@ -1,0 +1,23 @@
+These examples are work in progress.
+
+They demonstrate different working subtasks of the tracking toolkit.
+To build them, yopu need to a working installation of 
+	[DD4hep] [GBL] [LCIO]
+
+[geometry_test]
+Simply shows that a surface geometry can be read in and accessed in all its elements.
+Needs a compact xml description, e.g. the xml files included in the directory.
+
+[intersection_calculator]
+Is one step up from the simply reading of the geometry.
+All intersections with a given reference trajectory are calculated; testing both geometry and toolkit functionality.
+Needs a compact xml description, e.g. the xml files in the directory.
+
+[lcio_read_example]
+One step further -- reading in a geometry and some lcio data, which consists of simulated hits.
+The data was produced within a DD4hep example and is available in the directory; along with the compact xml description.
+
+[gbl_example]
+Is the first showcase of a complete fitting chain: read in a detector description (again a compact.xml file) and some data produced with the DD4hep example simulation.
+The data is read in and fitted with the GBL; at the end the results are printed.
+All needed data is provided within the example directory. 

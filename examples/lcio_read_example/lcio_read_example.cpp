@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 {
     if(argc < 2)
         {
-            std::cout << " usage: ./example compact.xml lcio.slcio" << std::endl ;
+            std::cout << " usage: ./lcio_read_example ILDEx.xml ILDExSimu.slcio" << std::endl ;
             return 1;
         }
 

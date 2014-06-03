@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 {
     if(argc < 2)
         {
-            std::cout << " usage: intersection_calculator someCompactDescription.xml" << std::endl ;
+            std::cout << " usage: ./intersection_calculator ILDEx.xml " << std::endl ;
             exit(1) ;
         }
 
