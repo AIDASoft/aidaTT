@@ -15,14 +15,14 @@ namespace aidaTT
                 ;
             };
 
-            fitResults(bool valid, double chis, double ndf, double weightL, const trackParameters& tp)
+            fitResults(bool valid, double chis, unsigned int ndf, double weightL, const trackParameters& tp)
                 : _valid(valid), _chisquare(chis), _ndf(ndf), _lostweight(weightL), _estParams(tp) {};
 
             double chiSquare() const
             {
                 return _chisquare;
             };
-            double ndf() const
+            unsigned int ndf() const
             {
                 return _ndf;
             };
@@ -40,7 +40,7 @@ namespace aidaTT
                 return _estParams;
             };
 
-            void setResults(bool v, double chs, double n, double wl, const trackParameters& tp)
+            void setResults(bool v, double chs, unsigned int n, double wl, const trackParameters& tp)
             {
                 _valid = v;
                 _chisquare = chs;
@@ -52,7 +52,7 @@ namespace aidaTT
         private:
             bool _valid;
             double _chisquare;
-            double _ndf;
+            unsigned int _ndf;
             double _lostweight;
 
             trackParameters _estParams;

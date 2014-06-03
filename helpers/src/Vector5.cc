@@ -25,7 +25,7 @@ namespace aidaTT
         gsl_vector_set_zero(_vector);
 
         if(initValues.size() != 5)
-            throw std::length_error("Wrong length of vector for vector5 initialization.");
+            throw std::length_error("Wrong length of vector for Vector5 initialization.");
         else
             {
                 for(std::vector<double>::const_iterator elem = initValues.begin(), start = initValues.begin(), last = initValues.end(); elem < last; ++elem)
@@ -36,6 +36,21 @@ namespace aidaTT
             }
     }
 
+
+
+    Vector5::Vector5(const double* array)
+    {
+        std::vector<double> tmpVector;
+        try
+            {
+                tmpVector.assign(array, array + 5);
+            }
+        catch(...)
+            {
+                throw std::length_error("Wrong length of array for Vector5 initialization.");
+            }
+
+    }
 
 
     Vector5::Vector5(double i, double j, double k, double m, double n)
@@ -64,6 +79,15 @@ namespace aidaTT
 
         _vector = gsl_vector_alloc(5);
         gsl_vector_memcpy(_vector, vec._vector);
+        return (*this);
+    }
+
+
+
+    Vector5& Vector5::operator+(const Vector5& vec)
+    {
+        gsl_vector_add(_vector, vec._vector);
+
         return (*this);
     }
 

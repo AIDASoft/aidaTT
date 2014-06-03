@@ -10,6 +10,8 @@
 #include "IGeometry.hh"
 #include "IBField.hh"
 #include "IFittingAlgorithm.hh"
+#include "Vector3D.hh"
+#include "fitResults.hh"
 
 namespace aidaTT
 {
@@ -74,7 +76,6 @@ namespace aidaTT
             ///~     a position, the resolution, the surface and some id
             void addMeasurement(const Vector3D&, const std::vector<double>&, const ISurface&, void*);
 
-
             ///~ TODO:: needs more thought!
             ///~ manually add an element to the trajectory; e.g. a point of interest
             ///~ optional: add a surface; e.g. which only contains material
@@ -87,7 +88,8 @@ namespace aidaTT
             const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const ISurface*>&);
 
             IFittingAlgorithm* getFittingAlgorithm() const;
-            IPropagation* getPropagationMethod() const;
+            IPropagation* getPropagation() const;
+            IBField* getBField() const;
 
             ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
             void prepareForFitting();
@@ -95,13 +97,20 @@ namespace aidaTT
             ///~ the actual fit call
             bool fit();
 
-            /// methods after fitting
-            std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
-            std::vector<trajectoryElement*> getOutliers() const;
+            const fitResults& getFitResults();
 
-            /// quantify the results
-            double getChiSquare() const;
-            unsigned int getNDF() const;
+            /// TODO:: placeholder; only z component in constant bfield
+            double Bz() const
+            {
+                return _bfieldZ;
+            };
+            /// methods after fitting
+            //~ std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
+            //~ std::vector<trajectoryElement*> getOutliers() const;
+//~
+            //~ /// quantify the results
+            //~ double getChiSquare() const;
+            //~ unsigned int getNDF() const;
 
         private:
             /* disable assignment */
@@ -120,9 +129,12 @@ namespace aidaTT
 
             double _bfieldZ;
 
-            bool _intersectsWithinZCylinderBounds(const ISurface*, double&);
-            bool _intersectWithinZPlaneBounds(const ISurface*, double&);
-            bool _intersectWithinZDiskBounds(const ISurface*, double&);
+            bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL);
+            void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*);
+
+            bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL);
+            bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL);
+            bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL);
 
             double _calculateRadius() const;
             double _calculateXCenter() const;

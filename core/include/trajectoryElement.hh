@@ -53,8 +53,9 @@ namespace aidaTT
     class trajectoryElement
     {
         public:
-            ///~ standard constructor A for measurements: arc length, measurement directions and resolutions, local curvilinear system and some identification
-            trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL);
+            ///~ standard constructor A for measurements: arc length, measurement directions,resolutions and local UV values, local curvilinear system and some identification
+            trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&,
+                              std::pair<Vector2D*, Vector2D*>* uvs, std::pair<Vector3D, Vector3D>*,  void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
@@ -105,6 +106,7 @@ namespace aidaTT
                 return _measDirections->size();
             };
 
+            ///~ get the residual: measurement - expected position (!)
             const std::vector<double>& measurementResiduals() const
             {
                 return _residuals;
@@ -146,8 +148,8 @@ namespace aidaTT
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 
-            void _calcResiduals();
-            void _calcMaterial();
+            void _calculateResiduals();
+            void _calculateMaterial();
 
             ///~
             double _arclength;
@@ -159,6 +161,9 @@ namespace aidaTT
             bool _measurement;
             std::vector<Vector3D>* _measDirections;
             std::vector<double> _resolutions;
+            std::vector<double> _residuals;
+
+            std::pair<Vector2D*, Vector2D*>* _UVvalues;
 
             ///~ local curvilinear system
             std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
@@ -166,9 +171,6 @@ namespace aidaTT
             void _calculateLocalToMeasurementProjectionMatrix();
 
             std::vector<Vector3D> _localToMeasurementProjection;
-
-            std::vector<double> _residuals;
-
 
             ///~ scattering info
             bool _scatterer;

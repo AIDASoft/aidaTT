@@ -24,6 +24,7 @@ namespace aidaTT
 {
     typedef DDSurfaces::ISurface ISurface;
     typedef DDSurfaces::IMaterial IMaterial;
+    typedef DDSurfaces::ISurface::Vector2D Vector2D;
 }
 #else
 #include "Vector3D.hh"
@@ -49,6 +50,26 @@ namespace aidaTT
     {
 
         public:
+            /** Helper class for 2d vectors */
+            struct Vector2D
+            {
+                double _x, _y ;
+                Vector2D() : _x(0.), _y(0.) {}
+                Vector2D(double x, double y) : _x(x), _y(y) {}
+                double operator[](unsigned i) const
+                {
+                    return i == 0 ? _x : _y ;
+                }
+                double x() const
+                {
+                    return _x ;
+                }
+                double y() const
+                {
+                    return _y ;
+                }
+            };
+
             /// Destructor
             virtual ~ISurface() {}
 

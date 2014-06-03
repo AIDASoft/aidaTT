@@ -24,6 +24,7 @@ namespace aidaTT
          *  -- a scattering GblPoint needs the precision (expected inverse standard deviation)
          */
 
+
         /// create vector of GBL points
         std::vector < gbl::GblPoint > theListOfPoints;
 
@@ -31,7 +32,6 @@ namespace aidaTT
 
         for(std::vector<trajectoryElement*>::const_iterator element = elements.begin(), last = elements.end(); element < last; ++element)
             {
-
                 const fiveByFiveMatrix& jac = (*element)->jacobian();
 
                 ///~ initialise point with jacobian from last to the current element
@@ -63,7 +63,7 @@ namespace aidaTT
                         const std::vector<double>& residuals = (*element)->measurementResiduals();
 
                         //~ convert the vector to an array:
-                        const double* res = residuals.data();
+                        const double* resid = residuals.data();
 
                         //~ 3) the precision of the measurements -- the inverse of the resolution
                         const std::vector<double>& errors = (*element)->measurementErrors();
@@ -79,10 +79,11 @@ namespace aidaTT
                         //~ convert the vector to an array:
                         const double* prec = precision.data();
 
-                        point.addMeasurement(TMatrixD(3, mDim, pL2M), TVectorD(mDim, res), TVectorD(mDim, prec));
+                        point.addMeasurement(TMatrixD(3, mDim, pL2M), TVectorD(mDim, resid), TVectorD(mDim, prec));
                     }
                 if((*element)->isScatterer())
                     {
+                        // TODO :: implement!
                         //~ now evaluate the scattering material
                         //~ the addScatterer routine will add a thin scatterer at the given position
                         //~ a thin scatter only changes the local direction, no offset. Multiple step approach:
@@ -98,19 +99,51 @@ namespace aidaTT
                 // store the point in the list that will be handed to the trajectory
                 theListOfPoints.push_back(point);
             }
+        /// TODO :: check validity before continuing!
 
-//~ if( !theListOfPoints.isValid() )
-        //~ throw something;
+        //~ this is not elegant -- delete previous data before starting again
+        if(_trajectory != NULL)
+            delete _trajectory;
 
         _trajectory = new gbl::GblTrajectory(theListOfPoints, true); /// TODO: pass info about magnetic field
 
         unsigned int returnValue = _trajectory->fit(_chisquare, _ndf, _lostweight);
 
         if(returnValue == 0)
-            return true;
+            {
+                _fillResults(TRAJ);
+                return true;
+            }
         else
             return false;
     }
+
+
+
+    void GBLInterface::_fillResults(const trajectory& TRAJ)
+    {
+        bool v = true;
+        double chs = _chisquare;
+        unsigned int n = _ndf;
+        double wl = _lostweight;
+
+        TVectorD tpCorr(5);
+        TMatrixDSym trackcovariance(5);
+        //~ // get the results at a given label in local cl track parameters
+        //~ // the track parameters are corrections to the curvilinear track parameters
+        _trajectory->getResults(0, tpCorr, trackcovariance);
+
+        Vector5 corrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
+        Vector5 trueCorrections = curvilinearToILDJacobian(corrections, Vector3D(0., 0., TRAJ.Bz())) * corrections;
+
+        Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + trueCorrections;
+
+        trackParameters tp;
+        tp.setTrackParameters(fittedParameters);
+        _theResults.setResults(v, chs, n, wl, tp);
+
+    }
+
 }
 /*  ORIGINAL
 

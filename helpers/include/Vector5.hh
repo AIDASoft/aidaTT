@@ -30,6 +30,10 @@ namespace aidaTT
              **/
             Vector5(const std::vector<double>&);
 
+            /** the construction with an array
+             **/
+            Vector5(const double*);
+
             /** the construction from five doubles
              **/
             Vector5(double, double, double, double, double);
@@ -39,6 +43,9 @@ namespace aidaTT
 
             /** assignment operator **/
             Vector5& operator=(const Vector5&);
+
+            /** addition operator **/
+            Vector5& operator+(const Vector5&);
 
             /** direct read access to the individual elements by index**/
             double operator()(unsigned int index) const;

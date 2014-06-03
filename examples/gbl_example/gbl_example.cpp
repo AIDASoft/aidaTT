@@ -29,6 +29,7 @@
 #include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "GBLInterface.hh"
+#include "fitResults.hh"
 
 using namespace std;
 using namespace lcio;
@@ -85,12 +86,16 @@ int main(int argc, char** argv)
 
     // the aidaTT stuff
 
-    /// create some bogus track parameters;
+    /// create some bogus track parameters:
+    ///~ test data is p = sqrt(3) * (1 1 1)^T
+    /// => d0 = 0; tanLambda = 1/sqrt(2), phi0 = pi/4, z0 = 0
+    // with B = 3.5T => omega = 3* 10^(-4) * 3.5 / sqrt(6)
     aidaTT::trackParameters bogusTP;
+    bogusTP.setTrackParameters(aidaTT::Vector5(3e-4 * 3.5 / sqrt(6), 1. / sqrt(2), M_PI_4, 0., 0.));
 
     // create the different objects needed for fitting
     // first a constant field parallel to z, 1T
-    aidaTT::ConstantSolenoidBField*  bfield = new aidaTT::ConstantSolenoidBField(1.);
+    aidaTT::ConstantSolenoidBField*  bfield = new aidaTT::ConstantSolenoidBField(3.5);
 
     // create the propagation object
     aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
@@ -98,11 +103,13 @@ int main(int argc, char** argv)
     // create the fitter object
     aidaTT::GBLInterface* fitter = new aidaTT::GBLInterface();
 
-    // now create a list of trajectory objects for the fitter
-    aidaTT::trajectory theMaster(bogusTP, fitter, bfield, propagation, &geom);
 
     while((evt = rdr->readNextEvent()) != 0)
         {
+            std::cout << " reading an event " << std::endl;
+            // now create a trajectory object to be fitted
+            aidaTT::trajectory theMaster(bogusTP, fitter, bfield, propagation, &geom);
+
             for(unsigned icol = 0, ncol = colNames.size() ; icol < ncol ; ++icol)
                 {
                     LCCollection* col = evt->getCollection(colNames[ icol ]) ;
@@ -117,7 +124,6 @@ int main(int argc, char** argv)
                             const aidaTT::ISurface* surf = surfMap[ id ] ;
                             if(surf->type().isSensitive())
                                 {
-                                    std::cout << " thank the lord " << std::endl;
                                     std::vector<double> resolutionDummy;
                                     resolutionDummy.push_back(0.01);
                                     resolutionDummy.push_back(0.12);
@@ -126,6 +132,12 @@ int main(int argc, char** argv)
                         }
                     theMaster.prepareForFitting();
                     theMaster.fit();
+
+                    const aidaTT::fitResults& result = theMaster.getFitResults();
+                    std::cout << " result chi2 " << result.chiSquare() << " with ndf " << result.ndf() << std::endl;
+                    std::cout << " fitted parameters are " << result.estimatedParameters() << std::endl;
+                    //~ if( result.valid() )
+                    //~ result =
                 }
         }
 

@@ -18,6 +18,7 @@ namespace aidaTT
     {
         _initialTrajectoryElements.clear();
 
+        /// TODO : implement different BField!
         _bfieldZ = _bfield->Bz(_referenceParameters.referencePoint());
     }
 
@@ -65,21 +66,11 @@ namespace aidaTT
 
         for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
             {
-                double __s = 0.; /// random value for init, never used
-                bool __intersects = false;
+                double s = 0.; /// random value for init, never used
+                bool intersects = _calculateIntersectionWithSurface(*surf, s);
 
-                /// currently three different types of surfaces are available
-                if((*surf)->type().isZCylinder())
-                    __intersects = _intersectsWithinZCylinderBounds(*surf, __s);
-                else if((*surf)->type().isZPlane())
-                    __intersects = _intersectWithinZPlaneBounds(*surf, __s);
-                else if((*surf)->type().isZDisk())
-                    __intersects = _intersectWithinZDiskBounds(*surf, __s);
-                else
-                    throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
-
-                if(__intersects)
-                    _intersectionsList.push_back(std::make_pair(__s, (*surf)));
+                if(intersects)
+                    _intersectionsList.push_back(std::make_pair(s, (*surf)));
             }
 
         return _intersectionsList;
@@ -87,7 +78,29 @@ namespace aidaTT
 
 
 
-    bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s)
+    const fitResults& trajectory::getFitResults()
+    {
+        return _fittingAlgorithm->getResults();
+    }
+
+
+
+    bool trajectory::_calculateIntersectionWithSurface(const ISurface* surf, double& s, Vector2D* localUV)
+    {
+        /// currently three different types of surfaces are available
+        if(surf->type().isZCylinder())
+            return _intersectsWithinZCylinderBounds(surf, s, localUV);
+        else if(surf->type().isZPlane())
+            return _intersectWithinZPlaneBounds(surf, s, localUV);
+        else if(surf->type().isZDisk())
+            return _intersectWithinZDiskBounds(surf, s, localUV);
+        else
+            throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+    }
+
+
+
+    bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s, Vector2D* localUV)
     {
         //// TODO:: MISSING IMPLEMENTATION
         return false;
@@ -95,7 +108,7 @@ namespace aidaTT
 
 
 
-    bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s)
+    bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV)
     {
         const Vector3D refpoint = _referenceParameters.referencePoint();
 
@@ -152,33 +165,54 @@ namespace aidaTT
         else if(insideFirst && S0 > 0. && !insideSecond)
             {
                 s = S0;
+                if(localUV != NULL)
+                    _calculateLocalCoordinates(surf, sol0, localUV);
                 return true;
             }
         else if(!insideFirst && insideSecond &&  S1 > 0.)
             {
                 s = S1;
+                if(localUV != NULL)
+                    _calculateLocalCoordinates(surf, sol1, localUV);
+
                 return true;
             }
         else // both are valid , choose the smaller solution
             {
                 if(S0 > 0. && S1 < 0.)
-                    s = S0;
-                else if(S0 < 0. && S1 > 0.)
-                    s = S1;
-                else // both are positive
                     {
                         s = S0;
-                        if(S1 < S0)
-                            s = S1;
+                        if(localUV != NULL)
+                            _calculateLocalCoordinates(surf, sol0, localUV);
+                    }
+                else if(S0 < 0. && S1 > 0.)
+                    {
+                        s = S1;
+                        if(localUV != NULL)
+                            _calculateLocalCoordinates(surf, sol1, localUV);
+                    }
+                else // both are positive
+                    {
+                        if(S0 < S1)
+                            {
+                                s = S0;
+                                if(localUV != NULL)
+                                    _calculateLocalCoordinates(surf, sol0, localUV);
+                            }
+                        else
+                            {
+                                s = S1;
+                                if(localUV != NULL)
+                                    _calculateLocalCoordinates(surf, sol1, localUV);
+                            }
                     }
                 return true;
-
             }
     }
 
 
 
-    bool trajectory::_intersectWithinZDiskBounds(const ISurface* surf, double& s)
+    bool trajectory::_intersectWithinZDiskBounds(const ISurface* surf, double& s, Vector2D* localUV)
     {
         // the z position of the plane
         double planePositionZ = surf->origin().z();
@@ -187,7 +221,24 @@ namespace aidaTT
         double y = _calculateYfromS(s);
 
         Vector3D thePlace = Vector3D(x, y, planePositionZ);
-        return surf->insideBounds(thePlace);
+
+        if(surf->insideBounds(thePlace))
+            {
+                if(localUV != NULL)
+                    _calculateLocalCoordinates(surf, thePlace, localUV);
+                return true;
+            }
+        else
+            return false;
+    }
+
+
+
+    void trajectory::_calculateLocalCoordinates(const ISurface* surf, const Vector3D& position, Vector2D* localUV)
+    {
+        Vector2D local = surf->globalToLocal(position);
+        localUV->_x = local.x();
+        localUV->_y = local.y();
     }
 
 
@@ -325,12 +376,19 @@ namespace aidaTT
 
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
-        double s =  _calculateSfromXY(position.x(), position.y());
+        Vector2D* referenceUV = new Vector2D();
+        double s =  0;
+        _calculateIntersectionWithSurface(&surface, s, referenceUV);
+
+        Vector2D* measuredUV = new Vector2D(surface.globalToLocal(position));
+
+        std::pair<Vector2D*, Vector2D*>* theUVs = new std::pair<Vector2D*, Vector2D*> (measuredUV, referenceUV);
+
         std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, _calculateLocalCurvilinearSystem(s), id));
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, theUVs, _calculateLocalCurvilinearSystem(s), id));
     }
 
 

@@ -37,7 +37,7 @@ namespace aidaTT
             /// inherited methods:
             bool fit(const trajectory&);
 
-            fitResults getResults() const
+            const fitResults& getResults() const
             {
                 return _theResults;
             };
@@ -46,7 +46,7 @@ namespace aidaTT
             GBLInterface(const GBLInterface&);
             GBLInterface& operator=(const GBLInterface&);
 
-///< GBL trajectory
+            ///< GBL trajectory
             gbl::GblTrajectory* _trajectory;
             ///< flag for curved track (helix, else straight line)
             bool _curvature;
@@ -72,6 +72,7 @@ namespace aidaTT
             ///< label of reference point
             unsigned int _refPointIndex;
 
+            void _fillResults(const trajectory&);
             fitResults _theResults;
     };
 
