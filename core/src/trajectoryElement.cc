@@ -28,8 +28,8 @@ namespace aidaTT
     ///~ calculate the residuals from the two UV vectors: measurement MINUS reference value
     void trajectoryElement::_calculateResiduals()
     {
-        _residuals.push_back((_UVvalues->first)->x() - (_UVvalues->second)->x());
-        _residuals.push_back((_UVvalues->first)->y() - (_UVvalues->second)->y());
+        _residuals.push_back((_UVvalues->first)->u() - (_UVvalues->second)->u());
+        _residuals.push_back((_UVvalues->first)->v() - (_UVvalues->second)->v());
     }
 
 

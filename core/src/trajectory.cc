@@ -237,8 +237,8 @@ namespace aidaTT
     void trajectory::_calculateLocalCoordinates(const ISurface* surf, const Vector3D& position, Vector2D* localUV)
     {
         Vector2D local = surf->globalToLocal(position);
-        localUV->_x = local.x();
-        localUV->_y = local.y();
+        localUV->_u = local.u();
+        localUV->_v = local.v();
     }
 
 

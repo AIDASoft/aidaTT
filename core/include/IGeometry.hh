@@ -53,20 +53,20 @@ namespace aidaTT
             /** Helper class for 2d vectors */
             struct Vector2D
             {
-                double _x, _y ;
-                Vector2D() : _x(0.), _y(0.) {}
-                Vector2D(double x, double y) : _x(x), _y(y) {}
+                double _u, _v ;
+                Vector2D() : _u(0.), _v(0.) {}
+                Vector2D(double u, double v) : _u(u), _v(v) {}
                 double operator[](unsigned i) const
                 {
-                    return i == 0 ? _x : _y ;
+                    return i == 0 ? _u : _v ;
                 }
-                double x() const
+                double u() const
                 {
-                    return _x ;
+                    return _u ;
                 }
-                double y() const
+                double v() const
                 {
-                    return _y ;
+                    return _v ;
                 }
             };
 
