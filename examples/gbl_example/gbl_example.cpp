@@ -8,15 +8,18 @@
 // c++
 #include <iostream>
 #include <map>
+#include <string>
 
 // lcio
 #include "lcio.h"
-#include "IO/LCReader.h"
+#include "IO/LCWriter.h"
 #include "EVENT/LCEvent.h"
 #include "EVENT/LCCollection.h"
 #include "EVENT/SimTrackerHit.h"
 #include "UTIL/ILDConf.h"
 
+#include <IMPL/LCCollectionVec.h>
+#include "IMPL/TrackImpl.h"
 
 // DD4hep
 #include "DD4hepGeometry.hh"
@@ -74,6 +77,11 @@ int main(int argc, char** argv)
     LCReader* rdr = LCFactory::getInstance()->createLCReader() ;
     rdr->open(lcioFileName) ;
 
+    std::string outFileName = "trackTest.slcio";
+
+    LCWriter* wrt = LCFactory::getInstance()->createLCWriter() ;
+    wrt->open(outFileName) ;
+
     LCEvent* evt = 0 ;
 
     std::vector< std::string > colNames ;
@@ -106,6 +114,10 @@ int main(int argc, char** argv)
 
     while((evt = rdr->readNextEvent()) != 0)
         {
+
+            IMPL::LCCollectionVec* outputTrackCollection = new IMPL::LCCollectionVec(EVENT::LCIO::TRACK);
+            std::string outName = "trytracks";
+
             std::cout << " reading an event " << std::endl;
             // now create a trajectory object to be fitted
             aidaTT::trajectory theMaster(bogusTP, fitter, bfield, propagation, &geom);
@@ -130,13 +142,37 @@ int main(int argc, char** argv)
                                     theMaster.addMeasurement(sHit->getPosition(), resolutionDummy, *surf, sHit);
                                 }
                         }
+
                     theMaster.prepareForFitting();
                     theMaster.fit();
 
                     const aidaTT::fitResults& result = theMaster.getFitResults();
+
+
+                    TrackImpl* theTrack = new TrackImpl();
+                    theTrack->setOmega(result.estimatedParameters()(0)) ;
+                    theTrack->setTanLambda(result.estimatedParameters()(1));
+                    theTrack->setPhi(result.estimatedParameters()(2));
+                    theTrack->setD0(result.estimatedParameters()(3));
+                    theTrack->setZ0(result.estimatedParameters()(4));
+
+                    TrackImpl* theInitialTrack = new TrackImpl();
+                    theInitialTrack->setOmega(1e-3 / sqrt(2) / 3. / 3.5) ;
+                    theInitialTrack->setTanLambda(.1 / sqrt(2));
+                    theInitialTrack->setPhi(M_PI_4);
+                    theInitialTrack->setD0(0.);
+                    theInitialTrack->setZ0(0.);
+
                     std::cout << " result chi2 " << result.chiSquare() << " with ndf " << result.ndf() << std::endl;
-                    std::cout << " fitted parameters are " << result.estimatedParameters() << std::endl;
+
+                    outputTrackCollection->addElement(theTrack);
+                    outputTrackCollection->addElement(theInitialTrack);
+
                 }
+            evt->addCollection(outputTrackCollection , outName);
+
+            wrt->writeEvent(evt);
+
         }
 
 

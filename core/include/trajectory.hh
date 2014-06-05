@@ -104,16 +104,17 @@ namespace aidaTT
             {
                 return _bfieldZ;
             };
-            /// methods after fitting
+
+            // methods after fitting
             //~ std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
             //~ std::vector<trajectoryElement*> getOutliers() const;
-//~
+
             //~ /// quantify the results
             //~ double getChiSquare() const;
             //~ unsigned int getNDF() const;
 
         private:
-            /* disable assignment */
+            /// disable assignment
             trajectory operator=(const trajectory&);
 
             // the  internal parts
