@@ -2,6 +2,7 @@
 #define FITRESULTS_HH
 
 #include <ostream>
+#include "trackParameters.hh"
 
 namespace aidaTT
 {
