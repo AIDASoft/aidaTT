@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <vector>
+#include <ostream>
 
 namespace aidaTT
 {
@@ -53,9 +54,9 @@ namespace aidaTT
     class trajectoryElement
     {
         public:
-            ///~ standard constructor A for measurements: arc length, measurement directions,resolutions and local UV values, local curvilinear system and some identification
+            /// Measurement constructor: arc length, surface, measurement direction(s), resolution(s) and residual(s) plus the local curvilinear system and some identification
             trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&,
-                              std::pair<Vector2D*, Vector2D*>* uvs, std::pair<Vector3D, Vector3D>*,  void* = NULL);
+                              const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);
@@ -148,7 +149,6 @@ namespace aidaTT
             trajectoryElement(const trajectoryElement&);
             trajectoryElement operator=(const trajectoryElement&);
 
-            void _calculateResiduals();
             void _calculateMaterial();
 
             ///~
@@ -163,8 +163,6 @@ namespace aidaTT
             std::vector<double> _resolutions;
             std::vector<double> _residuals;
 
-            std::pair<Vector2D*, Vector2D*>* _UVvalues;
-
             ///~ local curvilinear system
             std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
 
@@ -178,5 +176,8 @@ namespace aidaTT
 
             const void* const _id; // just store
     };
+
+
+
 }
 #endif // TRAJECTORYELEMENT_H

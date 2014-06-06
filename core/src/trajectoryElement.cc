@@ -2,14 +2,14 @@
 
 namespace aidaTT
 {
-    ///~ standard constructor A for measurements: arc length is given, the surface it belongs to and some identification
+    /// standard constructor for measurements: arc length is given, the surface it belongs to;
+    /// the measurement directions, resolution and residuals plus the local curvilinear system and some identification
     trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, std::vector<Vector3D>* measDir, const std::vector<double>& resolutions,
-                                         std::pair<Vector2D*, Vector2D*>* uvs, std::pair<Vector3D, Vector3D>* lCLS, void* id)
+                                         const std::vector<double>& residuals, std::pair<Vector3D, Vector3D>* lCLS, void* id)
         : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(&surface), _measurement(_surface->type().isSensitive()),
-          _measDirections(measDir), _resolutions(resolutions), _UVvalues(uvs), _localCurvilinearSystem(lCLS),  _id(id)
+          _measDirections(measDir), _resolutions(resolutions), _residuals(residuals), _localCurvilinearSystem(lCLS),  _id(id)
     {
         _calculateLocalToMeasurementProjectionMatrix();
-        _calculateResiduals();
     }
 
 
@@ -25,15 +25,6 @@ namespace aidaTT
     //~ {}
 
 
-    ///~ calculate the residuals from the two UV vectors: measurement MINUS reference value
-    void trajectoryElement::_calculateResiduals()
-    {
-        _residuals.push_back((_UVvalues->first)->u() - (_UVvalues->second)->u());
-        _residuals.push_back((_UVvalues->first)->v() - (_UVvalues->second)->v());
-    }
-
-
-
 
     trajectoryElement::~trajectoryElement()
     {
@@ -43,22 +34,7 @@ namespace aidaTT
             delete _measDirections;
         if(_jacobianFromPrevious)
             delete _jacobianFromPrevious;
-        if(_UVvalues)
-            {
-                delete _UVvalues->first;
-                delete _UVvalues->second;
-                delete _UVvalues;
-            }
     }
-
-
-// TO WRITE
-//~ std::pair<trackParameters, fullCovariance> const trajectoryElement::getFullState() { return ;}
-
-
-
-// TO WRITE
-//~ trackParameters const trajectoryElement::getStateVector();
 
 
 

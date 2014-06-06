@@ -99,7 +99,9 @@ int main(int argc, char** argv)
     /// => d0 = 0; tanLambda = 1/sqrt(2), phi0 = pi/4, z0 = 0
     // with B = 3.5T => omega = 3* 10^(-4) * 3.5 / sqrt(6)
     aidaTT::trackParameters bogusTP;
-    bogusTP.setTrackParameters(aidaTT::Vector5(3e-4 * 3.5 / sqrt(6), 1. / sqrt(2), M_PI_4, 0., 0.));
+    const double initialOmega = 3e-4 * 3.5 / sqrt(2);
+
+    bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega, .1 / sqrt(2), M_PI_4, 0., 0.));
 
     // create the different objects needed for fitting
     // first a constant field parallel to z, 1T
@@ -157,7 +159,7 @@ int main(int argc, char** argv)
                     theTrack->setZ0(result.estimatedParameters()(4));
 
                     TrackImpl* theInitialTrack = new TrackImpl();
-                    theInitialTrack->setOmega(1e-3 / sqrt(2) / 3. / 3.5) ;
+                    theInitialTrack->setOmega(initialOmega) ;
                     theInitialTrack->setTanLambda(.1 / sqrt(2));
                     theInitialTrack->setPhi(M_PI_4);
                     theInitialTrack->setD0(0.);

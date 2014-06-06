@@ -137,6 +137,8 @@ namespace aidaTT
                 if(inside)
                     {
                         s = S;
+                        if(localUV != NULL)
+                            _calculateLocalCoordinates(surf, thePlace, localUV);
                         return true;
                     }
                 else
@@ -376,19 +378,28 @@ namespace aidaTT
 
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
+
+        /// get reference information
         Vector2D* referenceUV = new Vector2D();
         double s =  0;
         _calculateIntersectionWithSurface(&surface, s, referenceUV);
 
+        /// calculate measurement info
         Vector2D* measuredUV = new Vector2D(surface.globalToLocal(position));
 
-        std::pair<Vector2D*, Vector2D*>* theUVs = new std::pair<Vector2D*, Vector2D*> (measuredUV, referenceUV);
+        // combining both delivers the actual residuals: measurement MINUS reference
+        const double udiff = measuredUV->u() - referenceUV->u();
+        const double vdiff = measuredUV->v() - referenceUV->v();
+
+        std::vector<double> residuals(2);
+        residuals[0] = udiff;
+        residuals[1] = vdiff;
 
         std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, theUVs, _calculateLocalCurvilinearSystem(s), id));
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, residuals, _calculateLocalCurvilinearSystem(s), id));
     }
 
 
