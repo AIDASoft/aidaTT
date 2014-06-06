@@ -23,14 +23,15 @@ namespace aidaTT
     class circle
     {
         public:
-            circle(double c0, double c1, double r) : _c0(c0), _c1(c1), _r(r) {};
+            circle(double c0, double c1, double r);
+
             double radius() const
             {
                 return _r;
             }
             double r2() const
             {
-                return _r * _r;
+                return (_r * _r) ;
             }
             std::pair<double, double> center() const
             {
@@ -54,7 +55,7 @@ namespace aidaTT
     class straightLine
     {
         public:
-            straightLine(double n0, double n1, double d) : _n0(n0), _n1(n1), _d0(d) {};
+            straightLine(double n0, double n1, double d);
             double distance() const
             {
                 return _d0;

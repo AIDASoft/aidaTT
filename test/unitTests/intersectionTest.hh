@@ -20,8 +20,11 @@ class intersectionTest : public UnitTesting::UnitTest
 
         aidaTT::circle* c1;
         aidaTT::circle* c2;
+        aidaTT::circle* c3;
         aidaTT::straightLine* sL1;
         aidaTT::straightLine* sL2;
+        aidaTT::straightLine* sL3;
+        aidaTT::straightLine* sL4;
 
 };
 #endif // INTERSECTIONTEST_HH

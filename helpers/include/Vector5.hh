@@ -8,14 +8,15 @@
 namespace aidaTT
 {
 
-    /** this is a simple abstraction of a five-element vector that will work with the matrix class
+    /** \page v5 Vector5
+     * This is a simple abstraction of a five-element vector that will work with the matrix class
      *
-     * it is a straightforward encapsulation of the gsl vector class with fixed size
+     * It is implemented as a straightforward encapsulation of the gsl vector class with fixed size.
      *
      */
 
 
-    ///~ a five element vector that abstracts the gsl vector
+    /// a five element vector that abstracts the gsl vector
     class Vector5
     {
             friend class fiveByFiveMatrix;

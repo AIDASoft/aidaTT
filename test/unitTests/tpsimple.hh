@@ -19,6 +19,10 @@ class tpsimple : public UnitTesting::UnitTest
         void _test();
 
         aidaTT::trackParameters* _one;
+        aidaTT::trackParameters* _two;
+        aidaTT::trackParameters* _three;
+        aidaTT::trackParameters* _four;
+
         typedef const double cdbl;
         cdbl a, b, c, d, e;
 

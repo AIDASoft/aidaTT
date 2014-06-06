@@ -12,9 +12,8 @@
 
 namespace aidaTT
 {
-
-    /*** trackParameters:: the main class for track parameter definition and interaction.
-     *
+    /// trackParameters:: the main class for track parameter definition and interaction
+    /***
      *  @version $Id
      *  @author Ch. Rosemann, DESY
      *

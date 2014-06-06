@@ -1,8 +1,31 @@
 #include "intersections.hh"
 
 #include <iostream>
+#include <stdexcept>
+
 namespace aidaTT
 {
+    circle::circle(double c0, double c1, double r) : _c0(c0), _c1(c1), _r(r)
+    {
+        if(r < 0.)
+            throw std::invalid_argument("[circle::circle] Error: radius must be >0  when creating a circle.");
+    }
+
+
+
+    straightLine::straightLine(double n0, double n1, double d) : _n0(n0), _n1(n1), _d0(d)
+    {
+        if(d < 0.)
+            throw std::invalid_argument("[straightLine::straightLine] Error: distance must be >= 0 when creating a straight line.");
+
+        if(fabs(n0) < 1e-12 && fabs(n1) < 1e-12)
+            {
+                throw std::invalid_argument("[straightLine::straightLine] Error: normal vector must be != zero.");
+            }
+    }
+
+
+
     intersections intersectCircleCircle(const circle& circ1, const circle& circ2)
     {
         double x1 = circ1.center().first;

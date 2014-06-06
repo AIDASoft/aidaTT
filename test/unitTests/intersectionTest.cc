@@ -1,5 +1,6 @@
 #include "intersectionTest.hh"
 
+#include <stdexcept>
 using namespace std;
 using namespace aidaTT;
 
@@ -37,6 +38,34 @@ void intersectionTest::_test()
     test_(floatCompare(sectLL[0].first, -0.5));
     test_(floatCompare(sectLL[0].second, 0.5));
     //    test_(floatCompare(_one->getYPerp(),     _one->getTrackParameters()(4)));
+
+    try
+        {
+            c3 = new circle(0., 0., -1.);
+        }
+    catch(std::invalid_argument& a)
+        {
+            test_(true);
+        }
+
+    try
+        {
+            sL3 = new straightLine(0., -1., -1.);
+        }
+    catch(std::invalid_argument& a)
+        {
+            test_(true);
+        }
+
+    try
+        {
+            sL4 = new straightLine(0., 0., 12.);
+        }
+    catch(std::invalid_argument& a)
+        {
+            test_(true);
+        }
+
 
 }
 

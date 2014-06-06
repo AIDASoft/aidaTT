@@ -42,6 +42,9 @@ void tpsimple::_test()
 {
     // create new trackparameters
     _one = new trackParameters();
+    _two = new trackParameters();
+    _three = new trackParameters();
+    _four = new trackParameters();
 
     // check whether all functions return the right values
     test_(floatCompare((*_one)(0) , 0.));
@@ -50,35 +53,59 @@ void tpsimple::_test()
     test_(floatCompare((*_one)(3) , 0.));
     test_(floatCompare((*_one)(4) , 0.));
 
-    for(size_t i = 0; i < 5; ++i)
-        test_(floatCompare(_one->parameters()(i) , 0.));
 
+    _two->setReferencePoint(*_refpoint);
+    _three->setTrackParameters(*_helix);
+    _four->setCovarianceMatrix(*_covmatrix);
+
+    for(size_t i = 0; i < 5; ++i)
+        {
+            test_(floatCompare(_one->parameters()(i) , 0.));
+            test_(floatCompare(_two->parameters()(i) , 0.));
+            test_(floatCompare(_four->parameters()(i) , 0.));
+        }
     for(size_t i = 0; i < 3; ++i)
-        test_(floatCompare(_one->referencePoint()[i], 0.));
+        {
+            test_(floatCompare(_one->referencePoint()[i], 0.));
+            test_(floatCompare(_three->referencePoint()[i], 0.));
+            test_(floatCompare(_four->referencePoint()[i], 0.));
+        }
 
     for(size_t i = 0; i < 5; ++i)
         for(size_t j = 0; j < 5; ++j)
             {
                 test_(floatCompare(_one->covarianceMatrix()(i, j), 0.));
+                test_(floatCompare(_two->covarianceMatrix()(i, j), 0.));
+                test_(floatCompare(_three->covarianceMatrix()(i, j), 0.));
             }
     // now use the setters
     _one->setTrackParameters(*_helix, *_covmatrix,  *_refpoint);
 
     // check the new values
     for(size_t i = 0; i < 5; ++i)
-        test_(floatCompare(_one->parameters()(i) , (*_helix)(i)));
-
+        {
+            test_(floatCompare(_one->parameters()(i) , (*_helix)(i)));
+            test_(floatCompare(_three->parameters()(i) , (*_helix)(i)));
+        }
     for(size_t i = 0; i < 3; ++i)
-        test_(floatCompare(_one->referencePoint()[i], (*_refpoint)[i]));
+        {
+            test_(floatCompare(_one->referencePoint()[i], (*_refpoint)[i]));
+            test_(floatCompare(_two->referencePoint()[i], (*_refpoint)[i]));
+        }
 
     for(size_t i = 0; i < 5; ++i)
         for(size_t j = 0; j < 5; ++j)
             {
                 if(i != j)
-                    test_(floatCompare(_one->covarianceMatrix()(i, j), 0.));
+                    {
+                        test_(floatCompare(_one->covarianceMatrix()(i, j), 0.));
+                        test_(floatCompare(_four->covarianceMatrix()(i, j), 0.));
+                    }
                 else
-                    test_(floatCompare(_one->covarianceMatrix()(i, j), 1.));
-
+                    {
+                        test_(floatCompare(_one->covarianceMatrix()(i, j), 1.));
+                        test_(floatCompare(_four->covarianceMatrix()(i, j), 1.));
+                    }
             }
 
     // check whether all functions return the right values
