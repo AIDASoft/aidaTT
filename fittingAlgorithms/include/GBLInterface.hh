@@ -3,7 +3,7 @@
 #ifndef GBLINTERFACE_H
 #define GBLINTERFACE_H
 #include "IFittingAlgorithm.hh"
-
+#include "trajectory.hh"
 #include "fiveByFiveMatrix.hh"
 #include "Vector5.hh"
 

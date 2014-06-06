@@ -1,7 +1,6 @@
 #ifndef IFITTINGALGORITHM_HH
 #define IFITTINGALGORITHM_HH
 
-#include "trajectory.hh"
 #include "fitResults.hh"
 
 namespace aidaTT
