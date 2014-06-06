@@ -46,31 +46,34 @@ namespace aidaTT
       * @version $Id: ISurface.h 1154 2014-05-09 13:46:26Z gaede $
       * @date Mar 7 2014
       */
+
+    /** Helper class for 2d vectors */
+    struct Vector2D
+    {
+        double _u, _v ;
+        Vector2D() : _u(0.), _v(0.) {}
+        Vector2D(double u, double v) : _u(u), _v(v) {}
+        double operator[](unsigned i) const
+        {
+            return i == 0 ? _u : _v ;
+        }
+        double u() const
+        {
+            return _u ;
+        }
+        double v() const
+        {
+            return _v ;
+        }
+    };
+
+
     class ISurface
     {
 
         public:
-            /** Helper class for 2d vectors */
-            struct Vector2D
-            {
-                double _u, _v ;
-                Vector2D() : _u(0.), _v(0.) {}
-                Vector2D(double u, double v) : _u(u), _v(v) {}
-                double operator[](unsigned i) const
-                {
-                    return i == 0 ? _u : _v ;
-                }
-                double u() const
-                {
-                    return _u ;
-                }
-                double v() const
-                {
-                    return _v ;
-                }
-            };
 
-            /// Destructor
+/// Destructor
             virtual ~ISurface() {}
 
             /// properties of the surface encoded in Type.
@@ -83,13 +86,19 @@ namespace aidaTT
             virtual bool insideBounds(const Vector3D& point, double epsilon = 1.e-4) const = 0 ;
 
             /** First direction of measurement U */
-            virtual const Vector3D& u(const Vector3D& point = Vector3D()) const = 0 ;
+            virtual Vector3D u(const Vector3D& point = Vector3D()) const = 0 ;
 
             /** Second direction of measurement V */
-            virtual const Vector3D& v(const Vector3D& point = Vector3D()) const = 0 ;
+            virtual Vector3D v(const Vector3D& point = Vector3D()) const = 0 ;
 
             /// Access to the normal direction at the given point
-            virtual const Vector3D& normal(const Vector3D& point = Vector3D()) const = 0 ;
+            virtual Vector3D normal(const Vector3D& point = Vector3D()) const = 0 ;
+
+            /** Convert the global position to the local position (u,v) on the surface */
+            virtual Vector2D globalToLocal(const Vector3D& point) const = 0 ;
+
+            /** Convert the local position (u,v) on the surface to the global position*/
+            virtual Vector3D localToGlobal(const Vector2D& point) const = 0 ;
 
             /** Get Origin of local coordinate system on surface */
             virtual const Vector3D& origin() const = 0 ;
