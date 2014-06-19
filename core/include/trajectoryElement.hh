@@ -133,7 +133,7 @@ namespace aidaTT
             ///~ and finally: the projection matrix from the local track frame to the measurement system
             const std::vector<Vector3D>& localToMeasurementProjection() const
             {
-                return _localToMeasurementProjection;
+                return *_localToMeasurementProjection;
             };
 
             ///~ set the jacobian from the previous element -- ownership of the memory is transferred
@@ -150,6 +150,7 @@ namespace aidaTT
             trajectoryElement operator=(const trajectoryElement&);
 
             void _calculateMaterial();
+            void _calculateLocalToMeasurementProjectionMatrix();
 
             ///~
             double _arclength;
@@ -166,9 +167,7 @@ namespace aidaTT
             ///~ local curvilinear system
             std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
 
-            void _calculateLocalToMeasurementProjectionMatrix();
-
-            std::vector<Vector3D> _localToMeasurementProjection;
+            std::vector<Vector3D>* _localToMeasurementProjection;
 
             ///~ scattering info
             bool _scatterer;
@@ -176,8 +175,5 @@ namespace aidaTT
 
             const void* const _id; // just store
     };
-
-
-
 }
 #endif // TRAJECTORYELEMENT_H

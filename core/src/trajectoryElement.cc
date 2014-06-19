@@ -1,4 +1,5 @@
 #include "trajectoryElement.hh"
+#include "helixGymnastics.hh"
 
 namespace aidaTT
 {
@@ -34,6 +35,8 @@ namespace aidaTT
             delete _measDirections;
         if(_jacobianFromPrevious)
             delete _jacobianFromPrevious;
+        if(_localToMeasurementProjection)
+            delete _localToMeasurementProjection;
     }
 
 
@@ -43,13 +46,6 @@ namespace aidaTT
         if(!_measurement)
             return;
 
-        const Vector3D clU = _localCurvilinearSystem->first;
-        const Vector3D clV = _localCurvilinearSystem->second;
-
-        for(std::vector<Vector3D>::iterator measDir = _measDirections->begin(), last = _measDirections->end(); measDir < last; ++measDir)
-            {
-                Vector3D projection = ((*measDir) * clU) * clU + ((*measDir) * clV) * clV;
-                _localToMeasurementProjection.push_back(projection);
-            }
+        _localToMeasurementProjection = calculateLocalToMeasurementProjectionMatrix(_localCurvilinearSystem->first, _localCurvilinearSystem->second, *_measDirections);
     }
 }

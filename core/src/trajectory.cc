@@ -157,8 +157,6 @@ namespace aidaTT
         const double S1 = calculateSfromXY(X1, Y1, _referenceParameters);
         const double Z1 = calculateZfromS(S1, _referenceParameters);
 
-        std::cout << " candidate 1 has s " << S0 << " at position " << X0 << "/" << Y0 << std::endl;
-        std::cout << " candidate 2 has s " << S1 << " at position " << X1 << "/" << Y1 << std::endl;
         Vector3D sol0(X0, Y0, Z0);
         Vector3D sol1(X1, Y1, Z1);
 
@@ -317,7 +315,7 @@ namespace aidaTT
                 fiveByFiveMatrix* j = new fiveByFiveMatrix;
                 (_initialTrajectoryElements.at(0))->setJacobian(j);
             }
-        /// now the rest
+        /// now the really interesting ones
         for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin() + 1, last = _initialTrajectoryElements.end(); element < last; ++element)
             {
                 ///~ obtain the two arc lengths
@@ -332,9 +330,6 @@ namespace aidaTT
                 fiveByFiveMatrix* jacob = new fiveByFiveMatrix;
                 _propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField);
                 (*element)->setJacobian(jacob);
-                std::cout << " difference in s is " << currS - prevS << " with cosLambda = " << cosLambda << " so dw is " << dw << std::endl;
-                std::cout << " tangent at start is " << tstart << " at end it's " << tend << std::endl;
-                std::cout << " jacobian is " << *jacob << std::endl;
             }
     }
 
