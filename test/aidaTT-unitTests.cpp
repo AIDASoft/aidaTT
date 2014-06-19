@@ -9,6 +9,7 @@
 #include "unitTests/spacevectors.hh"
 #include "unitTests/intersectionTest.hh"
 #include "unitTests/resultTest.hh"
+#include "unitTests/helixCalculations.hh"
 using namespace UnitTesting;
 using namespace std;
 
@@ -20,6 +21,7 @@ void addSimpleTests(UnitTestSuite& _test)
     _test.addTest(new spacevectors);
     _test.addTest(new intersectionTest);
     _test.addTest(new resultTest);
+    _test.addTest(new helixCalculations);
 }
 
 

@@ -6,11 +6,14 @@
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
+#include "helixGymnastics.hh"
+
 #include "IPropagation.hh"
 #include "IGeometry.hh"
 #include "IBField.hh"
 #include "IFittingAlgorithm.hh"
 #include "Vector3D.hh"
+
 #include "fitResults.hh"
 
 namespace aidaTT
@@ -137,23 +140,6 @@ namespace aidaTT
             bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL);
             bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL);
 
-            double _calculateRadius() const;
-            double _calculateXCenter() const;
-            double _calculateYCenter() const;
-
-            double _calculatePhifromXY(double, double) const;
-            double _calculateSfromXY(double, double) const;
-            double _calculateSfromXY(std::pair<double, double> k) const
-            {
-                return _calculateSfromXY(k.first, k.second);
-            }
-            double _calculateXfromS(double) const;
-            double _calculateYfromS(double) const;
-            double _calculateZfromS(double) const;
-
-            Vector3D _calculateTangent(double);
-
-            std::pair<Vector3D, Vector3D>* _calculateLocalCurvilinearSystem(double);
 
 
             /*

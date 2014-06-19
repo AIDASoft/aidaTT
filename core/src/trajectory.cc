@@ -118,9 +118,9 @@ namespace aidaTT
         const double dist = fabs(surf->distance(refpoint));
         straightLine line(nx, ny, dist);
         // create circle
-        const double radius  = _calculateRadius();
-        const double xcenter = _calculateXCenter();
-        const double ycenter = _calculateYCenter();
+        const double radius  = calculateRadius(_referenceParameters);
+        const double xcenter = calculateXCenter(_referenceParameters);
+        const double ycenter = calculateYCenter(_referenceParameters);
         circle circ(xcenter, ycenter, radius);
 
         intersections candidates = intersectCircleStraightLine(circ, line);
@@ -129,8 +129,8 @@ namespace aidaTT
             return false;
         else if(candidates.number() == 1)
             {
-                const double S = _calculateSfromXY(candidates[0]);
-                const double Z = _calculateZfromS(S);
+                const double S = calculateSfromXY(candidates[0], _referenceParameters);
+                const double Z = calculateZfromS(S, _referenceParameters);
                 Vector3D thePlace(candidates[0].first, candidates[0].second, Z);
                 bool inside = surf->insideBounds(thePlace);
 
@@ -149,13 +149,16 @@ namespace aidaTT
         /// calculate all values first, then evaluate
         const double X0 = candidates[0].first;
         const double Y0 = candidates[0].second;
-        const double S0 = _calculateSfromXY(X0, Y0);
-        const double Z0 = _calculateZfromS(S0);
+        const double S0 = calculateSfromXY(X0, Y0, _referenceParameters);
+        const double Z0 = calculateZfromS(S0, _referenceParameters);
 
         const double X1 = candidates[1].first;
         const double Y1 = candidates[1].second;
-        const double S1 = _calculateSfromXY(X1, Y1);
-        const double Z1 = _calculateZfromS(S1);
+        const double S1 = calculateSfromXY(X1, Y1, _referenceParameters);
+        const double Z1 = calculateZfromS(S1, _referenceParameters);
+
+        std::cout << " candidate 1 has s " << S0 << " at position " << X0 << "/" << Y0 << std::endl;
+        std::cout << " candidate 2 has s " << S1 << " at position " << X1 << "/" << Y1 << std::endl;
         Vector3D sol0(X0, Y0, Z0);
         Vector3D sol1(X1, Y1, Z1);
 
@@ -219,8 +222,8 @@ namespace aidaTT
         // the z position of the plane
         double planePositionZ = surf->origin().z();
         s = (planePositionZ - calculateZ0(_referenceParameters)) / calculateTanLambda(_referenceParameters);
-        double x = _calculateXfromS(s);
-        double y = _calculateYfromS(s);
+        double x = calculateXfromS(s, _referenceParameters);
+        double y = calculateYfromS(s, _referenceParameters);
 
         Vector3D thePlace = Vector3D(x, y, planePositionZ);
 
@@ -245,140 +248,8 @@ namespace aidaTT
 
 
 
-    double  trajectory::_calculatePhifromXY(double x, double y) const
-    {
-        // x0 and y0: p.c.a. coordinates w.r.t reference point
-        static const double x0   = calculateX0(_referenceParameters);
-        static const double y0   = calculateY0(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-        static const double curvature = calculateCurvature(_referenceParameters);
-
-        return atan2(sin(phi0) - curvature * (x - x0), cos(phi0) + curvature * (y - y0));
-    }
-
-
-
-    double  trajectory::_calculateSfromXY(double x, double y) const
-    {
-        // x0 and y0: p.c.a. coordinates w.r.t reference point
-        static const double x0   = calculateX0(_referenceParameters);
-        static const double y0   = calculateY0(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-
-        double phi = _calculatePhifromXY(x, y);
-        return ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(phi) / phi) ;
-    }
-
-
-
-    double  trajectory::_calculateXfromS(double s) const
-    {
-        static const double x0   = calculateX0(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-        static const double curvature = calculateCurvature(_referenceParameters);
-        if(curvature != 0.)
-            return (x0 + 2. / curvature * sin(curvature * s / 2.) * cos(phi0 - curvature * s / 2.));
-        else
-            return (x0 + s * cos(phi0));
-    }
-
-
-
-    double  trajectory::_calculateYfromS(double s) const
-    {
-        static const double y0   = calculateY0(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-        static const double curvature = calculateCurvature(_referenceParameters);
-        if(curvature != 0.)
-            return (y0 + 2. / curvature * sin(curvature * s / 2.) * sin(phi0 - curvature * s / 2.));
-        else
-            return (y0 + s * cos(phi0));
-    }
-
-
-
-    double  trajectory::_calculateZfromS(double s) const
-    {
-        static const double tanLambda = calculateTanLambda(_referenceParameters);
-        static const double z0        = calculateZ0(_referenceParameters);
-        return z0 + s * tanLambda;
-    }
-
-
-
-    Vector3D trajectory::_calculateTangent(double s)
-    {
-        static const double omega = calculateCurvature(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-        static const double lambda = calculateLambda(_referenceParameters);
-
-        double t0 = cos(phi0 - omega * s) * cos(lambda);
-        double t1 = sin(phi0 - omega * s) * cos(lambda);
-        double t2 = sin(lambda);
-
-        return Vector3D(t0, t1, t2);
-    }
-
-
-    std::pair<Vector3D, Vector3D>* trajectory::_calculateLocalCurvilinearSystem(double s)
-    {
-        static const double omega = calculateCurvature(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-        static const double lambda = calculateLambda(_referenceParameters);
-
-        const double u0 = - sin(phi0 - omega * s);
-        const double u1 =   cos(phi0 - omega * s);
-        const double u2 = 0.;
-
-        const double v0 = - cos(phi0 - omega * s) * sin(lambda);
-        const double v1 = - sin(phi0 - omega * s) * sin(lambda);
-        const double v2 = cos(lambda);
-
-        return new std::pair<Vector3D, Vector3D> (Vector3D(u0, u1, u2), Vector3D(v0, v1, v2));
-    }
-
-
-
-
-    double trajectory::_calculateRadius() const
-    {
-        static const double curvature = calculateCurvature(_referenceParameters);
-
-        if(curvature != 0.)
-            return 1. / curvature;
-        return 0.;
-    }
-
-
-
-    double trajectory::_calculateXCenter() const
-    {
-        static const double curvature = calculateCurvature(_referenceParameters);
-        static const double dzero = calculateDistanceFromPCA(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-
-        if(curvature != 0.)
-            return _referenceParameters.referencePoint().x() + (1. / curvature - dzero) * sin(phi0);
-        return 0.;
-    }
-
-
-
-    double trajectory::_calculateYCenter() const
-    {
-        static const double curvature = calculateCurvature(_referenceParameters);
-        static const double dzero = calculateDistanceFromPCA(_referenceParameters);
-        static const double phi0 = calculatePhi0(_referenceParameters);
-
-        if(curvature != 0.)
-            return _referenceParameters.referencePoint().y() - (1. / curvature - dzero) * cos(phi0);
-        return 0.;
-    }
-
-
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
     {
-
         /// get reference information
         Vector2D* referenceUV = new Vector2D();
         double s =  0;
@@ -399,14 +270,14 @@ namespace aidaTT
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, residuals, _calculateLocalCurvilinearSystem(s), id));
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
     }
 
 
 
     void trajectory::addElement(const Vector3D& point, void* id)
     {
-        double s =  _calculateSfromXY(point.x(), point.y());
+        double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
         _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
     }
 
@@ -414,13 +285,13 @@ namespace aidaTT
 
     void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
     {
-        double s =  _calculateSfromXY(point.x(), point.y());
+        double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
 // REDO!        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, id));
     }
 
 
 
-    static    bool compareTrajectoryElements(trajectoryElement* one, trajectoryElement* two)
+    bool compareTrajectoryElements(trajectoryElement* one, trajectoryElement* two)
     {
         return (one->arcLength() < two->arcLength());
     }
@@ -432,7 +303,7 @@ namespace aidaTT
         ///~ first sort the trajectory elements by arclength
         sort(_initialTrajectoryElements.begin(), _initialTrajectoryElements.end(), compareTrajectoryElements);
 
-        static const double cosLambda = cos(calculateLambda(_referenceParameters));
+        const double cosLambda = cos(calculateLambda(_referenceParameters));
 
         ///~ TODO: this uses a static b field for now ...
         const double qbyp      = calculateQoverP(_referenceParameters, _bfieldZ) ;
@@ -455,12 +326,15 @@ namespace aidaTT
                 ///~ calculate 3D arclength -> divide 2D arc length by cos lambda
                 double dw = (currS - prevS) / cosLambda;
 
-                Vector3D tstart = _calculateTangent(prevS);
-                Vector3D tend   = _calculateTangent(currS);
+                Vector3D tstart = calculateTangent(prevS, _referenceParameters);
+                Vector3D tend   = calculateTangent(currS, _referenceParameters);
 
                 fiveByFiveMatrix* jacob = new fiveByFiveMatrix;
                 _propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField);
                 (*element)->setJacobian(jacob);
+                std::cout << " difference in s is " << currS - prevS << " with cosLambda = " << cosLambda << " so dw is " << dw << std::endl;
+                std::cout << " tangent at start is " << tstart << " at end it's " << tend << std::endl;
+                std::cout << " jacobian is " << *jacob << std::endl;
             }
     }
 

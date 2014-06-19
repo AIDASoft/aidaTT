@@ -51,17 +51,22 @@ namespace aidaTT
     }
 
 
+
     double calculateDistanceFromPCA(const trackParameters& tp)
     {
         /// L3 type only
         return tp.parameters()(3);
     }
 
+
+
     double calculateCurvature(const trackParameters& tp)
     {
         /// L3 type only
         return tp.parameters()(0);
     }
+
+
 
     double calculateQoverP(const trackParameters& tp, double bfield)
     {

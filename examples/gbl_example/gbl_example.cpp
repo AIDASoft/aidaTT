@@ -24,6 +24,7 @@
 // DD4hep
 #include "DD4hepGeometry.hh"
 #include "DD4hep/LCDD.h"
+#include "DD4hep/TGeoUnits.h"
 #include "DDRec/SurfaceManager.h"
 
 
@@ -31,6 +32,7 @@
 #include "AidaTT.hh"
 #include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
+#include "simplifiedPropagation.hh"
 #include "GBLInterface.hh"
 #include "fitResults.hh"
 
@@ -95,11 +97,11 @@ int main(int argc, char** argv)
     // the aidaTT stuff
 
     /// create some bogus track parameters:
-    ///~ test data is p = sqrt(3) * (1 1 1)^T
+    ///~ test data is p = 3./sqrt(2) * (1 1 .1)^T
     /// => d0 = 0; tanLambda = 1/sqrt(2), phi0 = pi/4, z0 = 0
     // with B = 3.5T => omega = 3* 10^(-4) * 3.5 / sqrt(6)
     aidaTT::trackParameters bogusTP;
-    const double initialOmega = 3e-4 * 3.5 / sqrt(2);
+    const double initialOmega = 3e-4 * 3.5 / sqrt(2.);
 
     bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega, .1 / sqrt(2), M_PI_4, 0., 0.));
 
@@ -109,6 +111,7 @@ int main(int argc, char** argv)
 
     // create the propagation object
     aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
+    //aidaTT::simplifiedPropagation* propagation = new aidaTT::simplifiedPropagation();
 
     // create the fitter object
     aidaTT::GBLInterface* fitter = new aidaTT::GBLInterface();
@@ -134,14 +137,19 @@ int main(int argc, char** argv)
                             SimTrackerHit* sHit = (SimTrackerHit*) col->getElementAt(i) ;
                             long64 id = sHit->getCellID0() ;
                             idDecoder.setValue(id) ;
+                            double recalcPos[3] = {0., 0., 0.}; // could it be more ugly?
 
                             const aidaTT::ISurface* surf = surfMap[ id ] ;
                             if(surf->type().isSensitive())
                                 {
                                     std::vector<double> resolutionDummy;
-                                    resolutionDummy.push_back(0.01);
-                                    resolutionDummy.push_back(0.12);
-                                    theMaster.addMeasurement(sHit->getPosition(), resolutionDummy, *surf, sHit);
+                                    resolutionDummy.push_back(0.001);
+                                    resolutionDummy.push_back(0.0012);
+                                    for(unsigned int i = 0; i < 3; ++i)
+                                        recalcPos[i] = sHit->getPosition()[i] * tgeo::mm;
+
+                                    cout << " the hit is now at [" << recalcPos[0] << ", " << recalcPos[1] << ", " << recalcPos[2] << "]" << endl; //" on surface " << *surf << endl;
+                                    theMaster.addMeasurement(recalcPos, resolutionDummy, *surf, sHit);
                                 }
                         }
 
@@ -149,7 +157,6 @@ int main(int argc, char** argv)
                     theMaster.fit();
 
                     const aidaTT::fitResults& result = theMaster.getFitResults();
-
 
                     TrackImpl* theTrack = new TrackImpl();
                     theTrack->setOmega(result.estimatedParameters()(0)) ;
@@ -165,7 +172,6 @@ int main(int argc, char** argv)
                     theInitialTrack->setD0(0.);
                     theInitialTrack->setZ0(0.);
 
-                    std::cout << " result chi2 " << result.chiSquare() << " with ndf " << result.ndf() << std::endl;
 
                     outputTrackCollection->addElement(theTrack);
                     outputTrackCollection->addElement(theInitialTrack);
