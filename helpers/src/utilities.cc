@@ -71,9 +71,8 @@ namespace aidaTT
     double calculateQoverP(const trackParameters& tp, double bfield)
     {
         if(bfield != 0.)
-            return (- cos(calculateLambda(tp)) * calculateCurvature(tp) * 1. / bfield);
+            return (- cos(calculateLambda(tp)) * calculateCurvature(tp) / bfield);
         else
             return 0.;
     }
-
 }

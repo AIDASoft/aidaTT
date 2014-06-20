@@ -96,7 +96,7 @@ namespace aidaTT
                 return _scatterer;
             };
 
-            bool isThicksScatterer() const
+            bool isThickScatterer() const
             {
                 return _thick;
             };

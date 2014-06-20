@@ -24,7 +24,7 @@
 // DD4hep
 #include "DD4hepGeometry.hh"
 #include "DD4hep/LCDD.h"
-#include "DD4hep/TGeoUnits.h"
+#include "DD4hep/DD4hepUnits.h"
 #include "DDRec/SurfaceManager.h"
 
 
@@ -101,9 +101,16 @@ int main(int argc, char** argv)
     /// => d0 = 0; tanLambda = 1/sqrt(2), phi0 = pi/4, z0 = 0
     // with B = 3.5T => omega = 3* 10^(-4) * 3.5 / sqrt(6)
     aidaTT::trackParameters bogusTP;
-    const double initialOmega = 3e-4 * 3.5 / sqrt(2.);
 
-    bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega, .1 / sqrt(2), M_PI_4, 0., 0.));
+    //~ const double initialOmega = 3.5*1e-5;
+    //~ const double initialTanLambda = 0.;
+    //~ const double initialPhi = 5*M_PI_4;
+
+    const double initialOmega = 1.5 * 1e-4;
+    const double initialTanLambda = 1.;
+    const double initialPhi = M_PI_2;
+
+    bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega * 10., initialTanLambda, initialPhi, 0., 0.));
 
     // create the different objects needed for fitting
     // first a constant field parallel to z, 1T
@@ -129,8 +136,18 @@ int main(int argc, char** argv)
 
             for(unsigned icol = 0, ncol = colNames.size() ; icol < ncol ; ++icol)
                 {
-                    LCCollection* col = evt->getCollection(colNames[ icol ]) ;
+                    LCCollection* col = NULL;
+                    try
+                        {
+                            col = evt->getCollection(colNames[ icol ]) ;
+                        }
+                    catch(DataNotAvailableException &e)
+                        {
+                            continue;
+                        }
+
                     int nHit = col->getNumberOfElements() ;
+                    std::cout << " there are " << nHit << " hits in the vxd collection " << std::endl;
 
                     for(int i = 0 ; i < nHit ; ++i)
                         {
@@ -146,9 +163,9 @@ int main(int argc, char** argv)
                                     resolutionDummy.push_back(0.001);
                                     resolutionDummy.push_back(0.0012);
                                     for(unsigned int i = 0; i < 3; ++i)
-                                        recalcPos[i] = sHit->getPosition()[i] * tgeo::mm;
+                                        recalcPos[i] = sHit->getPosition()[i] * dd4hep::mm;
 
-                                    cout << " the hit is now at [" << recalcPos[0] << ", " << recalcPos[1] << ", " << recalcPos[2] << "]" << endl; //" on surface " << *surf << endl;
+                                    cout << " the hit is now at    [" << recalcPos[0] << ", " << recalcPos[1] << ", " << recalcPos[2] << "]" << endl; //" on surface " << *surf << endl;
                                     theMaster.addMeasurement(recalcPos, resolutionDummy, *surf, sHit);
                                 }
                         }
@@ -167,8 +184,8 @@ int main(int argc, char** argv)
 
                     TrackImpl* theInitialTrack = new TrackImpl();
                     theInitialTrack->setOmega(initialOmega) ;
-                    theInitialTrack->setTanLambda(.1 / sqrt(2));
-                    theInitialTrack->setPhi(M_PI_4);
+                    theInitialTrack->setTanLambda(initialTanLambda);
+                    theInitialTrack->setPhi(initialPhi);
                     theInitialTrack->setD0(0.);
                     theInitialTrack->setZ0(0.);
 

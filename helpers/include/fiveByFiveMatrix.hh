@@ -91,9 +91,11 @@ namespace aidaTT
     fiveByFiveMatrix perigeeToCurvilinearJacobian(const Vector5&, const Vector3D&);
 
     fiveByFiveMatrix perigeeToILDJacobian(const Vector5&);
+    fiveByFiveMatrix perigeeToLCIOJacobian(const Vector5&);
     fiveByFiveMatrix ildToPerigeeJacobian(const Vector5&);
 
     fiveByFiveMatrix curvilinearToILDJacobian(const Vector5&, const Vector3D&);
+    fiveByFiveMatrix curvilinearToLCIOJacobian(const Vector5&, const Vector3D&);
     fiveByFiveMatrix ildToCurvilinearJacobian(const Vector5&, const Vector3D&);
 }
 

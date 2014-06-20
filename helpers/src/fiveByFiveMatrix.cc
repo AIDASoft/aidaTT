@@ -243,6 +243,25 @@ namespace aidaTT
 
 
 
+    fiveByFiveMatrix perigeeToLCIOJacobian(const Vector5& perParams)
+    {
+        const double tanLambda = tan(M_PI_2 - perParams(1));
+
+        fiveByFiveMatrix per2LCIOjacobian;
+        per2LCIOjacobian.Unit();
+
+        // differences to unit matrix:
+        per2LCIOjacobian(0, 3) =  -1.;
+        per2LCIOjacobian(1, 2) =  1.;
+        per2LCIOjacobian(2, 0) =  -1.;
+        per2LCIOjacobian(3, 4) =  1.;
+        per2LCIOjacobian(4, 1) =  -(1. + tanLambda * tanLambda);
+
+        return per2LCIOjacobian;
+    }
+
+
+
     fiveByFiveMatrix ildToPerigeeJacobian(const Vector5& ildParams)
     {
         const double tanLambda = ildParams(1);
@@ -265,6 +284,15 @@ namespace aidaTT
         Vector5 perParams = curvilinearToPerigeeJacobian(clParams, bfield) * clParams;
 
         return perigeeToILDJacobian(perParams);
+    }
+
+
+
+    fiveByFiveMatrix curvilinearToLCIOJacobian(const Vector5&  clParams, const Vector3D& bfield)
+    {
+        Vector5 perParams = curvilinearToPerigeeJacobian(clParams, bfield) * clParams;
+
+        return perigeeToLCIOJacobian(perParams);
     }
 
 
