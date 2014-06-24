@@ -1,5 +1,6 @@
 #ifdef USE_GBL
 #include "GBLInterface.hh"
+#include "utilities.hh"
 
 namespace aidaTT
 {
@@ -133,15 +134,16 @@ namespace aidaTT
         //~ // the track parameters are corrections to the curvilinear track parameters
         _trajectory->getResults(0, tpCorr, trackcovariance);
 
-        Vector5 corrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
-        Vector5 trueCorrections = curvilinearToLCIOJacobian(corrections, Vector3D(0., 0., TRAJ.Bz())) * corrections;
+        Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-        Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + trueCorrections;
+        Vector5 ildCorrections = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) * clCorrections;
 
+        Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + ildCorrections;
+
+        /// TODO: missing covariance matrix
         trackParameters tp;
         tp.setTrackParameters(fittedParameters);
         _theResults.setResults(v, chs, n, wl, tp);
-
     }
 
 }

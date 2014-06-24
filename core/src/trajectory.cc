@@ -255,8 +255,6 @@ namespace aidaTT
         double s =  0;
         _calculateIntersectionWithSurface(&surface, s, referenceUV);
 
-        std::cout << " the isecpoint is at  [" << calculateXfromS(s, _referenceParameters) << ", "
-                  << calculateYfromS(s, _referenceParameters) << ", " << calculateZfromS(s, _referenceParameters) << "]" << std::endl << std::endl;
         /// calculate measurement info
         Vector2D* measuredUV = new Vector2D(surface.globalToLocal(position));
 

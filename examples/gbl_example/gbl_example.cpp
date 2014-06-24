@@ -110,7 +110,7 @@ int main(int argc, char** argv)
     const double initialTanLambda = 1.;
     const double initialPhi = M_PI_2;
 
-    bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega * 10., initialTanLambda, initialPhi, 0., 0.));
+    bogusTP.setTrackParameters(aidaTT::Vector5(initialOmega, initialTanLambda, initialPhi, 0., 0.));
 
     // create the different objects needed for fitting
     // first a constant field parallel to z, 1T
@@ -147,7 +147,6 @@ int main(int argc, char** argv)
                         }
 
                     int nHit = col->getNumberOfElements() ;
-                    std::cout << " there are " << nHit << " hits in the vxd collection " << std::endl;
 
                     for(int i = 0 ; i < nHit ; ++i)
                         {
@@ -165,7 +164,6 @@ int main(int argc, char** argv)
                                     for(unsigned int i = 0; i < 3; ++i)
                                         recalcPos[i] = sHit->getPosition()[i] * dd4hep::mm;
 
-                                    cout << " the hit is now at    [" << recalcPos[0] << ", " << recalcPos[1] << ", " << recalcPos[2] << "]" << endl; //" on surface " << *surf << endl;
                                     theMaster.addMeasurement(recalcPos, resolutionDummy, *surf, sHit);
                                 }
                         }

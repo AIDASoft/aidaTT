@@ -151,13 +151,22 @@ namespace aidaTT
 
     std::vector<Vector3D>* calculateLocalToMeasurementProjectionMatrix(const Vector3D& clU,  const Vector3D& clV, const std::vector<Vector3D>& measDirs)
     {
+        // calculate the projection matrix from the local curvilinear system to the measurement system
+        // done in two steps: first compute the easier measurement to local projection, then invert the result
+        // note: ALL measurements are taken as two dimensional
+        //  dim(M) = 1, then an arbitrary direction is taken, which will allow inversion of the matrix
+        //             , also the direction does not contribute, since the associated precision is zero
+        // NOTE: higher dimensions (up to five) are possible, but have to be implemented
+
         std::vector<Vector3D>* retVec = new std::vector<Vector3D>;
 
+        // insert code for 1D & 2D measurements
         for(std::vector<Vector3D>::const_iterator measDir = measDirs.begin(), last = measDirs.end(); measDir < last; ++measDir)
             {
                 Vector3D projection = ((*measDir) * clU) * clU + ((*measDir) * clV) * clV;
                 retVec->push_back(projection);
             }
+
         return retVec;
     }
 

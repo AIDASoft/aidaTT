@@ -79,11 +79,11 @@ namespace aidaTT
             void setReferencePoint(const Vector3D&);
 
             ///~ set the covariance matrix
-            void setCovarianceMatrix(const fullCovariance&);
+            void setCovarianceMatrix(const fiveByFiveMatrix&);
 
 
         private:
-            fullCovariance _covmatrix;
+            fiveByFiveMatrix _covmatrix;
             Vector5        _helixparams;
             Vector3D       _refpoint;
     };
