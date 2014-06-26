@@ -286,7 +286,8 @@ namespace aidaTT
     void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
     {
         double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
-// REDO!        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, id));
+        // suppress warning -- STILL WRONG:: TODO
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
     }
 
 
@@ -341,6 +342,4 @@ namespace aidaTT
     {
         return _fittingAlgorithm->fit(*this);
     }
-
-
 }

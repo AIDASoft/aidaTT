@@ -4,8 +4,6 @@
 
 namespace aidaTT
 {
-
-
     trackParameters::trackParameters() : _covmatrix() , _helixparams(), _refpoint()
     {
     }
