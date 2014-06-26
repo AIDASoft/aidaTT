@@ -248,7 +248,7 @@ namespace aidaTT
 
 
 
-    void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id)
+    void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
     {
         /// get reference information
         Vector2D* referenceUV = new Vector2D();
@@ -270,7 +270,7 @@ namespace aidaTT
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, resolution, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
+        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
     }
 
 

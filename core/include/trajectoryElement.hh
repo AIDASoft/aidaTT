@@ -54,7 +54,7 @@ namespace aidaTT
     class trajectoryElement
     {
         public:
-            /// Measurement constructor: arc length, surface, measurement direction(s), resolution(s) and residual(s) plus the local curvilinear system and some identification
+            /// Measurement constructor: arc length, surface, measurement direction(s), precision(s) and residual(s) plus the local curvilinear system and some identification
             trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&,
                               const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL);
 
@@ -113,9 +113,9 @@ namespace aidaTT
                 return _residuals;
             };
 
-            const std::vector<double>& measurementErrors() const
+            const std::vector<double>& precisions() const
             {
-                return _resolutions;
+                return _precisions;
             };
 
             ///~ access the local curvilinear system at the given point
@@ -131,7 +131,7 @@ namespace aidaTT
             };
 
             ///~ and finally: the projection matrix from the local track frame to the measurement system
-            const std::vector<Vector3D>& localToMeasurementProjection() const
+            const std::vector<double>& localToMeasurementProjection() const
             {
                 return *_localToMeasurementProjection;
             };
@@ -161,13 +161,14 @@ namespace aidaTT
             ///~ measurement variables:
             bool _measurement;
             std::vector<Vector3D>* _measDirections;
-            std::vector<double> _resolutions;
+            std::vector<double> _precisions;
             std::vector<double> _residuals;
 
             ///~ local curvilinear system
             std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
 
-            std::vector<Vector3D>* _localToMeasurementProjection;
+            /// 2x2 matrix for 2D measurements, projection from local cl to measurement system
+            std::vector<double>* _localToMeasurementProjection;
 
             ///~ scattering info
             bool _scatterer;

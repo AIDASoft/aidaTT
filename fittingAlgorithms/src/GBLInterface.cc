@@ -47,18 +47,14 @@ namespace aidaTT
 
                         const unsigned int mDim = (*element)->measurementDimension();
 
-                        //~ 1) projection matrix -- the basis change matrix
-                        const std::vector<Vector3D>& projL2M = (*element)->localToMeasurementProjection();
+                        if(mDim > 2)
+                            throw std::invalid_argument("Error: Currently only 1D or 2D measurements are implemented.");
 
-                        ///~ convert the data from the vector into an array in two steps:
-                        std::vector<double> projElements;
-                        for(std::vector<Vector3D>::const_iterator it = projL2M.begin(), last = projL2M.end(); it < last; ++it)
-                            {
-                                projElements.push_back(it->x());
-                                projElements.push_back(it->y());
-                                projElements.push_back(it->z());
-                            }
-                        const double* pL2M = projElements.data();
+                        //~ 1) projection matrix -- the basis change matrix
+                        const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
+
+                        ///~ convert the data from the vector into an array:
+                        const double* pL2M = projLocal2Meas.data();
 
                         //~ 2) the residuals in the measurement direction
                         const std::vector<double>& residuals = (*element)->measurementResiduals();
@@ -67,20 +63,13 @@ namespace aidaTT
                         const double* resid = residuals.data();
 
                         //~ 3) the precision of the measurements -- the inverse of the resolution
-                        const std::vector<double>& errors = (*element)->measurementErrors();
+                        const std::vector<double>& precision = (*element)->precisions();
 
-                        std::vector<double> precision;
-                        for(unsigned int errorid = 0; errorid < errors.size(); ++errorid)
-                            {
-                                if(errors.at(errorid) <= 1e-18)
-                                    precision.push_back(1e+99);
-                                else
-                                    precision.push_back(1. / errors.at(errorid));
-                            }
                         //~ convert the vector to an array:
                         const double* prec = precision.data();
 
-                        point.addMeasurement(TMatrixD(3, mDim, pL2M), TVectorD(mDim, resid), TVectorD(mDim, prec));
+                        // fixed size of arguments: 2D in measurements!
+                        point.addMeasurement(TMatrixD(2, 2, pL2M), TVectorD(2, resid), TVectorD(2, prec));
                     }
                 if((*element)->isScatterer())
                     {

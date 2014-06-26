@@ -22,7 +22,7 @@ namespace aidaTT
 
     std::pair<Vector3D, Vector3D>* calculateLocalCurvilinearSystem(double, const trackParameters&);
 
-    std::vector<Vector3D>* calculateLocalToMeasurementProjectionMatrix(const Vector3D&, const Vector3D&, const std::vector<Vector3D>&);
+    std::vector<double>* calculateLocalToMeasurementProjectionMatrix(const Vector3D&, const Vector3D&, const std::vector<Vector3D>&);
 
 }
 #endif // HELIXGYMNASTICS_HH

@@ -158,13 +158,13 @@ int main(int argc, char** argv)
                             const aidaTT::ISurface* surf = surfMap[ id ] ;
                             if(surf->type().isSensitive())
                                 {
-                                    std::vector<double> resolutionDummy;
-                                    resolutionDummy.push_back(0.001);
-                                    resolutionDummy.push_back(0.0012);
+                                    std::vector<double> precisionDummy;
+                                    precisionDummy.push_back(1. / 0.001);
+                                    precisionDummy.push_back(1. / 0.0012);
                                     for(unsigned int i = 0; i < 3; ++i)
                                         recalcPos[i] = sHit->getPosition()[i] * dd4hep::mm;
 
-                                    theMaster.addMeasurement(recalcPos, resolutionDummy, *surf, sHit);
+                                    theMaster.addMeasurement(recalcPos, precisionDummy, *surf, sHit);
                                 }
                         }
 
