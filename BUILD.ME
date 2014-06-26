@@ -20,6 +20,11 @@ External package is GBL, specify the path to the GBLConfig.cmake:
 This needs dd4hep or another implementation of the Geometry interface.
 To include the package in the compilation and thus activate the interface use
     cmake -DDD4hep_DIR=$PATH_TO_DD4HEP_CONFIG ..
+
+[ io ]
+One possible persistency format is given by LCIO.
+To build e.g. the examples that use LCIO specify
+	cmake --DLCIO_DIR=$PATH_TO_LCIO_CONFIG
   
 [ examples ]
 To build examples: 
