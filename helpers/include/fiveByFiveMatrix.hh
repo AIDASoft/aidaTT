@@ -38,7 +38,7 @@ namespace aidaTT
             fiveByFiveMatrix(const std::vector<double>&);
 
             /** the destructor **/
-            ~fiveByFiveMatrix();
+            virtual ~fiveByFiveMatrix();
 
             /** the assignment operator **/
             fiveByFiveMatrix& operator=(const fiveByFiveMatrix&);
