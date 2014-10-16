@@ -18,8 +18,8 @@
 
 namespace aidaTT
 {
-
-    /*** The main class to provide functionality for track parameter estimation.
+    /// The central class that provides functionality. 
+    /** The main class to provide functionality for track parameter estimation.
      *   This includes propagation and extrapolation to any specific point/surface.
      *
      *   Created with the class aidaTT; uses a specific set of
@@ -29,7 +29,7 @@ namespace aidaTT
      *
      *  @version $Rev$
      *  @author Ch. Rosemann, DESY
-     ***/
+     **/
 
     class IFittingAlgorithm;
 

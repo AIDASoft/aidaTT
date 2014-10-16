@@ -18,7 +18,7 @@ include(library_versioning)
 ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
 
 # include directories
-INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./geometry/include ./fields/include ./propagations/include ./fittingAlgorithms/include )
+INCLUDE_DIRECTORIES( BEFORE ./core/include  ./persistency/include ./helpers/include ./geometry/include ./fields/include ./propagations/include ./fittingAlgorithms/include )
 
 INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
 
@@ -26,6 +26,7 @@ AUX_SOURCE_DIRECTORY( ./core/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./propagations/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fittingAlgorithms/src  library_sources )
+AUX_SOURCE_DIRECTORY( ./persistency/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./helpers/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./geometry/src  library_sources )
 
@@ -36,7 +37,7 @@ FIND_PACKAGE( GBL )
 FIND_PACKAGE( DD4hep )
 FIND_PACKAGE( LCIO )
 
-FOREACH( pkg  GSL GBL DD4hep LCIO)  # later: KalTest ? LCIO ? TGeo ? 
+FOREACH( pkg  GSL GBL DD4hep LCIO)  
     IF( ${pkg}_FOUND )
         INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )

@@ -1,6 +1,7 @@
 #include "simpleFits.hh"
 #include <cmath>
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_linalg.h>
 
 using namespace std;
 
@@ -159,7 +160,10 @@ namespace aidaTT
                 gsl_matrix_set(_covariance, 1, 1, _sw);
             }
 
-/// TODO: invert covariance    _covariance.Invert();
+        /// invert covariance matrix
+        // since covariance matrix is semi positive definite use cholesky decomposition
+        gsl_linalg_cholesky_decomp(_covariance);
+        gsl_linalg_cholesky_invert(_covariance);
 
         nPoints = _numPoints;
         return _npar;
@@ -225,14 +229,21 @@ namespace aidaTT
         gsl_vector_set(bVec, 0, _sxy);
         gsl_vector_set(bVec, 1, _sy);
 
-        gsl_matrix_set(_covariance, 0, 0, _sxx);
-        gsl_matrix_set(_covariance, 0, 1, _sx);
-        gsl_matrix_set(_covariance, 1, 0, _sx);
-        gsl_matrix_set(_covariance, 1, 1, _sw);
+        // 2x2 matrix a = _sxx b = _sx c = _sx d = _sw
 
-        // solve
-//!!!   aMat.Invert();
+        // invert 2x2 matrix
+        double determinant = _sxx * _sw - _sx * _sx;
+        if(determinant != 0.)
+            {
+                gsl_matrix_set(_covariance, 0, 0, _sw / determinant);
+                gsl_matrix_set(_covariance, 0, 1, -_sx / determinant);
+                gsl_matrix_set(_covariance, 1, 0, -_sx / determinant);
+                gsl_matrix_set(_covariance, 1, 1, _sxx / determinant);
+            }
+        else
+            gsl_matrix_set_zero(_covariance);
 
+        // calculate parameters from inverse: x = A^-1 * b
         gsl_blas_dgemv(CblasNoTrans, 1., _covariance, bVec, 1., _parameters);
 
         // chi2
