@@ -23,11 +23,12 @@ ADD_AIDATT_EXAMPLE_WITH_ROOT( geometry_test geometry_test/geometry_test.cpp)
 ADD_AIDATT_EXAMPLE_WITH_ROOT( intersection_calculator intersection_calculator/intersection_calculator.cpp)
     IF(LCIO_FOUND)
       ADD_AIDATT_EXAMPLE_WITH_ROOT ( lcio_read_example  lcio_read_example/lcio_read_example.cpp )
+      #ADD_AIDATT_EXAMPLE_WITH_ROOT ( lcio_tracks_example  lcio_tracks_example/lcio_tracks_example.cpp )
     ENDIF(LCIO_FOUND)
 
 ENDIF(DD4HEP_FOUND)
 
 IF( GBL_FOUND)
-ADD_AIDATT_EXAMPLE_WITH_ROOT( gbl_extended gbl_extended/gbl_extended.cpp)
+#ADD_AIDATT_EXAMPLE_WITH_ROOT( gbl_extended gbl_extended/gbl_extended.cpp)
 ADD_AIDATT_EXAMPLE_WITH_ROOT( gbl_example gbl_example/gbl_example.cpp)
 ENDIF( GBL_FOUND )
