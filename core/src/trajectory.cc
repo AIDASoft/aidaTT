@@ -9,7 +9,9 @@
 #include "utilities.hh"
 #include "fiveByFiveMatrix.hh"
 
+#ifdef USE_DD4HEP
 #include "DD4hep/DD4hepUnits.h"
+#endif // USE_DD4HEP
 
 namespace aidaTT
 {

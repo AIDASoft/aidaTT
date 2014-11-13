@@ -16,6 +16,11 @@
 
 #include "fitResults.hh"
 
+#ifdef USE_LCIO
+#include "lcio.h"
+#include "IMPL/TrackImpl.h"
+#endif // USE_LCIO
+
 namespace aidaTT
 {
     /// The central class that provides functionality. 
@@ -108,13 +113,15 @@ namespace aidaTT
                 return _bfieldZ;
             };
 
-			/// persistency actions are declared as friend functions:
 
+            #ifdef USE_LCIO
+			/// persistency actions 
             /// create a persistent trajectory
-            friend void createPersistentTrajectory(const trajectory&, void * = NULL);
+            IMPL::TrackImpl* createPersistentTrajectory();
 
-            /// create a trajectory from persistent object
-            friend trajectory readPersistentTrajectory(void * = NULL);
+            ///~ create from persistent object
+            trajectory(const EVENT::Track* const);
+            #endif // USE_LCIO
 
 
             // methods after fitting
