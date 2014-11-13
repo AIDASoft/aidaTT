@@ -46,7 +46,7 @@ namespace aidaTT
             Vector3D(double x, double y, double z , T(&)()) ;
 
 
-            /** Default corrdinate system for initialization is cartesian */
+            /** Default coordinate system for initialization is cartesian */
             Vector3D(double x, double y, double z) :
                 _x(x), _y(y), _z(z)
             {}

@@ -12,7 +12,6 @@ namespace aidaTT
 
     trackParameters::trackParameters(const trackParameters& tp) :  _covmatrix(tp._covmatrix) , _helixparams(tp._helixparams), _refpoint(tp._refpoint)
     {
-
     }
 
 
@@ -85,4 +84,25 @@ namespace aidaTT
     {
         _covmatrix = cov;
     }
+
+
+
+    #ifdef USE_LCIO
+    trackParameters::trackParameters(const EVENT::TrackState* ts) : 
+		_helixparams(ts->getOmega(), ts->getTanLambda(), ts->getPhi(), ts->getD0(), ts->getZ0()) , _refpoint( ts->getReferencePoint() )
+    {
+		std::vector<double> covm(ts->getCovMatrix().begin(),ts->getCovMatrix().end() );
+		//std::vector<double> refp(ts->getReferencePoint().begin(),ts->getReferencePoint().end() );
+		//_covmatrix( covm ); 
+		//;
+
+	}
+	
+	
+
+    IMPL::TrackStateImpl* trackParameters::createLCIOTrackState()
+    {
+		return new IMPL::TrackStateImpl();
+	}
+    #endif // USE_LCIO
 }

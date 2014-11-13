@@ -342,4 +342,11 @@ namespace aidaTT
     {
         return _fittingAlgorithm->fit(*this);
     }
+    
+    
+    
+    #ifdef USE_LCIO
+    ;
+    
+    #endif // USE_LCIO
 }

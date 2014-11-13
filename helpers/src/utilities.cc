@@ -60,7 +60,23 @@ namespace aidaTT
 
 
 
+    double calculateD0(const trackParameters& tp)
+    {
+        /// L3 type only
+        return tp.parameters()(3) / 10.;
+    }
+
+
+
     double calculateCurvature(const trackParameters& tp)
+    {
+        /// L3 type only
+        return tp.parameters()(0) * 10.;
+    }
+
+
+
+    double calculateOmega(const trackParameters& tp)
     {
         /// L3 type only
         return tp.parameters()(0) * 10.;

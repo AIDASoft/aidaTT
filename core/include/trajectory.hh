@@ -108,6 +108,15 @@ namespace aidaTT
                 return _bfieldZ;
             };
 
+			/// persistency actions are declared as friend functions:
+
+            /// create a persistent trajectory
+            friend void createPersistentTrajectory(const trajectory&, void * = NULL);
+
+            /// create a trajectory from persistent object
+            friend trajectory readPersistentTrajectory(void * = NULL);
+
+
             // methods after fitting
             //~ std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
             //~ std::vector<trajectoryElement*> getOutliers() const;

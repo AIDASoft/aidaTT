@@ -8,6 +8,7 @@
 
 namespace aidaTT
 {
+	/// helper function to calculate the needed/wanted values from the current parametrization
     double calculateX0(const trackParameters&);
     double calculateY0(const trackParameters&);
     double calculatePhi0(const trackParameters&);
@@ -15,10 +16,10 @@ namespace aidaTT
     double calculateLambda(const trackParameters&);
     double calculateZ0(const trackParameters&);
     double calculateDistanceFromPCA(const trackParameters&);
+    double calculateD0(const trackParameters&);
     double calculateCurvature(const trackParameters&);
+    double calculateOmega(const trackParameters&);
     double calculateQoverP(const trackParameters& , double BField);
-
-
 
     fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector5&, const Vector3D&);
     fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
