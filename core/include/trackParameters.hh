@@ -82,10 +82,10 @@ namespace aidaTT
             void setCovarianceMatrix(const fiveByFiveMatrix&);
             
             ///~ create a persistent object
-            friend void createPersistentTrackState(const trackParameters&, void * = NULL);
+            void createPersistentTrackState(const trackParameters&, void * = NULL);
 
             ///~ create from persistent object
-            friend trackParameters readPersistentTrackState(void * = NULL);
+            trackParameters readPersistentTrackState(void * = NULL);
 
         private:
             fiveByFiveMatrix _covmatrix;
