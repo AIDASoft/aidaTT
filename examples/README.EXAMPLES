@@ -14,8 +14,12 @@ All intersections with a given reference trajectory are calculated; testing both
 Needs a compact xml description, e.g. the xml files in the directory.
 
 [lcio_read_example]
-One step further -- reading in a geometry and some lcio data, which consists of simulated hits.
+Reading in a geometry and some lcio data, which consists of simulated hits.
 The data was produced within a DD4hep example and is available in the directory; along with the compact xml description.
+
+[lcio_tracks]
+Reading in a geometry and some lcio data, simulated with DDSim and reconstructed with DDRec.
+Showcases the creation of a trajectory from lcio.
 
 [gbl_example]
 Is the first showcase of a complete fitting chain: read in a detector description (again a compact.xml file) and some data produced with the DD4hep example simulation.

@@ -87,7 +87,6 @@ namespace aidaTT
             ///~ set the covariance matrix
             void setCovarianceMatrix(const fiveByFiveMatrix&);
             
-            
             #ifdef USE_LCIO
             #include "lcio.h"
             #include "IMPL/TrackStateImpl.h"
