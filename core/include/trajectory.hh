@@ -16,14 +16,9 @@
 
 #include "fitResults.hh"
 
-#ifdef USE_LCIO
-#include "lcio.h"
-#include "IMPL/TrackImpl.h"
-#endif // USE_LCIO
-
 namespace aidaTT
 {
-    /// The central class that provides functionality. 
+    /// The central class that provides functionality.
     /** The main class to provide functionality for track parameter estimation.
      *   This includes propagation and extrapolation to any specific point/surface.
      *
@@ -59,23 +54,6 @@ namespace aidaTT
             {
                 return _referenceParameters;
             };
-
-            //~ MarlinTrk:: virtual int addHit(trajectoryElement* hit) = 0 ;
-            //~ MarlinTrk:: virtual int addAndFit( trajectoryElement* hit, double& chi2increment, double maxChi2Increment=DBL_MAX ) = 0 ;
-            //~ MarlinTrk:: virtual int testChi2Increment( trajectoryElement* hit, double& chi2increment ) = 0 ;
-
-            //~ MarlinTrk:: virtual int getHitsInFit( std::vector<std::pair<trajectoryElement*, double> >& hits ) = 0 ;
-            //~ MarlinTrk:: virtual int getOutliers( std::vector<std::pair<trajectoryElement*, double> >& hits ) = 0 ;
-            //~ MarlinTrk:: virtual int getNDF( int& ndf ) = 0 ;
-
-            //~ MarlinTrk:: virtual int extrapolate( const gear::Vector3D& point, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
-            //~ MarlinTrk:: virtual int extrapolate( const gear::Vector3D& point, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
-
-            //~ MarlinTrk:: virtual int propagate( const gear::Vector3D& point, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
-            //~ MarlinTrk:: virtual int propagate( const gear::Vector3D& point, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
-
-            //~ MarlinTrk:: virtual int getTrackState( IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
-            //~ MarlinTrk:: virtual int getTrackState( trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf ) = 0 ;
 
             /// methods available before fitting
             const std::vector<trajectoryElement*>& trajectoryElements() const;
@@ -113,17 +91,6 @@ namespace aidaTT
                 return _bfieldZ;
             };
 
-
-            #ifdef USE_LCIO
-			/// persistency actions 
-            /// create a persistent trajectory
-            IMPL::TrackImpl* createPersistentTrajectory();
-
-            ///~ create from persistent object
-            trajectory(const EVENT::Track* const);
-            #endif // USE_LCIO
-
-
             // methods after fitting
             //~ std::vector<trajectoryElement*> getFittedTrajectoryElements() const;
             //~ std::vector<trajectoryElement*> getOutliers() const;
@@ -133,6 +100,7 @@ namespace aidaTT
             //~ unsigned int getNDF() const;
 
         private:
+
             /// disable assignment
             trajectory operator=(const trajectory&);
 
@@ -156,40 +124,6 @@ namespace aidaTT
             bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL);
             bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL);
 
-
-
-            /*
-            // ?
-            //~ MarlinTrk::   virtual int initialise( bool fitDirection ) = 0 ;
-            //~ MarlinTrk:: virtual int initialise(  const EVENT::TrackState& ts, double bfield_z, bool fitDirection ) = 0 ;
-
-            BREAKS THE CONCEPT
-
-            // kalmanning
-            //~ MarlinTrk:: virtual int smooth( trajectoryElement* hit ) = 0 ;
-
-            // no layers available -- can't assume
-            //~ MarlinTrk:: virtual int propagateToLayer( int layerID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int propagateToLayer( int layerID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int intersectionWithLayer( int layerID, gear::Vector3D& point, int& detElementID, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int intersectionWithLayer( int layerID, trajectoryElement* hit, gear::Vector3D& point, int& detElementID, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int extrapolateToLayer( int layerID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int extrapolateToLayer( int layerID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int& detElementID, int mode=modeClosest ) = 0  ;
-
-
-
-            /// DON'T UNDERSTAND
-            * Steve: "not needed"
-            //~ MarlinTrk:: virtual int getTrackerHitAtPositiveNDF( trajectoryElement*& trkhit ) = 0 ;
-
-            * what's a detElement?
-            //~ MarlinTrk:: virtual int propagateToDetElement( int detElementID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int propagateToDetElement( int detEementID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int extrapolateToDetElement( int detEementID, trajectoryElement* hit, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int extrapolateToDetElement( int detElementID, IMPL::TrackStateImpl& ts, double& chi2, int& ndf, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int intersectionWithDetElement( int detElementID, gear::Vector3D& point, int mode=modeClosest ) = 0  ;
-            //~ MarlinTrk:: virtual int intersectionWithDetElement( int detEementID, trajectoryElement* hit, gear::Vector3D& point, int mode=modeClosest ) = 0  ;
-            */
     };
 }
 

@@ -10,12 +10,6 @@
 #include "Vector3D.hh"
 #include "Vector5.hh"
 
-#ifdef USE_LCIO
-#include "lcio.h"
-#include "IMPL/TrackStateImpl.h"
-#endif // USE_LCIO
-
-
 namespace aidaTT
 {
     /// trackParameters:: the main class for track parameter definition and interaction
@@ -86,18 +80,6 @@ namespace aidaTT
 
             ///~ set the covariance matrix
             void setCovarianceMatrix(const fiveByFiveMatrix&);
-            
-            #ifdef USE_LCIO
-            #include "lcio.h"
-            #include "IMPL/TrackStateImpl.h"
-            
-            ///~ create a persistent object
-            IMPL::TrackStateImpl* createPersistentTrackState();
-
-            ///~ create from persistent object
-            trackParameters(const EVENT::TrackState* const);
-            #endif // USE_LCIO
-
 
         private:
             fiveByFiveMatrix _covmatrix;
