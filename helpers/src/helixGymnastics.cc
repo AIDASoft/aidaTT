@@ -10,7 +10,7 @@ namespace aidaTT
         const double curvature = calculateCurvature(tP);
 
         if(curvature != 0.)
-            return 1. / curvature;
+            return fabs(1. / curvature);
         return 0.;
     }
 
@@ -18,26 +18,22 @@ namespace aidaTT
 
     double calculateXCenter(const trackParameters& tP)
     {
-        const double curvature = calculateCurvature(tP);
+        const double radius = calculateRadius(tP);
         const double dzero = calculateDistanceFromPCA(tP);
         const double phi0 = calculatePhi0(tP);
 
-        if(curvature != 0.)
-            return tP.referencePoint().x() + (1. / curvature - dzero) * sin(phi0);
-        return 0.;
+        return tP.referencePoint().x() + (radius - dzero) * sin(phi0);
     }
 
 
 
     double calculateYCenter(const trackParameters& tP)
     {
-        const double curvature = calculateCurvature(tP);
+        const double radius = calculateRadius(tP);
         const double dzero = calculateDistanceFromPCA(tP);
         const double phi0 = calculatePhi0(tP);
 
-        if(curvature != 0.)
-            return tP.referencePoint().y() - (1. / curvature - dzero) * cos(phi0);
-        return 0.;
+        return tP.referencePoint().y() - (radius - dzero) * cos(phi0);
     }
 
 
