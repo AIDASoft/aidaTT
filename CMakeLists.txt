@@ -83,7 +83,7 @@ ELSE()
 ENDIF()
 
 IF( DD4hep_FOUND )
-        ADD_DEFINITIONS( "-DUSE_DD4HEP" )
+        ADD_DEFINITIONS( "-DAIDATT_USE_DD4HEP" )
 ELSE()
     MESSAGE( STATUS "DD4hep not found, the geometry decription from DD4hep will not be available." )
 ENDIF()

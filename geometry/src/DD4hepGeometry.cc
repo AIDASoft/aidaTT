@@ -1,4 +1,4 @@
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 
 #include "DD4hepGeometry.hh"
 
@@ -30,4 +30,4 @@ namespace aidaTT
     }
 }
 
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP

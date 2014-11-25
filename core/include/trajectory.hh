@@ -117,12 +117,14 @@ namespace aidaTT
 
             double _bfieldZ;
 
-            bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL);
-            void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*);
+    public:
 
-            bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL);
-            bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL);
-            bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL);
+      bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+      void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*, Vector3D* = NULL);
+      
+      bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+      bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+      bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
 
     };
 }

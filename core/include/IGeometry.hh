@@ -16,7 +16,7 @@
  *  @author: Christoph Rosemann, DESY and Christian Grefe, CERN
  */
 
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 #include "DDSurfaces/ISurface.h"
 #include "DDSurfaces/IMaterial.h"
 
@@ -358,7 +358,7 @@ namespace aidaTT
     };
 }
 
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP
 
 namespace aidaTT
 {

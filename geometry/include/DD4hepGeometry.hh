@@ -1,4 +1,4 @@
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 
 #ifndef DD4HEPGEOMETRY_HH
 #define DD4HEPGEOMETRY_HH
@@ -22,4 +22,4 @@ namespace aidaTT
 }
 #endif // DD4HEPGEOMETRY_HH
 
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP

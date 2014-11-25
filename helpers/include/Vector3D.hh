@@ -1,4 +1,4 @@
-#ifdef USE_DD4HEP // only use when not the DD4hep version is available
+#ifdef AIDATT_USE_DD4HEP // only use when not the DD4hep version is available
 #include "DDSurfaces/Vector3D.h"
 
 namespace aidaTT
@@ -356,4 +356,4 @@ namespace aidaTT
     }
 }
 #endif // VECTOR3D_HH
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP

@@ -9,9 +9,9 @@
 #include "utilities.hh"
 #include "fiveByFiveMatrix.hh"
 
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 #include "DD4hep/DD4hepUnits.h"
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP
 
 namespace aidaTT
 {
@@ -89,22 +89,22 @@ namespace aidaTT
 
 
 
-    bool trajectory::_calculateIntersectionWithSurface(const ISurface* surf, double& s, Vector2D* localUV)
+    bool trajectory::_calculateIntersectionWithSurface(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
-        /// currently three different types of surfaces are available
-        if(surf->type().isZCylinder())
-            return _intersectsWithinZCylinderBounds(surf, s, localUV);
-        else if(surf->type().isZPlane())
-            return _intersectWithinZPlaneBounds(surf, s, localUV);
-        else if(surf->type().isZDisk())
-            return _intersectWithinZDiskBounds(surf, s, localUV);
-        else
-            throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+      /// currently three different types of surfaces are available
+      if(surf->type().isZCylinder())
+	return _intersectsWithinZCylinderBounds(surf, s, localUV, xx);
+      else if(surf->type().isZPlane())
+	return _intersectWithinZPlaneBounds(surf, s, localUV, xx);
+      else if(surf->type().isZDisk())
+	return _intersectWithinZDiskBounds(surf, s, localUV, xx);
+      else
+	throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
     }
 
 
 
-    bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s, Vector2D* localUV)
+    bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
         //// TODO:: MISSING IMPLEMENTATION
         return false;
@@ -112,7 +112,7 @@ namespace aidaTT
 
 
 
-    bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV)
+    bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
         const Vector3D refpoint = _referenceParameters.referencePoint();
 
@@ -143,6 +143,9 @@ namespace aidaTT
                         s = S;
                         if(localUV != NULL)
                             _calculateLocalCoordinates(surf, thePlace, localUV);
+
+			if( xx ) xx->fill( thePlace ) ;
+
                         return true;
                     }
                 else
@@ -174,6 +177,9 @@ namespace aidaTT
                 s = S0;
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, sol0, localUV);
+
+		if( xx ) xx->fill( sol0 ) ;
+
                 return true;
             }
         else if(!insideFirst && insideSecond &&  S1 > 0.)
@@ -182,6 +188,8 @@ namespace aidaTT
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, sol1, localUV);
 
+		if( xx ) xx->fill( sol1 ) ;
+
                 return true;
             }
         else // both are valid , choose the smaller solution
@@ -189,15 +197,20 @@ namespace aidaTT
                 if(S0 > 0. && S1 < 0.)
                     {
                         s = S0;
+
                         if(localUV != NULL)
                             _calculateLocalCoordinates(surf, sol0, localUV);
+
+			if( xx ) xx->fill( sol0 ) ;
                     }
                 else if(S0 < 0. && S1 > 0.)
                     {
                         s = S1;
                         if(localUV != NULL)
                             _calculateLocalCoordinates(surf, sol1, localUV);
-                    }
+
+			if( xx ) xx->fill( sol1 ) ;
+                   }
                 else // both are positive
                     {
                         if(S0 < S1)
@@ -205,13 +218,17 @@ namespace aidaTT
                                 s = S0;
                                 if(localUV != NULL)
                                     _calculateLocalCoordinates(surf, sol0, localUV);
+
+				if( xx ) xx->fill( sol0 ) ;
                             }
                         else
                             {
                                 s = S1;
                                 if(localUV != NULL)
                                     _calculateLocalCoordinates(surf, sol1, localUV);
-                            }
+
+				if( xx ) xx->fill( sol1 ) ;
+                             }
                     }
                 return true;
             }
@@ -219,7 +236,7 @@ namespace aidaTT
 
 
 
-    bool trajectory::_intersectWithinZDiskBounds(const ISurface* surf, double& s, Vector2D* localUV)
+    bool trajectory::_intersectWithinZDiskBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
         // the z position of the plane
         double planePositionZ = surf->origin().z();
@@ -233,6 +250,9 @@ namespace aidaTT
             {
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, thePlace, localUV);
+
+		if( xx ) xx->fill( thePlace ) ;
+
                 return true;
             }
         else
@@ -241,7 +261,7 @@ namespace aidaTT
 
 
 
-    void trajectory::_calculateLocalCoordinates(const ISurface* surf, const Vector3D& position, Vector2D* localUV)
+    void trajectory::_calculateLocalCoordinates(const ISurface* surf, const Vector3D& position, Vector2D* localUV, Vector3D* xx)
     {
         Vector2D local = surf->globalToLocal(position);
         localUV->_u = local.u();
