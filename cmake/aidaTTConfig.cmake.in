@@ -1,0 +1,57 @@
+##############################################################################
+# cmake configuration file for aidaTT
+#
+# returns following variables:
+#
+#   aidaTT_FOUND      : set to TRUE if aidaTT found
+#   aidaTT_VERSION    : package version
+#   aidaTT_ROOT       : path to this aidaTT installation
+#   aidaTT_LIBRARIES  : list of aidaTT libraries
+#   aidaTT_INCLUDE_DIRS  : list of paths to be used with INCLUDE_DIRECTORIES
+#   aidaTT_LIBRARY_DIRS  : list of paths to be used with LINK_DIRECTORIES
+#
+# @author Jan Engels, Desy
+##############################################################################
+
+SET( aidaTT_ROOT "@CMAKE_INSTALL_PREFIX@" )
+SET( aidaTT_VERSION "@aidaTT_VERSION@" )
+
+
+# ---------- include dirs -----------------------------------------------------
+# do not store find results in cache
+SET( aidaTT_INCLUDE_DIRS aidaTT_INCLUDE_DIRS-NOTFOUND )
+MARK_AS_ADVANCED( aidaTT_INCLUDE_DIRS )
+
+FIND_PATH( aidaTT_INCLUDE_DIRS
+	NAMES aidaTT/AidaTT.hh
+	PATHS ${aidaTT_ROOT}/include
+	NO_DEFAULT_PATH
+)
+
+# ---------- default build type  --------------------------------------------------------
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set (CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
+
+# ---------- libraries --------------------------------------------------------
+# do not store find results in cache
+SET( aidaTT_LIBRARY_DIRS ${aidaTT_ROOT}/lib )
+SET( aidaTT_LIBRARIES aidaTT_LIBRARIES-NOTFOUND )
+MARK_AS_ADVANCED( aidaTT_LIBRARY_DIRS aidaTT_LIBRARIES )
+
+
+
+CHECK_PACKAGE_LIBS( aidaTT )
+
+#----- APPLE ? -------
+
+set( USE_DYLD @USE_DYLD@ )
+MARK_AS_ADVANCED( USE_DYLD )
+
+# ---------- final checking ---------------------------------------------------
+INCLUDE( FindPackageHandleStandardArgs )
+# set aidaTT_FOUND to TRUE if all listed variables are TRUE and not empty
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( aidaTT DEFAULT_MSG aidaTT_ROOT aidaTT_INCLUDE_DIRS aidaTT_LIBRARIES )
+
+SET( aidaTT_FOUND ${aidaTT_FOUND} )
+

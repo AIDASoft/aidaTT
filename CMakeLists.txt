@@ -17,10 +17,21 @@ include(library_versioning)
 # require proper c++
 ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
 
+#------------- set the default installation directory to be the source directory
+
+IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  SET( CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH
+    "install prefix path  - overwrite with -D CMAKE_INSTALL_PREFIX = ..."
+    FORCE )
+  MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is ${CMAKE_INSTALL_PREFIX} - overwrite with -D CMAKE_INSTALL_PREFIX" )
+ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+#-------------------------------------------------------------------------------
+
 # include directories
 INCLUDE_DIRECTORIES( BEFORE ./core/include  ./helpers/include ./geometry/include ./fields/include ./persistency/include ./propagations/include ./fittingAlgorithms/include )
 
-INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
+#INSTALL( DIRECTORY ./include DESTINATION . PATTERN ".svn" EXCLUDE )
 
 AUX_SOURCE_DIRECTORY( ./core/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src  library_sources )
@@ -45,7 +56,7 @@ FOREACH( pkg  GSL GBL DD4hep LCIO)
     ENDIF()
 ENDFOREACH()
 
-INSTALL( TARGETS ${PROJECT_NAME} DESTINATION lib )
+#INSTALL( TARGETS ${PROJECT_NAME} DESTINATION lib )
 
 # add a target to generate API documentation with Doxygen
 FIND_PACKAGE(Doxygen)
@@ -91,5 +102,22 @@ add_subdirectory(examples EXCLUDE_FROM_ALL)
 # build tests with `make tests`
 add_subdirectory(test EXCLUDE_FROM_ALL)
 
+
+
+
+#--- install target-------------------------------------
+FILE(GLOB hfiles "*/include/*.hh")
+
+INSTALL(FILES ${hfiles}
+  DESTINATION include/${PROJECT_NAME}
+  )
+
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  )
+
 # generate and install following configuration files
 #GENERATE_PACKAGE_CONFIGURATION_FILES( aidaTTConfig.cmake aidaTTConfigVersion.cmake )
+GENERATE_PACKAGE_CONFIGURATION_FILES( aidaTTConfig.cmake )
+
