@@ -105,7 +105,6 @@ int main(int argc, char** argv)
             LCCollection* trackCollection = evt->getCollection(trackCollectionName) ;
 
             int nTracks = trackCollection->getNumberOfElements();
-            std::cout << " there are " << nTracks << " tracks in the event " << std::endl;
 
             // ignore event if more or less than a single track is present
             if(nTracks != 1)
@@ -119,12 +118,25 @@ int main(int argc, char** argv)
             aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
+
             for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
                 {
                     long64 hitid = (*thit)->getCellID0() ;
                     idDecoder.setValue(hitid) ;
+
+                    if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
+                        continue;
+
+                    if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
+                        {
+                            idDecoder[lcio::ILDCellID0::side] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
+                            hitid = idDecoder.lowWord() ;
+                        }
+
                     const aidaTT::ISurface* surf = surfMap[ hitid ] ;
-                    std::cout << " surface is " << surf << std::endl;
+
+                    if(surf == NULL)
+                        continue;
 
                     double hitpos[3] = {0., 0., 0.};
                     for(unsigned int i = 0; i < 3; ++i)
@@ -140,10 +152,10 @@ int main(int argc, char** argv)
 
                     fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
                 }
-
             fitTrajectory.prepareForFitting();
-            fitTrajectory.fit();
 
+
+            fitTrajectory.fit();
             const aidaTT::fitResults& result = fitTrajectory.getFitResults();
 
             std::cout << " estimated parameters after fitting are: " << result.estimatedParameters()(0) << "," << result.estimatedParameters()(1)  << "," <<
