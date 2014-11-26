@@ -119,7 +119,11 @@ namespace aidaTT
         // the straight line: normals plus distance; distance must be positive !
         const double nx = surf->normal().x();
         const double ny = surf->normal().y();
-        const double dist = fabs(surf->distance(refpoint));
+
+	//fg: this is wrong - we need the distance from the origin
+	//    const double dist = fabs(surf->distance(refpoint));
+        const double dist = fabs(surf->distance( Vector3D() ));
+
         straightLine line(nx, ny, dist);
         // create circle
         const double radius  = calculateRadius(_referenceParameters);
