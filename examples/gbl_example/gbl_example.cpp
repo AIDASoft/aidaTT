@@ -2,7 +2,7 @@
  * this is an example of the usage
  * it's based on the example1.cpp in GBL by Claus Kleinwort
  */
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
 
 // c++
@@ -204,4 +204,4 @@ int main(int argc, char** argv)
 
 
 #endif // USE_LCIO
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP

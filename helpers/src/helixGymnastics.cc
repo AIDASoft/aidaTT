@@ -54,17 +54,35 @@ namespace aidaTT
     double  calculateSfromXY(double x, double y, const trackParameters& tP)
     {
         // x0 and y0: p.c.a. coordinates w.r.t reference point
-        const double x0   = calculateX0(tP);
-        const double y0   = calculateY0(tP);
+        // const double x0   = calculateX0(tP) ;
+        // const double y0   = calculateY0(tP) ;
+        const double x0   = calculateX0(tP) + tP.referencePoint().x() ;
+	const double y0   = calculateY0(tP) + tP.referencePoint().y() ;
         const double phi0 = calculatePhi0(tP);
 
         double phi = calculatePhifromXY(x, y, tP);
         double dphi = phi - phi0;
 
-        if(phi != 0.)
-            return ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi) ;
-        else
+        if(phi != 0.){
+
+	  double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi)  ;
+	  
+	  std::cout <<  " *** calculateSfromXY :  s = " << s 
+		    << " dphi*R = " << dphi / std::fabs( calculateCurvature( tP ) ) 
+		    << " dphi*R/tan(L) = " << dphi / std::fabs( calculateCurvature( tP ) ) / calculateTanLambda( tP )  
+		    << std::endl ; 
+
+	  s = dphi / std::fabs( calculateCurvature( tP ) )  ;
+
+	  return s ;
+
+        }else
             return 0.;
+
+        // if(phi != 0.)
+        //     return ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi) ;
+        // else
+        //     return 0.;
     }
 
 
@@ -106,7 +124,8 @@ namespace aidaTT
     {
         const double tanLambda = calculateTanLambda(tP);
         const double z0        = calculateZ0(tP);
-        return (z0 + s * tanLambda);
+	//return (z0 + tP.referencePoint().z() + s * tanLambda);
+	return (z0 + s * tanLambda);
     }
 
 

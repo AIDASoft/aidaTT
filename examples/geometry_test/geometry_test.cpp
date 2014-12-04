@@ -1,4 +1,4 @@
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 
 #include <iostream>
 
@@ -41,4 +41,4 @@ int main(int argc, char** argv)
     return 0;
 }
 
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP

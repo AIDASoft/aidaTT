@@ -4,10 +4,14 @@ namespace aidaTT
 {
 
     /// SUPER DUMMY !!! only L3 type: [ Omega, tan(lambda), phi_0, d_0, z_0 ]
+
+
+  // x0 and y0: p.c.a. coordinates w.r.t reference point
+
     double calculateX0(const trackParameters& tp)
     {
         /// L3 type only
-        return cos(tp.parameters()(2)) * tp.parameters()(3) / 10.;
+      return cos(tp.parameters()(2)) * tp.parameters()(3)  / 10.;
     }
 
 
@@ -15,7 +19,7 @@ namespace aidaTT
     double calculateY0(const trackParameters& tp)
     {
         /// L3 type only
-        return sin(tp.parameters()(2)) * tp.parameters()(3) / 10.;
+      return sin(tp.parameters()(2)) * tp.parameters()(3)  / 10.;
     }
 
 

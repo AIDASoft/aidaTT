@@ -1,4 +1,4 @@
-#ifdef USE_DD4HEP
+#ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
 
 #include "lcio.h"
@@ -103,4 +103,4 @@ int main(int argc, char** argv)
 
 
 #endif // USE_LCIO
-#endif // USE_DD4HEP
+#endif // AIDATT_USE_DD4HEP
