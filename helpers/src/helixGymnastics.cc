@@ -22,7 +22,7 @@ namespace aidaTT
         const double dzero = calculateDistanceFromPCA(tP);
         const double phi0 = calculatePhi0(tP);
 
-        return tP.referencePoint().x() + (radius - dzero) * sin(phi0);
+        return tP.referencePoint().x() + (radius - dzero) * sin( -phi0 );
     }
 
 
