@@ -127,9 +127,9 @@ int main(int argc, char** argv)
     aidaTT::trackParameters iTP;
 
     // ****** use TrackState at ... *****************
-        const TrackState* ts = initialTrack->getTrackState( TrackState::AtIP ) ;
-    //    const TrackState* ts = initialTrack->getTrackState( TrackState::AtFirstHit ) ;
-    // const TrackState* ts = initialTrack->getTrackState( TrackState::AtLastHit ) ;
+    //            const TrackState* ts = initialTrack->getTrackState( TrackState::AtIP ) ;
+            const TrackState* ts = initialTrack->getTrackState( TrackState::AtFirstHit ) ;
+    //     const TrackState* ts = initialTrack->getTrackState( TrackState::AtLastHit ) ;
     // const TrackState* ts = initialTrack->getTrackState( TrackState::AtCalorimeter ) ;
 
     iTP.setTrackParameters(aidaTT::Vector5(ts->getOmega(), ts->getTanLambda(), ts->getPhi(), ts->getD0(), ts->getZ0()));

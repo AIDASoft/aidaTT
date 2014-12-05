@@ -12,6 +12,7 @@
 
 #include <IMPL/LCCollectionVec.h>
 #include "IMPL/TrackImpl.h"
+#include "IMPL/TrackStateImpl.h"
 
 // DD4hep
 #include "DD4hepGeometry.hh"
@@ -79,6 +80,8 @@ int main(int argc, char** argv)
 
     LCReader* rdr = LCFactory::getInstance()->createLCReader() ;
     rdr->open(lcioFileName) ;
+    LCWriter* wrt = LCFactory::getInstance()->createLCWriter() ;
+    wrt->open("lcio_tracks.slcio") ;
 
     LCEvent* evt = 0 ;
 
@@ -103,6 +106,16 @@ int main(int argc, char** argv)
         {
 
             LCCollection* trackCollection = evt->getCollection(trackCollectionName) ;
+
+	    // add output track collection to the event
+	    LCCollectionVec* outCol = new LCCollectionVec( LCIO::TRACK ) ;
+	    evt->addCollection( outCol ,  "AidaTTTracks"   ) ; 
+	    LCFlagImpl trkFlag(0) ;
+	    trkFlag.setBit( LCIO::TRBIT_HITS ) ;
+	    outCol->setFlag( trkFlag.getFlag()  ) ;
+	    TrackImpl* outTrk = new TrackImpl ;  
+	    outCol->addElement( outTrk ) ;
+
 
             int nTracks = trackCollection->getNumberOfElements();
 
@@ -130,13 +143,20 @@ int main(int argc, char** argv)
                     if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
                         {
                             idDecoder[lcio::ILDCellID0::side] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
+
+			    // increase the layerid by one:
+			    unsigned layerID = idDecoder[lcio::ILDCellID0::layer] ;
+			    idDecoder[lcio::ILDCellID0::layer] = layerID + 1 ;
+
                             hitid = idDecoder.lowWord() ;
                         }
 
                     const aidaTT::ISurface* surf = surfMap[ hitid ] ;
 
-                    if(surf == NULL)
-                        continue;
+		    if(surf == NULL){ 
+		      std::cerr << " lcio_tracks : no surface found for id : " << idDecoder.valueString() << std::endl ;
+		      continue;
+		    }
 
                     double hitpos[3] = {0., 0., 0.};
                     for(unsigned int i = 0; i < 3; ++i)
@@ -146,11 +166,14 @@ int main(int argc, char** argv)
                     TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
                     if(planarhit != NULL)
                         {
-                            precision.push_back(1. / planarhit->getdU());
-                            precision.push_back(1. / planarhit->getdV());
+			  precision.push_back(1. / ( planarhit->getdU() * dd4hep::mm ) ) ;
+			  precision.push_back(1. / ( planarhit->getdV() * dd4hep::mm ) ) ;
                         }
 
                     fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
+
+		    outTrk->addHit( *thit ) ;
+
                 }
             fitTrajectory.prepareForFitting();
 
@@ -161,6 +184,28 @@ int main(int argc, char** argv)
             std::cout << " estimated parameters after fitting are: " << result.estimatedParameters()(0) << "," << result.estimatedParameters()(1)  << "," <<
                       result.estimatedParameters()(2)  << "," <<  result.estimatedParameters()(3)  << "," << result.estimatedParameters()(4) << std:: endl;
 
+
+	    // add Track State to track:
+	    //TrackStateImpl(int location, float d0, float phi, float omega, float z0, float tanLambda, const float* covMatrix, const float* reference) ;
+	    TrackStateImpl* ts = new TrackStateImpl();
+
+	    ts->setD0(        result.estimatedParameters()(3) ) ; //  / dd4hep::mm ) ;
+	    ts->setPhi(       result.estimatedParameters()(2) ) ; //               ) ;
+	    ts->setOmega(     result.estimatedParameters()(0) ) ; //  * dd4hep::mm ) ;
+	    ts->setZ0(        result.estimatedParameters()(4) ) ; //  / dd4hep::mm ) ;
+	    ts->setTanLambda( result.estimatedParameters()(1) ) ; //               ) ;
+
+	    // fixme:cov matrix !?
+	    //ts->setCov(  ... ) ;
+
+	    float ref[3] = { 0., 0. ,0. } ;
+	    ts->setReferencePoint(ref);
+
+	    ts->setLocation(lcio::TrackState::AtIP);
+
+	    outTrk->addTrackState(ts);
+
+	    wrt->writeEvent( evt ) ;
         }
 
 

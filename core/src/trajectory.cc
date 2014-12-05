@@ -131,6 +131,8 @@ namespace aidaTT
         const double ycenter = calculateYCenter(_referenceParameters);
         circle circ(xcenter, ycenter, radius);
 
+	//	std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ; 
+
         intersections candidates = intersectCircleStraightLine(circ, line);
 
         if(candidates.number() < 1)
