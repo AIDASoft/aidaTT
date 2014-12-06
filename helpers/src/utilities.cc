@@ -3,20 +3,15 @@
 namespace aidaTT
 {
 
+  static const double CONV = 1. ; 
+
     /// SUPER DUMMY !!! only L3 type: [ Omega, tan(lambda), phi_0, d_0, z_0 ]
-
-  //fg: this is what we have in CEDViewer :
-  // double xs = ts->getReferencePoint()[0] -  ts->getD0() * sin( ts->getPhi() ) ;
-  // double ys = ts->getReferencePoint()[1] +  ts->getD0() * cos( ts->getPhi() ) ;
-  // double zs = ts->getReferencePoint()[2] +  ts->getZ0() ;
-
-  // x0 and y0: p.c.a. coordinates w.r.t reference point
 
     double calculateX0(const trackParameters& tp)
     {
         /// L3 type only
-      //      return cos(tp.parameters()(2)) * tp.parameters()(3)  / 10.;
-      return sin( - tp.parameters()(2)) * tp.parameters()(3)  / 10.;
+      //      return cos(tp.parameters()(2)) * tp.parameters()(3)  / CONV;
+      return ( sin( - tp.parameters()(2)) * tp.parameters()(3)  ) / CONV  + tp.referencePoint().x() ;
     }
 
 
@@ -24,8 +19,8 @@ namespace aidaTT
     double calculateY0(const trackParameters& tp)
     {
         /// L3 type only
-      //return sin(tp.parameters()(2)) * tp.parameters()(3)  / 10.;
-      return cos(tp.parameters()(2)) * tp.parameters()(3)  / 10.;
+      //return sin(tp.parameters()(2)) * tp.parameters()(3)  / CONV;
+      return ( cos(tp.parameters()(2)) * tp.parameters()(3) ) / CONV  + tp.referencePoint().y()  ;
     }
 
 
@@ -57,7 +52,7 @@ namespace aidaTT
     double calculateZ0(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.parameters()(4) / 10.;
+        return tp.parameters()(4) / CONV;
     }
 
 
@@ -65,7 +60,7 @@ namespace aidaTT
     double calculateDistanceFromPCA(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.parameters()(3) / 10.;
+        return tp.parameters()(3) / CONV;
     }
 
 
@@ -73,7 +68,7 @@ namespace aidaTT
     double calculateD0(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.parameters()(3) / 10.;
+        return tp.parameters()(3) / CONV;
     }
 
 
@@ -81,7 +76,7 @@ namespace aidaTT
     double calculateCurvature(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.parameters()(0) * 10.;
+        return tp.parameters()(0) * CONV;
     }
 
 
@@ -89,7 +84,7 @@ namespace aidaTT
     double calculateOmega(const trackParameters& tp)
     {
         /// L3 type only
-        return tp.parameters()(0) * 10.;
+        return tp.parameters()(0) * CONV;
     }
 
 

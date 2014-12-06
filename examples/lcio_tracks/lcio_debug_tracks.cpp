@@ -127,12 +127,12 @@ int main(int argc, char** argv)
     aidaTT::trackParameters iTP;
 
     // ****** use TrackState at ... *****************
-    //            const TrackState* ts = initialTrack->getTrackState( TrackState::AtIP ) ;
-            const TrackState* ts = initialTrack->getTrackState( TrackState::AtFirstHit ) ;
-    //     const TrackState* ts = initialTrack->getTrackState( TrackState::AtLastHit ) ;
-    // const TrackState* ts = initialTrack->getTrackState( TrackState::AtCalorimeter ) ;
+    //  const TrackState* ts = initialTrack->getTrackState( TrackState::AtIP ) ;
+    //  const TrackState* ts = initialTrack->getTrackState( TrackState::AtFirstHit ) ;
+    const TrackState* ts = initialTrack->getTrackState( TrackState::AtLastHit ) ;
+    //  const TrackState* ts = initialTrack->getTrackState( TrackState::AtCalorimeter ) ;
 
-    iTP.setTrackParameters(aidaTT::Vector5(ts->getOmega(), ts->getTanLambda(), ts->getPhi(), ts->getD0(), ts->getZ0()));
+	    iTP.setTrackParameters(aidaTT::Vector5(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm ));
       
 
 
@@ -206,15 +206,12 @@ int main(int argc, char** argv)
 	std::cout << " ++++  intersection found for surface : " << surf << std::endl 
 		  << "       at s = " << s << std::endl 
 		  << "       xx  =  " << xx << std::endl 
-		  << "      posV =  " << posV
+		  << "    hitPos =  " << posV
  		  <<  std::endl ;
-	
-	//	phi = -s * omega ;
 	
       } else {
 	
 	std::cout << " ++++ no intersection found for surface : " << surf << std::endl ;
-	
       }
 
       

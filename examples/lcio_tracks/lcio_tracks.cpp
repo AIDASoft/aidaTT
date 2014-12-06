@@ -126,7 +126,7 @@ int main(int argc, char** argv)
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
             aidaTT::trackParameters iTP;
-            iTP.setTrackParameters(aidaTT::Vector5(initialTrack->getOmega(), initialTrack->getTanLambda(), initialTrack->getPhi(), initialTrack->getD0(), initialTrack->getZ0()));
+            iTP.setTrackParameters(aidaTT::Vector5(initialTrack->getOmega()/dd4hep::mm, initialTrack->getTanLambda(), initialTrack->getPhi(), initialTrack->getD0()*dd4hep::mm, initialTrack->getZ0()*dd4hep::mm ));
 
             aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 
@@ -189,11 +189,11 @@ int main(int argc, char** argv)
 	    //TrackStateImpl(int location, float d0, float phi, float omega, float z0, float tanLambda, const float* covMatrix, const float* reference) ;
 	    TrackStateImpl* ts = new TrackStateImpl();
 
-	    ts->setD0(        result.estimatedParameters()(3) ) ; //  / dd4hep::mm ) ;
-	    ts->setPhi(       result.estimatedParameters()(2) ) ; //               ) ;
-	    ts->setOmega(     result.estimatedParameters()(0) ) ; //  * dd4hep::mm ) ;
-	    ts->setZ0(        result.estimatedParameters()(4) ) ; //  / dd4hep::mm ) ;
-	    ts->setTanLambda( result.estimatedParameters()(1) ) ; //               ) ;
+	    ts->setD0(        result.estimatedParameters()(3) / dd4hep::mm ) ;
+	    ts->setPhi(       result.estimatedParameters()(2)              ) ;
+	    ts->setOmega(     result.estimatedParameters()(0) * dd4hep::mm ) ;
+	    ts->setZ0(        result.estimatedParameters()(4) / dd4hep::mm ) ;
+	    ts->setTanLambda( result.estimatedParameters()(1)              ) ;
 
 	    // fixme:cov matrix !?
 	    //ts->setCov(  ... ) ;

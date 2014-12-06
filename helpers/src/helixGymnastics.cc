@@ -22,7 +22,6 @@ namespace aidaTT
         const double dzero = calculateDistanceFromPCA(tP);
         const double phi0 = calculatePhi0(tP);
 
-	//return tP.referencePoint().x() + (radius - dzero) * sin( - phi0 );
 	return tP.referencePoint().x()  + (radius - dzero) * sin( phi0 );
     }
 
@@ -42,17 +41,13 @@ namespace aidaTT
 
     double  calculatePhifromXY(double x, double y, const trackParameters& tP)
     {
-        // x0 and y0: p.c.a. coordinates w.r.t reference point
+        // x0 and y0: p.c.a. coordinates - not w.r.t reference point
       const double x0   = calculateX0(tP);
       const double y0   = calculateY0(tP);
-      // const double x0   = calculateX0(tP) + tP.referencePoint().x() ;
-      // const double y0   = calculateY0(tP) + tP.referencePoint().y() ;
       const double phi0 = calculatePhi0(tP);
       const double curvature = calculateCurvature(tP);
       
-      return atan2(sin(phi0) - curvature * (x - x0), cos(phi0) + curvature * (y - y0));
-      //	return atan2( curvature * (x - x0), curvature * (y - y0));
-      //	return atan2( curvature * (y - y0) , curvature * (x - x0));
+      return atan2( sin(phi0) - curvature * (x - x0), cos(phi0) + curvature * (y - y0) );
     }
 
 
@@ -62,22 +57,19 @@ namespace aidaTT
         // x0 and y0: p.c.a. coordinates w.r.t reference point
         const double x0   = calculateX0(tP) ;
         const double y0   = calculateY0(tP) ;
-        // const double x0   = calculateX0(tP) + tP.referencePoint().x() ;
-	// const double y0   = calculateY0(tP) + tP.referencePoint().y() ;
         const double phi0 = calculatePhi0(tP);
 
         double phi = calculatePhifromXY(x, y, tP);
         double dphi = phi - phi0;
 
-        if(phi != 0.){
+        if( dphi != 0.){
 
-	  double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi)  ;
+	  double s = ( (x - x0) * cos(phi0) + (y - y0) * sin(phi0) ) / ( sin(dphi)/dphi )  ;
 	  
 	  // std::cout <<  " *** calculateSfromXY :  s = " << s 
-	  //  	    << " dphi*R = " << dphi / std::fabs( calculateCurvature( tP ) ) 
-	  //  	    << std::endl ; 
-	  //    fg: this would be shorter :
-	  //	  s = dphi / std::fabs( calculateCurvature( tP ) )  ;
+	  //   	    << " dphi*R = " << dphi / std::fabs( calculateCurvature( tP ) ) 
+	  // 	    << " dphi = " << dphi
+	  // 	    << std::endl ; 
 
 	  return s ;
 
@@ -125,8 +117,8 @@ namespace aidaTT
     {
         const double tanLambda = calculateTanLambda(tP);
         const double z0        = calculateZ0(tP);
-	//return (z0 + tP.referencePoint().z() + s * tanLambda);
-	return (z0 + s * tanLambda);
+	return (z0 + tP.referencePoint().z() + s * tanLambda);
+	//	return (z0 + s * tanLambda);
     }
 
 
