@@ -29,6 +29,7 @@
 #include "GBLInterface.hh"
 #include "fitResults.hh"
 #include "Vector5.hh"
+#include "LCIOPersistency.hh"
 
 #include <map>
 
@@ -125,8 +126,7 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-            aidaTT::trackParameters iTP;
-            iTP.setTrackParameters(aidaTT::Vector5(initialTrack->getOmega()/dd4hep::mm, initialTrack->getTanLambda(), initialTrack->getPhi(), initialTrack->getD0()*dd4hep::mm, initialTrack->getZ0()*dd4hep::mm ));
+            aidaTT::trackParameters iTP( aidaTT::readLCIO( initialTrack->getTrackState(1) ) ); // 1 means AtIP
 
             aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 
@@ -181,19 +181,19 @@ int main(int argc, char** argv)
             fitTrajectory.fit();
             const aidaTT::fitResults& result = fitTrajectory.getFitResults();
 
-            std::cout << " estimated parameters after fitting are: " << result.estimatedParameters()(0) << "," << result.estimatedParameters()(1)  << "," <<
-                      result.estimatedParameters()(2)  << "," <<  result.estimatedParameters()(3)  << "," << result.estimatedParameters()(4) << std:: endl;
+            //~ std::cout << " estimated parameters after fitting are: " << result.estimatedParameters()(0) << "," << result.estimatedParameters()(1)  << "," <<
+                      //~ result.estimatedParameters()(2)  << "," <<  result.estimatedParameters()(3)  << "," << result.estimatedParameters()(4) << std:: endl;
 
 
 	    // add Track State to track:
 	    //TrackStateImpl(int location, float d0, float phi, float omega, float z0, float tanLambda, const float* covMatrix, const float* reference) ;
-	    TrackStateImpl* ts = new TrackStateImpl();
+	    TrackStateImpl* ts = aidaTT::createLCIO( result.estimatedParameters() );
 
-	    ts->setD0(        result.estimatedParameters()(3) / dd4hep::mm ) ;
-	    ts->setPhi(       result.estimatedParameters()(2)              ) ;
-	    ts->setOmega(     result.estimatedParameters()(0) * dd4hep::mm ) ;
-	    ts->setZ0(        result.estimatedParameters()(4) / dd4hep::mm ) ;
-	    ts->setTanLambda( result.estimatedParameters()(1)              ) ;
+	    //~ ts->setD0(        result.estimatedParameters()(3) / dd4hep::mm ) ;
+	    //~ ts->setPhi(       result.estimatedParameters()(2)              ) ;
+	    //~ ts->setOmega(     result.estimatedParameters()(0) * dd4hep::mm ) ;
+	    //~ ts->setZ0(        result.estimatedParameters()(4) / dd4hep::mm ) ;
+	    //~ ts->setTanLambda( result.estimatedParameters()(1)              ) ;
 
 	    // fixme:cov matrix !?
 	    //ts->setCov(  ... ) ;

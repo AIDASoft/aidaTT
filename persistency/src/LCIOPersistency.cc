@@ -1,5 +1,6 @@
 #ifdef USE_LCIO
 
+
 #include "LCIOPersistency.hh"
 
 #include "Vector5.hh"
@@ -13,36 +14,39 @@
 
 namespace aidaTT
 {
+#ifdef AIDATT_USE_DD4HEP
+#include "DD4hep/DD4hepUnits.h"
+
     trackParameters readLCIO(const EVENT::TrackState* const ts)
     {
         trackParameters TP;
         /// track state can be read as L3 parametrization:  [ Omega, tan(lambda), phi_0, d_0, z_0, ]
-        Vector5 param(ts->getOmega(), ts->getTanLambda(), ts->getPhi(), ts->getD0(), ts->getZ0());
+        Vector5 param(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm);
 
         /// get the reference point
-        Vector3D refPoint(ts->getReferencePoint());
+        Vector3D refPoint(ts->getReferencePoint()[0]*dd4hep::mm , ts->getReferencePoint()[1]*dd4hep::mm , ts->getReferencePoint()[2]*dd4hep::mm);
 
         /// the covariance matrix is stored as lower triangle,
         ///  order of parameters is: d0, phi, omega, z0, tan(lambda)
         fullCovariance covarianceMatrix;
 
         // omega, omega - 0,0
-        covarianceMatrix(0, 0) = ts->getCovMatrix().at(5);
+        covarianceMatrix(0, 0) = ts->getCovMatrix().at(5)/(dd4hep::mm*dd4hep::mm);
         // tanLambda,tanLambda (1,1)
         covarianceMatrix(1, 1) = ts->getCovMatrix().at(14);
         // phi,phi (2,2)
         covarianceMatrix(2, 2) = ts->getCovMatrix().at(2);
         // d0,d0 (3,3)
-        covarianceMatrix(3, 3) = ts->getCovMatrix().at(0);
+        covarianceMatrix(3, 3) = ts->getCovMatrix().at(0)*dd4hep::mm*dd4hep::mm;
         // z0,z0 (4,4)
-        covarianceMatrix(4, 4) = ts->getCovMatrix().at(9);
+        covarianceMatrix(4, 4) = ts->getCovMatrix().at(9)*dd4hep::mm*dd4hep::mm;
 
         // omega, tanLambda (0,1) - (1,0)
-        covarianceMatrix(1, 0) = ts->getCovMatrix().at(12);
-        covarianceMatrix(0, 1) = ts->getCovMatrix().at(12);
+        covarianceMatrix(1, 0) = ts->getCovMatrix().at(12)/dd4hep::mm;
+        covarianceMatrix(0, 1) = ts->getCovMatrix().at(12)/dd4hep::mm;
         // omega, phi (0,2) - (2,0)
-        covarianceMatrix(2, 0) = ts->getCovMatrix().at(4);
-        covarianceMatrix(0, 2) = ts->getCovMatrix().at(4);
+        covarianceMatrix(2, 0) = ts->getCovMatrix().at(4)/dd4hep::mm;
+        covarianceMatrix(0, 2) = ts->getCovMatrix().at(4)/dd4hep::mm;
         //omega, d0 (0,3) - (3,0)
         covarianceMatrix(3, 0) = ts->getCovMatrix().at(3);
         covarianceMatrix(0, 3) = ts->getCovMatrix().at(3);
@@ -54,22 +58,22 @@ namespace aidaTT
         covarianceMatrix(1, 2) = ts->getCovMatrix().at(11);
         covarianceMatrix(2, 1) = ts->getCovMatrix().at(11);
         // tanLambda, d0 (1,3) - (3,1)
-        covarianceMatrix(1, 3) = ts->getCovMatrix().at(10);
-        covarianceMatrix(3, 1) = ts->getCovMatrix().at(10);
+        covarianceMatrix(1, 3) = ts->getCovMatrix().at(10)*dd4hep::mm;
+        covarianceMatrix(3, 1) = ts->getCovMatrix().at(10)*dd4hep::mm;
         // tanLambda, z0 (1,4) - (4,1)
-        covarianceMatrix(1, 4) = ts->getCovMatrix().at(13);
-        covarianceMatrix(4, 1) = ts->getCovMatrix().at(13);
+        covarianceMatrix(1, 4) = ts->getCovMatrix().at(13)*dd4hep::mm;
+        covarianceMatrix(4, 1) = ts->getCovMatrix().at(13)*dd4hep::mm;
 
         // phi, d0 (2,3) - (3,2)
-        covarianceMatrix(3, 2) = ts->getCovMatrix().at(1);
-        covarianceMatrix(2, 3) = ts->getCovMatrix().at(1);
+        covarianceMatrix(3, 2) = ts->getCovMatrix().at(1)*dd4hep::mm;
+        covarianceMatrix(2, 3) = ts->getCovMatrix().at(1)*dd4hep::mm;
         // phi, z0 (2,4) - (4,2)
-        covarianceMatrix(2, 4) = ts->getCovMatrix().at(7);
-        covarianceMatrix(4, 2) = ts->getCovMatrix().at(7);
+        covarianceMatrix(2, 4) = ts->getCovMatrix().at(7)*dd4hep::mm;
+        covarianceMatrix(4, 2) = ts->getCovMatrix().at(7)*dd4hep::mm;
 
         // d0, z0 (3,4) - (4,3)
-        covarianceMatrix(3, 4) = ts->getCovMatrix().at(6);
-        covarianceMatrix(4, 3) = ts->getCovMatrix().at(6);
+        covarianceMatrix(3, 4) = ts->getCovMatrix().at(6)*dd4hep::mm*dd4hep::mm;
+        covarianceMatrix(4, 3) = ts->getCovMatrix().at(6)*dd4hep::mm*dd4hep::mm;
 
         TP.setTrackParameters(param, covarianceMatrix, refPoint);
         return  TP;
@@ -135,7 +139,7 @@ namespace aidaTT
 
         return tsi;
     }
-
+#endif // AIDATT_USE_DD4HEP
 
 
 //~ trajectory readLCIO(const EVENT::Track* const t)
