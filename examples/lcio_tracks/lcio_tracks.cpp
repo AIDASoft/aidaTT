@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 
                             // increase the layerid by one:
                             unsigned layerID = idDecoder[lcio::ILDCellID0::layer] ;
-                            idDecoder[lcio::ILDCellID0::layer] = layerID + 1 ;
+                            //idDecoder[lcio::ILDCellID0::layer] = layerID + 1 ;
 
                             hitid = idDecoder.lowWord() ;
                         }
