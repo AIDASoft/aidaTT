@@ -129,12 +129,23 @@ namespace aidaTT
 
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + ildCorrections;
 
-        /// TODO: missing covariance matrix
         trackParameters tp;
         tp.setTrackParameters(fittedParameters);
+	
+	fiveByFiveMatrix testCovMat;
+	
+	for (int i = 0 ; i < 5 ; i++ ){
+	  for (int j = 0 ; j < 5 ; j++ ){
+	    testCovMat(i,j) = trackcovariance(i,j);
+	  }
+	}
+	
+	tp.setCovarianceMatrix(testCovMat);
+	
         _theResults.setResults(v, chs, n, wl, tp);
+	
     }
-
+  
 }
 /*  ORIGINAL
 
