@@ -92,49 +92,49 @@ namespace aidaTT
         tsi->setLocation(0);
 
         /// set parameter values
-        tsi->setD0(calculateD0(tp));
+        tsi->setD0(calculateD0(tp) / dd4hep::mm);
         tsi->setPhi(calculatePhi0(tp));
-        tsi->setOmega(calculateOmega(tp));
+        tsi->setOmega(calculateOmega(tp) * dd4hep::mm);
         tsi->setZ0(calculateZ0(tp));
-        tsi->setTanLambda(calculateTanLambda(tp));
+        tsi->setTanLambda(calculateTanLambda(tp) / dd4hep::mm);
 
         std::vector<float> covm;
 
         // d0,d0 (3,3)
-        covm.push_back(covarianceMatrix(3, 3));  // ts->getCovMatrix().at(0);
+        covm.push_back(covarianceMatrix(3, 3) / (dd4hep::mm * dd4hep::mm) ) ;  // ts->getCovMatrix().at(0);
         // phi, d0 (2,3) - (3,2)
-        covm.push_back(covarianceMatrix(3, 2));  // ts->getCovMatrix().at(1);
+        covm.push_back(covarianceMatrix(3, 2) / dd4hep::mm);  // ts->getCovMatrix().at(1);
         // phi,phi (2,2)
         covm.push_back(covarianceMatrix(2, 2));  // ts->getCovMatrix().at(2);
         //omega, d0 (0,3) - (3,0)
         covm.push_back(covarianceMatrix(3, 0));  // ts->getCovMatrix().at(3);
         // omega, phi (0,2) - (2,0)
-        covm.push_back(covarianceMatrix(0, 2));  // ts->getCovMatrix().at(4);
+        covm.push_back(covarianceMatrix(0, 2) * dd4hep::mm);  // ts->getCovMatrix().at(4);
         // omega, omega - 0,0
-        covm.push_back(covarianceMatrix(0, 0));  // ts->getCovMatrix().at(5);
+        covm.push_back(covarianceMatrix(0, 0) * (dd4hep::mm * dd4hep::mm));  // ts->getCovMatrix().at(5);
         // d0, z0 (3,4) - (4,3)
-        covm.push_back(covarianceMatrix(3, 4));  // ts->getCovMatrix().at(6);
+        covm.push_back(covarianceMatrix(3, 4) / (dd4hep::mm * dd4hep::mm));  // ts->getCovMatrix().at(6);
         // phi, z0 (2,4) - (4,2)
-        covm.push_back(covarianceMatrix(2, 4));  // ts->getCovMatrix().at(7);
+        covm.push_back(covarianceMatrix(2, 4) / dd4hep::mm);  // ts->getCovMatrix().at(7);
         // omega, z0 (0,4) - (4,0)
         covm.push_back(covarianceMatrix(4, 0));  // ts->getCovMatrix().at(8);
         // z0,z0 (4,4)
-        covm.push_back(covarianceMatrix(4, 4));  // ts->getCovMatrix().at(9);
+        covm.push_back(covarianceMatrix(4, 4) / (dd4hep::mm * dd4hep::mm));  // ts->getCovMatrix().at(9);
         // tanLambda, d0 (1,3) - (3,1)
-        covm.push_back(covarianceMatrix(1, 3));  // ts->getCovMatrix().at(10);
+        covm.push_back(covarianceMatrix(1, 3) / dd4hep::mm);  // ts->getCovMatrix().at(10);
         // tanLambda, phi (1,2) - (2,1)
         covm.push_back(covarianceMatrix(1, 2));  // ts->getCovMatrix().at(11);
         // omega, tanLambda (0,1) - (1,0)
-        covm.push_back(covarianceMatrix(0, 1));  // ts->getCovMatrix().at(12);
+        covm.push_back(covarianceMatrix(0, 1) * dd4hep::mm);  // ts->getCovMatrix().at(12);
         // tanLambda, z0 (1,4) - (4,1)
-        covm.push_back(covarianceMatrix(1, 4));  // ts->getCovMatrix().at(13);
+        covm.push_back(covarianceMatrix(1, 4) / dd4hep::mm);  // ts->getCovMatrix().at(13);
         // tanLambda,tanLambda (1,1)
         covm.push_back(covarianceMatrix(1, 1));  // ts->getCovMatrix().at(14);
 
         tsi->setCovMatrix(covm);
 
         /// set reference point
-        float rp[3] = { refPoint.x(), refPoint.y(), refPoint.z() };
+        float rp[3] = { refPoint.x() / dd4hep::mm, refPoint.y() / dd4hep::mm, refPoint.z() / dd4hep::mm};
         tsi->setReferencePoint(rp);
 
         return tsi;
