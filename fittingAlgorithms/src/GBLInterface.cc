@@ -150,7 +150,7 @@ namespace aidaTT
 	finalCov = cl2PerJacobianT * finalCov ;
 
 
-	tp.setCovarianceMatrix(testCovMat);
+	tp.setCovarianceMatrix( finalCov );
 	
         _theResults.setResults(v, chs, n, wl, tp);
 	
