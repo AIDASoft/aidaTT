@@ -125,7 +125,10 @@ namespace aidaTT
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-        Vector5 ildCorrections = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) * clCorrections;
+	  //        Vector5 ildCorrections = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) * clCorrections;
+
+	fiveByFiveMatrix cl2PerJacobian  = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) ; 
+        Vector5 ildCorrections =  cl2PerJacobian * clCorrections;
 
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + ildCorrections;
 
@@ -133,13 +136,20 @@ namespace aidaTT
         tp.setTrackParameters(fittedParameters);
 	
 	fiveByFiveMatrix testCovMat;
-	
 	for (int i = 0 ; i < 5 ; i++ ){
 	  for (int j = 0 ; j < 5 ; j++ ){
 	    testCovMat(i,j) = trackcovariance(i,j);
 	  }
 	}
-	
+
+	//fg --- need to transform the covariance matrix from CL to perigee ----
+	fiveByFiveMatrix cl2PerJacobianT( cl2PerJacobian ) ;
+	cl2PerJacobianT.Transpose() ;
+
+	fiveByFiveMatrix finalCov  = testCovMat * cl2PerJacobian ;
+	finalCov = cl2PerJacobianT * finalCov ;
+
+
 	tp.setCovarianceMatrix(testCovMat);
 	
         _theResults.setResults(v, chs, n, wl, tp);

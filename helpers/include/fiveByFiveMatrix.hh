@@ -61,6 +61,12 @@ namespace aidaTT
                 gsl_matrix_set_identity(_matrix);
             };
 
+            /** transpose the matrix (in place) */
+            inline void Transpose()
+            {
+               gsl_matrix_transpose(_matrix);
+            };  
+           
             /** get array to construct other matrix representations */
             double* array() const;
 

@@ -221,6 +221,9 @@ namespace aidaTT
 	return true;
 	
     }
+
+
+
     // bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     // {
     //     const Vector3D refpoint = _referenceParameters.referencePoint();
