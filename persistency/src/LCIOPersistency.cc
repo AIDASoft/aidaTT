@@ -22,7 +22,9 @@ namespace aidaTT
         trackParameters TP;
         /// track state can be read as L3 parametrization:  [ Omega, tan(lambda), phi_0, d_0, z_0, ]
 	Vector5 param(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm);
-        // Vector5 param( 1.01 * ts->getOmega()/dd4hep::mm, 
+
+	//debug: vary the track parameters by 1% :
+	// Vector5 param( 1.01 * ts->getOmega()/dd4hep::mm, 
 	// 	       1.01 * ts->getTanLambda(), 
 	// 	       0.99 * ts->getPhi(), 
 	// 	       0.99 * ts->getD0()*dd4hep::mm, 
@@ -97,11 +99,11 @@ namespace aidaTT
         tsi->setLocation(0);
 
         /// set parameter values
-        tsi->setD0(calculateD0(tp) / dd4hep::mm);
-        tsi->setPhi(calculatePhi0(tp));
-        tsi->setOmega(calculateOmega(tp) * dd4hep::mm);
-        tsi->setZ0(calculateZ0(tp));
-        tsi->setTanLambda(calculateTanLambda(tp) / dd4hep::mm);
+        tsi->setD0( calculateD0(tp) / dd4hep::mm);
+        tsi->setPhi( calculatePhi0(tp) );
+        tsi->setOmega( calculateOmega(tp) * dd4hep::mm);
+        tsi->setZ0( calculateZ0(tp)  / dd4hep::mm);
+        tsi->setTanLambda( calculateTanLambda(tp) );
 
         std::vector<float> covm;
 

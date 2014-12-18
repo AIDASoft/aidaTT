@@ -8,6 +8,8 @@
 
 namespace aidaTT
 {
+  
+  /** Enum for accessing the track parameters in L3/LCIO perigee convention */ 
     enum {
       OMEGA = 0, 
       TANL, 
@@ -18,7 +20,7 @@ namespace aidaTT
 
   
   
-	/// helper function to calculate the needed/wanted values from the current parametrization
+    /// helper function to calculate the needed/wanted values from the current parametrization
     double calculateX0(const trackParameters&);
     double calculateY0(const trackParameters&);
     double calculatePhi0(const trackParameters&);

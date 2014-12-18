@@ -1,4 +1,5 @@
 #include "utilities.hh"
+#include "helixGymnastics.hh"
 
 namespace aidaTT
 {
@@ -190,6 +191,9 @@ namespace aidaTT
     
     double xc    = x0 + rdr*csf0;
     double yc    = y0 + rdr*snf0;
+
+    // std::cout << " ***++ xc = " << xc << ", yc = " << yc << " XCenter " << calculateXCenter( tp ) << " YCenter " << calculateYCenter( tp ) << std::endl ;
+
     double fi0p  = 0.;
     
     if (cpa > 0.) fi0p = std::atan2( (yc-yv), (xc-xv) );

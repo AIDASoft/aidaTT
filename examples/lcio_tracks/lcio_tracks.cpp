@@ -134,13 +134,13 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState(1) )    );     // 1 means AtIP
+            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )    );  
 
 	    std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
-#define compute_start_helix 0	    
+#define compute_start_helix 0
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
 	    aidaTT::trackParameters startHelix ;
 
@@ -153,9 +153,9 @@ int main(int argc, char** argv)
 	      lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
 	      lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
 
-	      aidaTT::Vector3D x1( h1->getPosition()[0], h1->getPosition()[1] , h1->getPosition()[2] ) ;
-	      aidaTT::Vector3D x2( h2->getPosition()[0], h2->getPosition()[1] , h2->getPosition()[2] ) ;
-	      aidaTT::Vector3D x3( h3->getPosition()[0], h3->getPosition()[1] , h3->getPosition()[2] ) ;
+	      aidaTT::Vector3D x1( h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm ) ;
+	      aidaTT::Vector3D x2( h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm ) ;
+	      aidaTT::Vector3D x3( h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm ) ;
 	      
 	      calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
 	      
@@ -169,10 +169,11 @@ int main(int argc, char** argv)
 	      startHelix.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
 	      startHelix.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
 
-	      std::cout << "  start helix from three points : " << startHelix << std::endl ;
+	      // std::cout << "  start helix from three points : " << startHelix << std::endl ;
 
 	      // use this helix as start for the fit:
 	      iTP = startHelix ;
+
 	    }
 #endif //----------------------------------------------------------------------------------------------------------------------
 
@@ -209,13 +210,16 @@ int main(int argc, char** argv)
                     double hitpos[3] = {0., 0., 0.};
                     for(unsigned int i = 0; i < 3; ++i)
                         hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
+
                     std::vector<double> precision;
 
                     TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
                     if(planarhit != NULL)
-                        {
-                            precision.push_back(1. / (planarhit->getdU() * dd4hep::mm)) ;
-                            precision.push_back(1. / (planarhit->getdV() * dd4hep::mm)) ;
+		      {
+			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
+			  precision.push_back( 1. / (   planarhit->getdU() * dd4hep::mm ) ) ;
+			  precision.push_back( 1. / (   planarhit->getdV() * dd4hep::mm ) ) ;
+			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
                         }
 
                     fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
@@ -245,6 +249,10 @@ int main(int argc, char** argv)
 
 	    outTrk->setChi2( result.chiSquare() ) ;
 	    outTrk->setNdf( result.ndf() ) ;
+	    outTrk->subdetectorHitNumbers().resize(10.) ;
+
+	    outTrk->subdetectorHitNumbers()[0] = outTrk->getTrackerHits().size() ;
+
 
             float ref[3] = { 0., 0. , 0. } ;
             ts->setReferencePoint(ref);

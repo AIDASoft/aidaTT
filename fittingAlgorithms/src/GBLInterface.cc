@@ -38,7 +38,7 @@ namespace aidaTT
                 ///~ initialise point with jacobian from last to the current element
                 gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
-		std::cout << " ---  GBLInterface::fit - element : " <<  **element << std::endl ;
+		//		std::cout << " ---  GBLInterface::fit - element : " <<  **element << std::endl ;
 		
 
                 if((*element)->hasMeasurement())

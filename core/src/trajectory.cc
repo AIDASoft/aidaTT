@@ -219,7 +219,7 @@ namespace aidaTT
 	      }
 	  }
 
-	std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
+	//	std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
 	return true;
 	
     }
@@ -413,7 +413,10 @@ namespace aidaTT
         measDir->push_back(surface.v(position));
 
 
-	std::cout << " trajectory::addMeasurement: intersects surface : " << intersects << " residuals: " <<  udiff << ", " << vdiff << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
+	// std::cout << " trajectory::addMeasurement: intersects surface : " << intersects 
+	// 	  << " residuals: " <<  udiff << ", " << vdiff 
+	// 	  << " errors :   " <<  1./precision[0] << ", " << 1./precision[1]  
+	// 	  << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
 
 	if( intersects ){ 
 	  _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
