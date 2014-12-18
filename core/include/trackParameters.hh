@@ -49,21 +49,25 @@ namespace aidaTT
             trackParameters& operator=(const trackParameters&);
 
             ///~ getter functions
-            Vector5 parameters() const;
+            const Vector5& parameters() const { return _helixparams; }
+
+            /// access parameters to set values 
+            Vector5& parameters() { return _helixparams; } 
 
             ///~ direct read access to the individual elements by index
             double operator()(unsigned int) const;
 
             ///~ get the reference point in global, cartesian coordinates (x,y,z)
-            Vector3D referencePoint() const
-            {
-                return _refpoint;
-            };
+            const Vector3D& referencePoint() const  { return _refpoint;  }
 
-            fullCovariance covarianceMatrix() const
-            {
-                return _covmatrix;
-            };
+            /// access the reference point in global, cartesian coordinates (x,y,z)
+            Vector3D& referencePoint() { return _refpoint;  }
+
+            /// read access covariance matrix
+            const fullCovariance& covarianceMatrix() const { return _covmatrix; };
+
+            /// write access covariance matrix
+            fullCovariance& covarianceMatrix() { return _covmatrix; };
 
             ///~ setter functions
             ///~ set everything at once
