@@ -21,7 +21,12 @@ namespace aidaTT
     {
         trackParameters TP;
         /// track state can be read as L3 parametrization:  [ Omega, tan(lambda), phi_0, d_0, z_0, ]
-        Vector5 param(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm);
+	Vector5 param(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm);
+        // Vector5 param( 1.01 * ts->getOmega()/dd4hep::mm, 
+	// 	       1.01 * ts->getTanLambda(), 
+	// 	       0.99 * ts->getPhi(), 
+	// 	       0.99 * ts->getD0()*dd4hep::mm, 
+	// 	       1.01  * ts->getZ0()*dd4hep::mm);
 
         /// get the reference point
         Vector3D refPoint(ts->getReferencePoint()[0]*dd4hep::mm , ts->getReferencePoint()[1]*dd4hep::mm , ts->getReferencePoint()[2]*dd4hep::mm);

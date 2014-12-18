@@ -29,6 +29,7 @@
 #include "GBLInterface.hh"
 #include "fitResults.hh"
 #include "Vector5.hh"
+#include "utilities.hh"
 #include "LCIOPersistency.hh"
 
 #include <map>
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
             wrt->open(outFile) ;
         }
     else
-        wrt->open("innowaythisisnorway.slcio") ;
+      wrt->open("innowaythisisnorway.slcio", lcio::LCIO::WRITE_NEW ) ;
 
     LCEvent* evt = 0 ;
 
@@ -133,11 +134,50 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-            aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(1)));     // 1 means AtIP
+            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState(1) )    );     // 1 means AtIP
 
-            aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
+	    std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
+
+#define compute_start_helix 0	    
+#if compute_start_helix //----------------------------------------------------------------------------------------------------
+	    aidaTT::trackParameters startHelix ;
+
+	    unsigned nHits = initialHits.size() ;
+	    if( nHits > 2 ) {  
+	      //--------- get the start helix from three points
+	      bool backwards = false ;
+
+	      lcio::TrackerHit* h1 = ( backwards ?  initialHits[ nHits-1 ] : initialHits[    0    ] ) ;
+	      lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
+	      lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
+
+	      aidaTT::Vector3D x1( h1->getPosition()[0], h1->getPosition()[1] , h1->getPosition()[2] ) ;
+	      aidaTT::Vector3D x2( h2->getPosition()[0], h2->getPosition()[1] , h2->getPosition()[2] ) ;
+	      aidaTT::Vector3D x3( h3->getPosition()[0], h3->getPosition()[1] , h3->getPosition()[2] ) ;
+	      
+	      calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
+	      
+	      moveHelixTo( startHelix, aidaTT::Vector3D()  ) ; // move to origin
+
+	      // --- set some large errors to the covariance matrix
+	      startHelix.covarianceMatrix().Unit() ;
+	      startHelix.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
+	      startHelix.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
+	      startHelix.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
+	      startHelix.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
+	      startHelix.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
+
+	      std::cout << "  start helix from three points : " << startHelix << std::endl ;
+
+	      // use this helix as start for the fit:
+	      iTP = startHelix ;
+	    }
+#endif //----------------------------------------------------------------------------------------------------------------------
+
+
+            aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 
             for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
                 {
@@ -186,25 +226,25 @@ int main(int argc, char** argv)
             fitTrajectory.prepareForFitting();
 
 
-            fitTrajectory.fit();
+            bool success = fitTrajectory.fit();
             const aidaTT::fitResults& result = fitTrajectory.getFitResults();
+
+
+	    if( ! success ) {
+
+	      std::cout << " ********** ERROR:  Fit Failed !!!!! ******************************* " << std::endl ;
+	    }
 
             std::cout << " initial values vs. refitted: " << std::endl;
             std::cout << iTP << std::endl;
             std::cout << result.estimatedParameters() << std::endl;
 
+
             // add Track State to track:
-            //TrackStateImpl(int location, float d0, float phi, float omega, float z0, float tanLambda, const float* covMatrix, const float* reference) ;
-            TrackStateImpl* ts = aidaTT::createLCIO(result.estimatedParameters());
+            TrackStateImpl* ts = aidaTT::createLCIO( result.estimatedParameters()  );
 
-            //~ ts->setD0(        result.estimatedParameters()(3) / dd4hep::mm ) ;
-            //~ ts->setPhi(       result.estimatedParameters()(2)              ) ;
-            //~ ts->setOmega(     result.estimatedParameters()(0) * dd4hep::mm ) ;
-            //~ ts->setZ0(        result.estimatedParameters()(4) / dd4hep::mm ) ;
-            //~ ts->setTanLambda( result.estimatedParameters()(1)              ) ;
-
-            // fixme:cov matrix !?
-            //ts->setCov(  ... ) ;
+	    outTrk->setChi2( result.chiSquare() ) ;
+	    outTrk->setNdf( result.ndf() ) ;
 
             float ref[3] = { 0., 0. , 0. } ;
             ts->setReferencePoint(ref);

@@ -8,6 +8,15 @@
 
 namespace aidaTT
 {
+  enum {
+    OMEGA = 0, 
+    TANL, 
+    PHI0,
+    D0,
+    Z0 
+  } Index ;
+  
+  
 	/// helper function to calculate the needed/wanted values from the current parametrization
     double calculateX0(const trackParameters&);
     double calculateY0(const trackParameters&);
@@ -20,6 +29,12 @@ namespace aidaTT
     double calculateCurvature(const trackParameters&);
     double calculateOmega(const trackParameters&);
     double calculateQoverP(const trackParameters& , double BField);
+
+  /// compute start parameters for a helix from three points, e.g. first, last and middle point ) 
+  void calculateStartHelix( const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward=false) ;
+
+  /// move the helix parameters to a new reference point - fixme: covariance matrix is not yet updated !
+  double moveHelixTo( trackParameters& tp,  const Vector3D& ref ) ;
 
     fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector5&, const Vector3D&);
     fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
