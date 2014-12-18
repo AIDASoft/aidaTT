@@ -51,7 +51,7 @@ namespace aidaTT
      */
 
 
-    class trajectoryElement
+    class trajectoryElement 
     {
         public:
             /// Measurement constructor: arc length, surface, measurement direction(s), precision(s) and residual(s) plus the local curvilinear system and some identification
@@ -176,5 +176,19 @@ namespace aidaTT
 
             const void* const _id; // just store
     };
+
+
+  inline std::ostream& operator<<(  std::ostream& os, const trajectoryElement& e ) {
+    
+    os << " trajectory element at s= " <<  e.arcLength() << " has measurement: " <<  e.hasMeasurement() << " isScatterer : " << e.isScatterer()
+       << "\n surface: " << e.surface()
+      //       << "\n state: " << e.fullState()
+       << "\n jacobian:                " <<  e.jacobian()
+       << "\n jacobian from previous : " <<  e.jacobianFromPrevious()
+       << std::endl ;
+
+    return os ;
+  }
+
 }
 #endif // TRAJECTORYELEMENT_H
