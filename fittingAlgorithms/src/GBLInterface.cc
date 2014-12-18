@@ -38,6 +38,9 @@ namespace aidaTT
                 ///~ initialise point with jacobian from last to the current element
                 gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
+		std::cout << " ---  GBLInterface::fit - element : " <<  **element << std::endl ;
+		
+
                 if((*element)->hasMeasurement())
                     {
                         /// three elements are needed to add a measurement to a gblpoint:
@@ -146,9 +149,17 @@ namespace aidaTT
 	fiveByFiveMatrix cl2PerJacobianT( cl2PerJacobian ) ;
 	cl2PerJacobianT.Transpose() ;
 
-	fiveByFiveMatrix finalCov  = testCovMat * cl2PerJacobian ;
-	finalCov = cl2PerJacobianT * finalCov ;
+	// std::cout << " initial covariance: " << testCovMat << std::endl ;
+	// std::cout << " Jacobian :          " <<  cl2PerJacobian << std::endl ;
+	// std::cout << " JacobianT:          " <<  cl2PerJacobianT << std::endl ;
 
+	fiveByFiveMatrix finalCov  = testCovMat * cl2PerJacobianT ;
+
+	// std::cout << " half transformed:  " << finalCov   << std::endl ;
+
+	finalCov = cl2PerJacobian * finalCov ;
+
+	// std::cout << " final   covariance: " << finalCov   << std::endl ;
 
 	tp.setCovarianceMatrix( finalCov );
 	
