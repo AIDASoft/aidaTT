@@ -8,13 +8,14 @@
 
 namespace aidaTT
 {
-  enum {
-    OMEGA = 0, 
-    TANL, 
-    PHI0,
-    D0,
-    Z0 
-  } Index ;
+    enum {
+      OMEGA = 0, 
+      TANL, 
+      PHI0,
+      D0,
+      Z0 
+    } ;
+
   
   
 	/// helper function to calculate the needed/wanted values from the current parametrization
