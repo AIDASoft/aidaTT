@@ -30,10 +30,10 @@ namespace aidaTT
 
 
 
-    Vector5 trackParameters::parameters() const
-    {
-        return _helixparams;
-    }
+    // Vector5 trackParameters::parameters() const
+    // {
+    //     return _helixparams;
+    // }
 
 
 
@@ -50,7 +50,7 @@ namespace aidaTT
     double& trackParameters::operator()(unsigned int index)
     {
         if(index > 4)
-            throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for reading.");
+            throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for writing.");
         else
             return _helixparams(index);
     }
