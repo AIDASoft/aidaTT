@@ -187,7 +187,7 @@ namespace aidaTT
 
 		if( xx ) xx->fill( sol0 ) ;
 
-                return true;
+		//        return true;
             }
         else if( !insideFirst && insideSecond )
             {
@@ -197,7 +197,7 @@ namespace aidaTT
 
 		if( xx ) xx->fill( sol1 ) ;
 
-                return true;
+                // return true;
             }
         else // both are valid , choose the smaller absolute solution
 	  {
@@ -218,6 +218,8 @@ namespace aidaTT
 		if( xx ) xx->fill( sol1 ) ;
 	      }
 	  }
+
+	std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
 	return true;
 	
     }
@@ -393,7 +395,7 @@ namespace aidaTT
         /// get reference information
         Vector2D* referenceUV = new Vector2D();
         double s =  0;
-        _calculateIntersectionWithSurface(&surface, s, referenceUV);
+        double intersects = _calculateIntersectionWithSurface(&surface, s, referenceUV);
 
         /// calculate measurement info
         Vector2D* measuredUV = new Vector2D(surface.globalToLocal(position));
@@ -410,7 +412,15 @@ namespace aidaTT
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-        _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
+
+	std::cout << " trajectory::addMeasurement: intersects surface : " << intersects << " residuals: " <<  udiff << ", " << vdiff << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
+
+	if( intersects ){ 
+	  _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
+	}else{
+	  std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface 
+		    << "        hit will be ignored ! " << std::endl ;
+	}
     }
 
 
