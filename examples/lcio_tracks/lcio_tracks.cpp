@@ -175,6 +175,15 @@ int main(int argc, char** argv)
 	      iTP = startHelix ;
 
 	    }
+#else
+	    // --- set some large errors to the covariance matrix
+	    iTP.covarianceMatrix().Unit() ;
+	    iTP.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
+	    iTP.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
+	    iTP.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
+	    iTP.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
+	    iTP.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
+	    
 #endif //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -217,8 +226,8 @@ int main(int argc, char** argv)
                     if(planarhit != NULL)
 		      {
 			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
-			  precision.push_back( 1. / (   planarhit->getdU() * dd4hep::mm ) ) ;
-			  precision.push_back( 1. / (   planarhit->getdV() * dd4hep::mm ) ) ;
+			  precision.push_back( 1. / (   .001 * planarhit->getdU() * dd4hep::mm ) ) ;
+			  precision.push_back( 1. / (   .001 * planarhit->getdV() * dd4hep::mm ) ) ;
 			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
                         }
 
