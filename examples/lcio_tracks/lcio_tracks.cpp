@@ -225,11 +225,14 @@ int main(int argc, char** argv)
                     TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
                     if(planarhit != NULL)
 		      {
-			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
-			  precision.push_back( 1. / (   .001 * planarhit->getdU() * dd4hep::mm ) ) ;
-			  precision.push_back( 1. / (   .001 * planarhit->getdV() * dd4hep::mm ) ) ;
-			//FIXME:  the errors seem to be too large by a factor 1000 !!! ?????
-                        }
+			//we need 1./variance for the precision: 
+			double du = planarhit->getdU() * dd4hep::mm  ;
+			double dv = planarhit->getdV() * dd4hep::mm  ;
+
+			precision.push_back( 1. /  (du*du) ) ;
+			precision.push_back( 1. /  (dv*dv) ) ;
+			
+		      }
 
                     fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 
