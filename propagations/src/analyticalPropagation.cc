@@ -1,4 +1,6 @@
 #include "analyticalPropagation.hh"
+
+#include "aidaTT-Units.hh"
 #include <cmath>
 
 namespace aidaTT
@@ -18,7 +20,8 @@ namespace aidaTT
          * \return bool for success
          */
 
-        const double qp = -bfield.r(); // -|B*c|
+        // TODO: explain WHY the conversion factor is needed -> see paper
+        const double qp = -bfield.r() * convertBr2P_cm ; // -|B*c|
         const double q = qp * qop; // Q
         if(q == 0.)
             {

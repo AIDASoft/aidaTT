@@ -1,240 +1,157 @@
 #include "utilities.hh"
 #include "helixGymnastics.hh"
 
+#include "aidaTT-Units.hh"
+
 namespace aidaTT
 {
-
-  static const double CONV = 1. ; 
-
-    /// SUPER DUMMY !!! only L3 type: [ Omega, tan(lambda), phi_0, d_0, z_0 ]
-
-    double calculateX0(const trackParameters& tp)
-    {
-        /// L3 type only
-      //      return cos(tp.parameters()(2)) * tp.parameters()(3)  / CONV;
-      return ( sin( - tp.parameters()(2)) * tp.parameters()(3)  ) / CONV  + tp.referencePoint().x() ;
-    }
-
-
-
-    double calculateY0(const trackParameters& tp)
-    {
-        /// L3 type only
-      //return sin(tp.parameters()(2)) * tp.parameters()(3)  / CONV;
-      return ( cos(tp.parameters()(2)) * tp.parameters()(3) ) / CONV  + tp.referencePoint().y()  ;
-    }
-
-
-
-    double calculatePhi0(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(2);
-    }
-
-
-
-    double  calculateTanLambda(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(1);
-    }
-
-
-
-    double  calculateLambda(const trackParameters& tp)
-    {
-        /// L3 type only
-        return atan(tp.parameters()(1));
-    }
-
-
-
-    double calculateZ0(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(4) / CONV;
-    }
-
-
-
-    double calculateDistanceFromPCA(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(3) / CONV;
-    }
-
-
-
-    double calculateD0(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(3) / CONV;
-    }
-
-
-
-    double calculateCurvature(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(0) * CONV;
-    }
-
-
-
-    double calculateOmega(const trackParameters& tp)
-    {
-        /// L3 type only
-        return tp.parameters()(0) * CONV;
-    }
-
-
-
     double calculateQoverP(const trackParameters& tp, double bfield)
     {
         if(bfield != 0.)
-            return (- cos(calculateLambda(tp)) * calculateCurvature(tp) / bfield);
+            return (- cos(calculateLambda(tp)) * calculateCurvature(tp) / (bfield * convertBr2P_cm));
         else
             return 0.;
     }
 
-  void calculateStartHelix( const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward) {
+    void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward)
+    {
 
-    //-------------------------------------------------------------------------------------------------
-    // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  ) 
-    //------------------------------------------------------------------------------------------------
- 
-   static const Vector3D ez(0., 0., 1.);
+        //-------------------------------------------------------------------------------------------------
+        // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
+        //------------------------------------------------------------------------------------------------
 
-   Vector3D x12 = x2 - x1 ;
-   Vector3D x13 = x3 - x1 ;
-   Vector3D x23 = x3 - x2 ;
+        static const Vector3D ez(0., 0., 1.);
 
-   x12.z() = 0.;
-   x13.z() = 0.;
-   x23.z() = 0.;
+        Vector3D x12 = x2 - x1 ;
+        Vector3D x13 = x3 - x1 ;
+        Vector3D x23 = x3 - x2 ;
 
-   double x12mag = x12.r();
-   x12 = x12.unit();
-   double x13mag = x13.r();
-   x13 = x13.unit();
-   double x23mag = x23.r();
-   x23 = x23.unit();
-   
-   double sinHalfPhi23 = x12.cross(x13).z();
+        x12.z() = 0.;
+        x13.z() = 0.;
+        x23.z() = 0.;
 
-   double cosHalfPhi23 = 0.5 * (x13mag/x12mag + (1. - x23mag/x12mag)*(x12mag + x23mag)/x13mag);
-   double halfPhi23 = std::atan2( sinHalfPhi23, cosHalfPhi23 );
+        double x12mag = x12.r();
+        x12 = x12.unit();
+        double x13mag = x13.r();
+        x13 = x13.unit();
+        double x23mag = x23.r();
+        x23 = x23.unit();
 
-   double r  = -0.5 * x23mag / sinHalfPhi23;
+        double sinHalfPhi23 = x12.cross(x13).z();
 
-   Vector3D xc = 0.5 * (x2 + x3) + r * cosHalfPhi23 * x23.cross(ez);
+        double cosHalfPhi23 = 0.5 * (x13mag / x12mag + (1. - x23mag / x12mag) * (x12mag + x23mag) / x13mag);
+        double halfPhi23 = std::atan2(sinHalfPhi23, cosHalfPhi23);
 
-   if ( backward ) r = -r;
+        double r  = -0.5 * x23mag / sinHalfPhi23;
 
-   tp.parameters()( OMEGA )  =  1. / r ;
-   tp.parameters()( TANL  )  =  ( x2.z() - x3.z()) / (r * 2 * halfPhi23 ) ;
-   tp.parameters()( PHI0  )  =  std::atan2( r * ( xc.y() - x1.y() ),  r * ( xc.x() - x1.x() ) ) + M_PI/2. ;
-   tp.parameters()( D0    )  =  0. ;
-   tp.parameters()( Z0    )  =  0. ;
+        Vector3D xc = 0.5 * (x2 + x3) + r * cosHalfPhi23 * x23.cross(ez);
 
-   tp.referencePoint() = x1 ;
+        if(backward) r = -r;
 
-  }
+        tp.parameters()(OMEGA)  =  1. / r ;
+        tp.parameters()(TANL)  = (x2.z() - x3.z()) / (r * 2 * halfPhi23) ;
+        tp.parameters()(PHI0)  =  std::atan2(r * (xc.y() - x1.y()),  r * (xc.x() - x1.x())) + M_PI / 2. ;
+        tp.parameters()(D0)  =  0. ;
+        tp.parameters()(Z0)  =  0. ;
 
-  double moveHelixTo( trackParameters& tp,  const Vector3D& refNew ) {
+        tp.referencePoint() = x1 ;
 
-    //-------------------------------------------------------------------------------------------------
-    // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  ) 
-    //------------------------------------------------------------------------------------------------
+    }
 
-    // ---------------------------------------------------
-    // (0) Preparation
-    // ---------------------------------------------------
-    //   Define some numerical constants.
-    //
-    
-    static const double kPi    = M_PI ;
-    static const double kTwoPi = 2.0*kPi;
-    
-    //   Copy helix parmeters to local variables
-    
-    double dr    = - tp( D0 ) ;
-    double fi0   =   tp(PHI0) - M_PI/2. ;
+    double moveHelixTo(trackParameters& tp,  const Vector3D& refNew)
+    {
 
-    while (fi0 < 0.)      fi0 += kTwoPi;
-    while (fi0 > kTwoPi)  fi0 -= kTwoPi;
+        //-------------------------------------------------------------------------------------------------
+        // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
+        //------------------------------------------------------------------------------------------------
 
-    double cpa   =  tp( OMEGA )  ;  //fixme: ???
-    double dz    =  tp( Z0 ) ;
-    double tnl   =  tp( TANL ) ;
-    
-    double x0    = tp.referencePoint().x();
-    double y0    = tp.referencePoint().y();
-    double z0    = tp.referencePoint().z();
+        // ---------------------------------------------------
+        // (0) Preparation
+        // ---------------------------------------------------
+        //   Define some numerical constants.
+        //
 
-    double xv    = refNew.x();
-    double yv    = refNew.y();
-    double zv    = refNew.z();
-    
-    // ---------------------------------------------------
-    // (1) Calculate a' = f_k-1(a_k-1)
-    // ---------------------------------------------------
-    //        a' = (dr', fi0', cpa', dz', tnl')
-    //        a  = (dr , fi0 , cpa , dz , tnl )
-    //
-    double r     = 1./cpa;
-    double rdr   = r + dr;
-    double csf0  = std::cos(fi0);
-    double snf0  = std::sqrt( std::max( 0.0, (1.0-csf0)*(1.0+csf0) ) );
-    if (fi0 > kPi) snf0 = -snf0;
-    
-    double xc    = x0 + rdr*csf0;
-    double yc    = y0 + rdr*snf0;
+        static const double kPi    = M_PI ;
+        static const double kTwoPi = 2.0 * kPi;
 
-    // std::cout << " ***++ xc = " << xc << ", yc = " << yc << " XCenter " << calculateXCenter( tp ) << " YCenter " << calculateYCenter( tp ) << std::endl ;
+        //   Copy helix parmeters to local variables
 
-    double fi0p  = 0.;
-    
-    if (cpa > 0.) fi0p = std::atan2( (yc-yv), (xc-xv) );
-    if (cpa < 0.) fi0p = std::atan2( (yv-yc), (xv-xc) );
+        double dr    = - tp(D0) ;
+        double fi0   =   tp(PHI0) - M_PI / 2. ;
 
-    while (fi0p < 0.)      fi0p += kTwoPi;
-    while (fi0p > kTwoPi)  fi0p -= kTwoPi;
-    
-    double csf   = std::cos(fi0p);
-    double snf   = std::sqrt( std::max(0.0, (1.0-csf)*(1.0+csf)) );
-    if (fi0p > kPi) snf = -snf;
-    
-    double anrm  = 1.0/std::sqrt(csf*csf+snf*snf);
-    csf  *= anrm;
-    snf  *= anrm;
-    double csfd  = csf*csf0 + snf*snf0;
-    double snfd  = snf*csf0 - csf*snf0;
-    
-    double fid   = fi0p - fi0;
-    while (fid < 0)      fid += kTwoPi;
-    while (fid > kTwoPi) fid -= kTwoPi;
-    if    (fid > kPi)    fid -= kTwoPi;
-    
-    double drp   = (xc-xv)*csf + (yc-yv)*snf - r;
-    double dzp   = z0 - zv + dz - r*tnl*fid;
-    
-    //fg:
-    fi0p += M_PI/2. ;
-    while ( fi0p < -kPi )  fi0p += kTwoPi;
-    while ( fi0p >  kPi )  fi0p -= kTwoPi;
-    
-    tp( D0 )    = - drp ;
-    tp( PHI0 )  =   fi0p ;
-    tp( OMEGA ) =   cpa ;
-    tp( Z0 )    =   dzp ;
-    tp( TANL )  =   tnl;
-    
-    tp.setReferencePoint( refNew ) ;
+        while(fi0 < 0.)      fi0 += kTwoPi;
+        while(fi0 > kTwoPi)  fi0 -= kTwoPi;
 
-    return fid ;
-  }
+        double cpa   =  tp(OMEGA)  ;    //fixme: ???
+        double dz    =  tp(Z0) ;
+        double tnl   =  tp(TANL) ;
+
+        double x0    = tp.referencePoint().x();
+        double y0    = tp.referencePoint().y();
+        double z0    = tp.referencePoint().z();
+
+        double xv    = refNew.x();
+        double yv    = refNew.y();
+        double zv    = refNew.z();
+
+        // ---------------------------------------------------
+        // (1) Calculate a' = f_k-1(a_k-1)
+        // ---------------------------------------------------
+        //        a' = (dr', fi0', cpa', dz', tnl')
+        //        a  = (dr , fi0 , cpa , dz , tnl )
+        //
+        double r     = 1. / cpa;
+        double rdr   = r + dr;
+        double csf0  = std::cos(fi0);
+        double snf0  = std::sqrt(std::max(0.0, (1.0 - csf0) * (1.0 + csf0)));
+        if(fi0 > kPi) snf0 = -snf0;
+
+        double xc    = x0 + rdr * csf0;
+        double yc    = y0 + rdr * snf0;
+
+        // std::cout << " ***++ xc = " << xc << ", yc = " << yc << " XCenter " << calculateXCenter( tp ) << " YCenter " << calculateYCenter( tp ) << std::endl ;
+
+        double fi0p  = 0.;
+
+        if(cpa > 0.) fi0p = std::atan2((yc - yv), (xc - xv));
+        if(cpa < 0.) fi0p = std::atan2((yv - yc), (xv - xc));
+
+        while(fi0p < 0.)      fi0p += kTwoPi;
+        while(fi0p > kTwoPi)  fi0p -= kTwoPi;
+
+        double csf   = std::cos(fi0p);
+        double snf   = std::sqrt(std::max(0.0, (1.0 - csf) * (1.0 + csf)));
+        if(fi0p > kPi) snf = -snf;
+
+        double anrm  = 1.0 / std::sqrt(csf * csf + snf * snf);
+        csf  *= anrm;
+        snf  *= anrm;
+        double csfd  = csf * csf0 + snf * snf0;
+        double snfd  = snf * csf0 - csf * snf0;
+
+        double fid   = fi0p - fi0;
+        while(fid < 0)      fid += kTwoPi;
+        while(fid > kTwoPi) fid -= kTwoPi;
+        if(fid > kPi)    fid -= kTwoPi;
+
+        double drp   = (xc - xv) * csf + (yc - yv) * snf - r;
+        double dzp   = z0 - zv + dz - r * tnl * fid;
+
+        //fg:
+        fi0p += M_PI / 2. ;
+        while(fi0p < -kPi)  fi0p += kTwoPi;
+        while(fi0p >  kPi)  fi0p -= kTwoPi;
+
+        tp(D0)    = - drp ;
+        tp(PHI0)  =   fi0p ;
+        tp(OMEGA) =   cpa ;
+        tp(Z0)    =   dzp ;
+        tp(TANL)  =   tnl;
+
+        tp.setReferencePoint(refNew) ;
+
+        return fid ;
+    }
 
     /// calculate and return transformation matrix from curivilinear to perigee track parameters (at reference point)
     fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters& tP, const Vector5& clParams, const Vector3D& bfield)
@@ -272,9 +189,12 @@ namespace aidaTT
         jacobian.Unit();
 
         // differences to unit matrix:
-        const double Q = - qop * bfield.r(); // -Bz*q/p
-        const double qbar = qop * bfield.z();
-        jacobian(0, 0) = - bfield.z() / cosLambda;
+
+        /// TODO: more comments on the conversion of the actual "B" field values
+        /// actually (!) they are defined WITH the conversion to 1/R already /intended/
+        const double Q = - qop * bfield.r() * convertBr2P_cm ; // -Bz*q/p
+        const double qbar = qop * bfield.z() * convertBr2P_cm;
+        jacobian(0, 0) = - bfield.z() * convertBr2P_cm / cosLambda;
         jacobian(0, 1) = -qbar * tanLambda / cosLambda;
         jacobian(0, 3) = qbar * Q * tanLambda * ui * anv / cosLambda / ti;
         jacobian(0, 4) = qbar * Q * tanLambda * vi * anv / cosLambda / ti;
@@ -302,11 +222,11 @@ namespace aidaTT
         const double theta   = perParams(1);
         const double phi     = perParams(2);
 
-	//**************************************************************************
-	//fg: make sure this is not called before it is fixed:
+        //**************************************************************************
+        //fg: make sure this is not called before it is fixed:
         std::cerr  << " **** incomplete method fiveByFiveMatrix perigeeToCurvilinearJacobian() (utilities.cc) called - fix it ! " << std::endl ;
-	exit(1) ;
-	//**************************************************************************
+        exit(1) ;
+        //**************************************************************************
 
 
         // define local curvilinear coordinate system: U = Z x T / |Z x T|, V = T x U
@@ -339,8 +259,8 @@ namespace aidaTT
         jacobian.Unit();
 
         // differences to unit matrix:
-        const double Q = - qop * bfield.r(); // -Bz*q/p
-        jacobian(0, 0) = - sin(theta) / bfield.z() ;
+        const double Q = - qop * bfield.r() * convertBr2P_cm; // -Bz*q/p
+        jacobian(0, 0) = - sin(theta) / (bfield.z() * convertBr2P_cm) ;
         jacobian(0, 1) = qop / tanLambda ;
 
         jacobian(1, 1) = -1.;
