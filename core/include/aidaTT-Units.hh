@@ -1,6 +1,3 @@
-#ifndef AIDATT_UNITS_HH
-#define AIDATT_UNITS_HH
-
 /* this is the declaration of units used in exchange to the outside world inside aidaTT
  *
  * the first main interaction point is the geometry, that is
@@ -20,40 +17,46 @@
  *      a speed of light given in [cm/s]
  */
 
-namespace aidaTT
-{
-
 #ifdef AIDATT_USE_DD4HEP
 #include "DD4hep/DD4hepUnits.h"
 
-    typedef dd4hep::millimeter millimeter;
-    typedef dd4hep::centimeter centimeter;
-    typedef dd4hep::meter      meter;
+namespace aidaTT
+{
+    using  dd4hep::millimeter;
+    using  dd4hep::centimeter;
+    using  dd4hep::meter;
 
-    typedef dd4hep::mm mm;
-    typedef dd4hep::cm cm;
-    typedef dd4hep::m  m;
+    using  dd4hep::mm;
+    using  dd4hep::cm;
+    using  dd4hep::m;
 
-    typedef dd4hep::megaelectronvolt = 1.e-3;
-    typedef dd4hep::electronvolt = 1.e-6 * megaelectronvolt;
-    typedef dd4hep::kiloelectronvolt = 1.e-3 * megaelectronvolt;
-    typedef dd4hep::gigaelectronvolt = 1.e+3 * megaelectronvolt;
-    typedef dd4hep::teraelectronvolt = 1.e+6 * megaelectronvolt;
-    typedef dd4hep::petaelectronvolt = 1.e+9 * megaelectronvolt;
+    using  dd4hep::megaelectronvolt;
+    using  dd4hep::electronvolt;
+    using  dd4hep::kiloelectronvolt;
+    using  dd4hep::gigaelectronvolt;
+    using  dd4hep::teraelectronvolt;
+    using  dd4hep::petaelectronvolt;
 
     // symbols
-    typedef dd4hep::MeV = megaelectronvolt;
-    typedef dd4hep::eV = electronvolt;
-    typedef dd4hep::keV = kiloelectronvolt;
-    typedef dd4hep::GeV = gigaelectronvolt;
-    typedef dd4hep::TeV = teraelectronvolt;
-    typedef dd4hep::PeV = petaelectronvolt;
+    using  dd4hep::MeV;
+    using  dd4hep::eV;
+    using  dd4hep::keV;
+    using  dd4hep::GeV;
+    using  dd4hep::TeV;
+    using  dd4hep::PeV;
 
     static const double convertBr2P_cm = 0.299792458 * (centimeter / meter);
-
+}
 #else
-///TODO
-#endif // AIDATT_USE_DD4HEP
+
+#ifndef AIDATT_UNITS_HH
+#define AIDATT_UNITS_HH
+namespace aidaTT
+{
+    ///TODO
 
 }
 #endif // AIDATT_UNITS_HH
+
+#endif // AIDATT_USE_DD4HEP
+
