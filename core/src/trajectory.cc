@@ -65,7 +65,7 @@ namespace aidaTT
         /// master method for intersection calculation, subdelegates. steps:
         /// 1. calculate all intersections
         /// 2. check for every intersection if inside the bounds
-        /// 3. chose the one with the smaller s (!)
+        /// 3. choose the one with the smaller s (!), if needed
         /// 4. build the vector with pairs of s and surface
 
         for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
@@ -217,140 +217,9 @@ namespace aidaTT
                     }
             }
 
-        //  std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
         return true;
 
     }
-
-
-
-    // bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
-    // {
-    //     const Vector3D refpoint = _referenceParameters.referencePoint();
-
-    //     // the straight line: normals plus distance; distance must be positive !
-    //     const double nx = surf->normal().x();
-    //     const double ny = surf->normal().y();
-
-    //  //fg: this is wrong - we need the distance from the origin
-    //  //    const double dist = fabs(surf->distance(refpoint));
-    //     const double dist = fabs(surf->distance( Vector3D() ));
-
-    //     straightLine line(nx, ny, dist);
-    //     // create circle
-    //     const double radius  = calculateRadius(_referenceParameters);
-    //     const double xcenter = calculateXCenter(_referenceParameters);
-    //     const double ycenter = calculateYCenter(_referenceParameters);
-    //     circle circ(xcenter, ycenter, radius);
-
-    //  //  std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ;
-
-    //     intersections candidates = intersectCircleStraightLine(circ, line);
-
-    //     if(candidates.number() < 1)
-    //         return false;
-    //     else if(candidates.number() == 1)
-    //         {
-    //             const double S = calculateSfromXY(candidates[0], _referenceParameters);
-    //             const double Z = calculateZfromS(S, _referenceParameters);
-    //             Vector3D thePlace(candidates[0].first, candidates[0].second, Z);
-    //             bool inside = surf->insideBounds(thePlace);
-
-    //             if(inside)
-    //                 {
-    //                     s = S;
-    //                     if(localUV != NULL)
-    //                         _calculateLocalCoordinates(surf, thePlace, localUV);
-
-    //          if( xx ) xx->fill( thePlace ) ;
-
-    //                     return true;
-    //                 }
-    //             else
-    //                 return false;
-    //         }
-
-    //     ///  else -- the standard case: two solutions index 0 and 1
-    //     /// calculate all values first, then evaluate
-    //     const double X0 = candidates[0].first;
-    //     const double Y0 = candidates[0].second;
-    //     const double S0 = calculateSfromXY(X0, Y0, _referenceParameters);
-    //     const double Z0 = calculateZfromS(S0, _referenceParameters);
-
-    //     const double X1 = candidates[1].first;
-    //     const double Y1 = candidates[1].second;
-    //     const double S1 = calculateSfromXY(X1, Y1, _referenceParameters);
-    //     const double Z1 = calculateZfromS(S1, _referenceParameters);
-
-    //     Vector3D sol0(X0, Y0, Z0);
-    //     Vector3D sol1(X1, Y1, Z1);
-
-    //     const bool insideFirst  = surf->insideBounds(sol0);
-    //     const bool insideSecond = surf->insideBounds(sol1);
-
-    //     if((!insideFirst && !insideSecond) || (S0 < 0. && S1 < 0.))      // discard negative or no solution
-    //         return false;
-    //     else if(insideFirst && S0 >= 0. && !insideSecond)
-    //         {
-    //             s = S0;
-    //             if(localUV != NULL)
-    //                 _calculateLocalCoordinates(surf, sol0, localUV);
-
-    //      if( xx ) xx->fill( sol0 ) ;
-
-    //             return true;
-    //         }
-    //     else if(!insideFirst && insideSecond &&  S1 >= 0.)
-    //         {
-    //             s = S1;
-    //             if(localUV != NULL)
-    //                 _calculateLocalCoordinates(surf, sol1, localUV);
-
-    //      if( xx ) xx->fill( sol1 ) ;
-
-    //             return true;
-    //         }
-    //     else // both are valid , choose the smaller solution
-    //         {
-    //             if(S0 >= 0. && S1 < 0.)
-    //                 {
-    //                     s = S0;
-
-    //                     if(localUV != NULL)
-    //                         _calculateLocalCoordinates(surf, sol0, localUV);
-
-    //          if( xx ) xx->fill( sol0 ) ;
-    //                 }
-    //             else if(S0 < 0. && S1 >= 0.)
-    //                 {
-    //                     s = S1;
-    //                     if(localUV != NULL)
-    //                         _calculateLocalCoordinates(surf, sol1, localUV);
-
-    //          if( xx ) xx->fill( sol1 ) ;
-    //                }
-    //             else // both are positive
-    //                 {
-    //                     if(S0 < S1)
-    //                         {
-    //                             s = S0;
-    //                             if(localUV != NULL)
-    //                                 _calculateLocalCoordinates(surf, sol0, localUV);
-
-    //              if( xx ) xx->fill( sol0 ) ;
-    //                         }
-    //                     else
-    //                         {
-    //                             s = S1;
-    //                             if(localUV != NULL)
-    //                                 _calculateLocalCoordinates(surf, sol1, localUV);
-
-    //              if( xx ) xx->fill( sol1 ) ;
-    //                          }
-    //                 }
-    //             return true;
-    //         }
-    // }
 
 
 
@@ -410,12 +279,6 @@ namespace aidaTT
         measDir->push_back(surface.u(position));
         measDir->push_back(surface.v(position));
 
-
-        // std::cout << " trajectory::addMeasurement: intersects surface : " << intersects
-        //    << " residuals: " <<  udiff << ", " << vdiff
-        //    << " errors :   " <<  1./precision[0] << ", " << 1./precision[1]
-        //    << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
-
         if(intersects)
             {
                 _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
@@ -439,6 +302,7 @@ namespace aidaTT
 
     void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
     {
+        /// TODO :: this is not complete -- what is it needed for?
         double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
         // suppress warning -- STILL WRONG:: TODO
         _initialTrajectoryElements.push_back(new trajectoryElement(s, id));

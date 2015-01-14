@@ -30,13 +30,6 @@ namespace aidaTT
 
 
 
-    // Vector5 trackParameters::parameters() const
-    // {
-    //     return _helixparams;
-    // }
-
-
-
     double trackParameters::operator()(unsigned int index) const
     {
         if(index > 4)

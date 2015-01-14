@@ -84,14 +84,14 @@ namespace aidaTT
 /// internally used is curvilinear track parametrization
 /// intermediate to them is a different kind of "perigee" parametrization
 
-    fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector5&, const Vector3D&);
-    fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
+    fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector3D&);
+    //fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
 
-    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters&, const Vector5&);
-    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters&, const Vector5&);
+    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters&);
+    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters&);
 
-    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters&, const Vector5&, const Vector3D&);
-    fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
+    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters&, const Vector3D&);
+    //fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters&, const Vector3D&);
 }
 
 #endif // UTITILITIES_HH

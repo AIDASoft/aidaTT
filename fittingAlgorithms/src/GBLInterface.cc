@@ -128,7 +128,7 @@ namespace aidaTT
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-        fiveByFiveMatrix cl2PerJacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) ;
+        fiveByFiveMatrix cl2PerJacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
 
         Vector5 corrections =  cl2PerJacobian * clCorrections;
 

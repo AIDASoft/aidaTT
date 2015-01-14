@@ -160,7 +160,7 @@ namespace aidaTT
     /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
     /// \param [input] Vector5 curvilinear corrections -- as calculated e.g. from a fit
     /// \param [input] Vector3D BField -- needed to evaluate expressions
-    fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters& tP, const Vector5& clParams, const Vector3D& bfield)
+    fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters& tP, const Vector3D& bfield)
     {
         const double qop    = calculateQoverP(tP, bfield.z());
         const double lambda = calculateLambda(tP);
@@ -220,74 +220,74 @@ namespace aidaTT
     }
 
 
+    /* comment out for now -- ever needed??
+        /// Calculate transformation matrix from perigee to curvilinear track parametrization
+        /// \param [return] 5x5 matrix -- the wanted transformation
+        /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
+        /// \param [input] Vector5 perigee track parameter corrections
+        /// \param [input] Vector3D BField -- needed to evaluate expressions
+        fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters& tP, const Vector5& perParams, const Vector3D& bfield)
+        {
+            /// FIXME !!// this is probably broken
+            const double kappa   = perParams(0);
+            const double theta   = perParams(1);
+            const double phi     = perParams(2);
 
-    /// Calculate transformation matrix from perigee to curvilinear track parametrization
-    /// \param [return] 5x5 matrix -- the wanted transformation
-    /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
-    /// \param [input] Vector5 perigee track parameter corrections
-    /// \param [input] Vector3D BField -- needed to evaluate expressions
-    fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters& tP, const Vector5& perParams, const Vector3D& bfield)
-    {
-        /// FIXME !!// this is probably broken
-        const double kappa   = perParams(0);
-        const double theta   = perParams(1);
-        const double phi     = perParams(2);
-
-        //**************************************************************************
-        //fg: make sure this is not called before it is fixed:
-        std::cerr  << " **** incomplete method fiveByFiveMatrix perigeeToCurvilinearJacobian() (utilities.cc) called - fix it ! " << std::endl ;
-        exit(1) ;
-        //**************************************************************************
+            // **************************************************************************
+            //fg: make sure this is not called before it is fixed:
+            std::cerr  << " **** incomplete method fiveByFiveMatrix perigeeToCurvilinearJacobian() (utilities.cc) called - fix it ! " << std::endl ;
+            exit(1) ;
+            // **************************************************************************
 
 
-        // define local curvilinear coordinate system: U = Z x T / |Z x T|, V = T x U
-        const double qop = - kappa * sin(theta) / bfield.z();
-        const double lambda = M_PI_2 - theta;
-        const double cosPhi = cos(phi);
-        const double sinPhi = sin(phi);
-        const double tanLambda = tan(lambda);
-        const double cosLambda = 1. / sqrt(1. + tanLambda * tanLambda);
-        const double sinLambda = sin(lambda);
+            // define local curvilinear coordinate system: U = Z x T / |Z x T|, V = T x U
+            const double qop = - kappa * sin(theta) / bfield.z();
+            const double lambda = M_PI_2 - theta;
+            const double cosPhi = cos(phi);
+            const double sinPhi = sin(phi);
+            const double tanLambda = tan(lambda);
+            const double cosLambda = 1. / sqrt(1. + tanLambda * tanLambda);
+            const double sinLambda = sin(lambda);
 
-        Vector3D T(cosPhi * cosLambda, sinPhi * cosLambda, sinLambda);
-        Vector3D U(-sinPhi, cosPhi, 0.);
-        Vector3D V(-cosPhi * sinLambda, -sinPhi * sinLambda, cosLambda);
+            Vector3D T(cosPhi * cosLambda, sinPhi * cosLambda, sinLambda);
+            Vector3D U(-sinPhi, cosPhi, 0.);
+            Vector3D V(-cosPhi * sinLambda, -sinPhi * sinLambda, cosLambda);
 
-        // helper vectors for local (perigee) system
-        // J = -U , K = Z, I = J x K
-        Vector3D J(sinPhi, -cosPhi, 0.);
-        Vector3D K(0., 0., 1.);
-        // set the right variables for helix parametrisation by wittek/strandlie
-        // H is direction of magnetic field, N is H x T/a, a = |H x T|
-        Vector3D H(bfield.unit()); // magnetic field direction
-        Vector3D aN = H.cross(T); // a*N
+            // helper vectors for local (perigee) system
+            // J = -U , K = Z, I = J x K
+            Vector3D J(sinPhi, -cosPhi, 0.);
+            Vector3D K(0., 0., 1.);
+            // set the right variables for helix parametrisation by wittek/strandlie
+            // H is direction of magnetic field, N is H x T/a, a = |H x T|
+            Vector3D H(bfield.unit()); // magnetic field direction
+            Vector3D aN = H.cross(T); // a*N
 
-        // formal helpers for later evaluation of jacobian transformation from curvilinear track parameters to perigee frame
-        const double anv = aN.dot(V), tj = T.dot(J), tk = T.dot(K);
-        const double anu = aN.dot(U), vk = V.dot(K);
+            // formal helpers for later evaluation of jacobian transformation from curvilinear track parameters to perigee frame
+            const double anv = aN.dot(V), tj = T.dot(J), tk = T.dot(K);
+            const double anu = aN.dot(U), vk = V.dot(K);
 
-        fiveByFiveMatrix jacobian;
-        jacobian.Unit();
+            fiveByFiveMatrix jacobian;
+            jacobian.Unit();
 
-        // differences to unit matrix:
-        const double Q = - qop * bfield.r() * convertBr2P_cm; // -Bz*q/p
-        jacobian(0, 0) = - sin(theta) / (bfield.z() * convertBr2P_cm) ;
-        jacobian(0, 1) = qop / tanLambda ;
+            // differences to unit matrix:
+            const double Q = - qop * bfield.r() * convertBr2P_cm; // -Bz*q/p
+            jacobian(0, 0) = - sin(theta) / (bfield.z() * convertBr2P_cm) ;
+            jacobian(0, 1) = qop / tanLambda ;
 
-        jacobian(1, 1) = -1.;
-        jacobian(1, 3) = - Q * tj * anv;
-        jacobian(1, 4) = - Q * tk * anv;
+            jacobian(1, 1) = -1.;
+            jacobian(1, 3) = - Q * tj * anv;
+            jacobian(1, 4) = - Q * tk * anv;
 
-        jacobian(2, 3) = -Q * tj * anu / cosLambda;
-        jacobian(2, 4) = -Q * tk * anu / cosLambda;
+            jacobian(2, 3) = -Q * tj * anu / cosLambda;
+            jacobian(2, 4) = -Q * tk * anu / cosLambda;
 
-        jacobian(3, 3) = -1 ;
+            jacobian(3, 3) = -1 ;
 
-        jacobian(4, 4) = vk;
+            jacobian(4, 4) = vk;
 
-        return jacobian;
-    }
-
+            return jacobian;
+        }
+    */
 
 
     /// Calculate the simple transformation matrix from perigee to L3 parametrization
@@ -295,8 +295,7 @@ namespace aidaTT
     /// with d0 = -epsilon, phi0 = phi, omega = -kappa, , z0 = z_p, lambda = pi/2 - theta
     /// \param [return] 5x5 matrix -- the transformation
     /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
-    /// \param [input] Vector5 perigee track parameter corrections
-    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters& tP, const Vector5& perParams)
+    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters& tP)
     {
         //// FIXME !
         const double tanLambda = calculateTanLambda(tP);
@@ -305,7 +304,7 @@ namespace aidaTT
 
         // differences to zero matrix:
         p2l3(0, 0) = -1.; // omega = -kappa
-        p2l3(1, 4) = -(1. + tanLambda * tanLambda); // lambda = pi/2 - theta
+        p2l3(1, 4) = -(1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
         p2l3(2, 1) = +1.; // phi0 = phi
         p2l3(3, 2) = -1.; // d0 = -epsilon
         p2l3(4, 3) = +1.; //  z0 = z_p
@@ -320,8 +319,7 @@ namespace aidaTT
     /// with d0 = -epsilon, phi0 = phi, omega = -kappa, , z0 = z_p, lambda = pi/2 - theta
     /// \param [return] 5x5 matrix -- the transformation
     /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
-    /// \param [input] Vector5 L3 track parameter corrections
-    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters& tP, const Vector5& L3Params)
+    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters& tP)
     {
         const double tanLambda = calculateTanLambda(tP) ;
 
@@ -345,37 +343,36 @@ namespace aidaTT
     /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
     /// \param [input] Vector5 curvilinear track parameter corrections
     /// \param [input] Vector3D BField -- needed to evaluate expressions
-    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters& tP, const Vector5&  clParams, const Vector3D& bfield)
+    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters& tP, const Vector3D& bfield)
     {
         // first calculate the perigee transform and parameter values
-        fiveByFiveMatrix cl2p = curvilinearToPerigeeJacobian(tP, clParams, bfield) ;
-        Vector5 perParams     =  cl2p * clParams;
+        fiveByFiveMatrix cl2p = curvilinearToPerigeeJacobian(tP, bfield) ;
 
         // now the second transformation
-        fiveByFiveMatrix p2L3 = perigeeToL3Jacobian(tP, perParams);
+        fiveByFiveMatrix p2L3 = perigeeToL3Jacobian(tP);
 
         // and return the product
         return p2L3 * cl2p;
     }
 
 
+    /* not needed ???
+        /// Calculate transformation matrix from L3 track parametrization to curvilinear parametrization
+        /// -- this joins the two transformations from L3 to perigee and then perigee to curvilinear
+        /// \param [return] 5x5 matrix -- the transformation
+        /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
+        /// \param [input] Vector5 L3 parameter corrections
+        /// \param [input] Vector3D BField -- needed to evaluate expressions
+        fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters& tP, const Vector3D& bfield)
+        {
+            // first move from L3 to perigee
+            fiveByFiveMatrix l32p = L3ToPerigeeJacobian(tP);
 
-    /// Calculate transformation matrix from L3 track parametrization to curvilinear parametrization
-    /// -- this joins the two transformations from L3 to perigee and then perigee to curvilinear
-    /// \param [return] 5x5 matrix -- the transformation
-    /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
-    /// \param [input] Vector5 L3 parameter corrections
-    /// \param [input] Vector3D BField -- needed to evaluate expressions
-    fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters& tP, const Vector5& l3Params, const Vector3D& bfield)
-    {
-        // first move from L3 to perigee
-        fiveByFiveMatrix l32p = L3ToPerigeeJacobian(tP, l3Params);
-        Vector5 perParams = l32p * l3Params;
+            // now calculate the second transformation matrix
+            fiveByFiveMatrix p2cl = perigeeToCurvilinearJacobian(tP, bfield);
 
-        // now calculate the second transformation matrix
-        fiveByFiveMatrix p2cl = perigeeToCurvilinearJacobian(tP, perParams, bfield);
-
-        // return the full product
-        return p2cl * l32p;
-    }
+            // return the full product
+            return p2cl * l32p;
+        }
+        */
 }

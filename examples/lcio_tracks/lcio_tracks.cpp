@@ -90,7 +90,7 @@ int main(int argc, char** argv)
             wrt->open(outFile) ;
         }
     else
-      wrt->open("innowaythisisnorway.slcio", lcio::LCIO::WRITE_NEW ) ;
+        wrt->open("innowaythisisnorway.slcio", lcio::LCIO::WRITE_NEW) ;
 
     LCEvent* evt = 0 ;
 
@@ -134,56 +134,57 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )    );  
+            aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(lcio::TrackState::AtIP)));
 
-	    std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
+            std::cout << "  start helix from LCIO      : " << iTP << std::endl ;
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
-#define compute_start_helix 1
+#define compute_start_helix 0
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
-	    aidaTT::trackParameters startHelix ;
+            aidaTT::trackParameters startHelix ;
 
-	    unsigned nHits = initialHits.size() ;
-	    if( nHits > 2 ) {  
-	      //--------- get the start helix from three points
-	      bool backwards = false ;
+            unsigned nHits = initialHits.size() ;
+            if(nHits > 2)
+                {
+                    //--------- get the start helix from three points
+                    bool backwards = false ;
 
-	      lcio::TrackerHit* h1 = ( backwards ?  initialHits[ nHits-1 ] : initialHits[    0    ] ) ;
-	      lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
-	      lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
+                    lcio::TrackerHit* h1 = (backwards ?  initialHits[ nHits - 1 ] : initialHits[    0    ]) ;
+                    lcio::TrackerHit* h2 =  initialHits[(nHits + 1) / 2 ] ;
+                    lcio::TrackerHit* h3 = (backwards ?  initialHits[    0    ] : initialHits[ nHits - 1 ]) ;
 
-	      aidaTT::Vector3D x1( h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm ) ;
-	      aidaTT::Vector3D x2( h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm ) ;
-	      aidaTT::Vector3D x3( h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm ) ;
-	      
-	      calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
-	      
-	      moveHelixTo( startHelix, aidaTT::Vector3D()  ) ; // move to origin
+                    aidaTT::Vector3D x1(h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm) ;
+                    aidaTT::Vector3D x2(h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm) ;
+                    aidaTT::Vector3D x3(h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm) ;
 
-	      // --- set some large errors to the covariance matrix
-	      startHelix.covarianceMatrix().Unit() ;
-	      startHelix.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
-	      startHelix.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
-	      startHelix.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
-	      startHelix.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
-	      startHelix.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
+                    calculateStartHelix(x1, x2,  x3 , startHelix , backwards) ;
 
-	      // std::cout << "  start helix from three points : " << startHelix << std::endl ;
+                    moveHelixTo(startHelix, aidaTT::Vector3D()) ;    // move to origin
 
-	      // use this helix as start for the fit:
-	      iTP = startHelix ;
+                    // --- set some large errors to the covariance matrix
+                    startHelix.covarianceMatrix().Unit() ;
+                    startHelix.covarianceMatrix()(aidaTT::OMEGA, aidaTT::OMEGA) = 1.e-2 ;
+                    startHelix.covarianceMatrix()(aidaTT::TANL , aidaTT::TANL) = 1.e2 ;
+                    startHelix.covarianceMatrix()(aidaTT::PHI0 , aidaTT::PHI0) = 1.e2 ;
+                    startHelix.covarianceMatrix()(aidaTT::D0   , aidaTT::D0) = 1.e5 ;
+                    startHelix.covarianceMatrix()(aidaTT::Z0   , aidaTT::Z0) = 1.e5 ;
 
-	    }
+                    // std::cout << "  start helix from three points : " << startHelix << std::endl ;
+
+                    // use this helix as start for the fit:
+                    iTP = startHelix ;
+
+                }
 #else
-	    // --- set some large errors to the covariance matrix
-	    iTP.covarianceMatrix().Unit() ;
-	    iTP.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
-	    iTP.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
-	    iTP.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
-	    iTP.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
-	    iTP.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
-	    
+            // --- set some large errors to the covariance matrix
+            iTP.covarianceMatrix().Unit() ;
+            iTP.covarianceMatrix()(aidaTT::OMEGA, aidaTT::OMEGA) = 1.e-2 ;
+            iTP.covarianceMatrix()(aidaTT::TANL , aidaTT::TANL) = 1.e2 ;
+            iTP.covarianceMatrix()(aidaTT::PHI0 , aidaTT::PHI0) = 1.e2 ;
+            iTP.covarianceMatrix()(aidaTT::D0   , aidaTT::D0) = 1.e5 ;
+            iTP.covarianceMatrix()(aidaTT::Z0   , aidaTT::Z0) = 1.e5 ;
+
 #endif //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -220,15 +221,15 @@ int main(int argc, char** argv)
 
                     TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
                     if(planarhit != NULL)
-		      {
-			//we need 1./variance for the precision: 
-			double du = planarhit->getdU() * dd4hep::mm  ;
-			double dv = planarhit->getdV() * dd4hep::mm  ;
+                        {
+                            //we need 1./variance for the precision:
+                            double du = planarhit->getdU() * dd4hep::mm  ;
+                            double dv = planarhit->getdV() * dd4hep::mm  ;
 
-			precision.push_back( 1. /  (du*du) ) ;
-			precision.push_back( 1. /  (dv*dv) ) ;
-			
-		      }
+                            precision.push_back(1. / (du * du)) ;
+                            precision.push_back(1. / (dv * dv)) ;
+
+                        }
 
                     fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 
@@ -242,10 +243,11 @@ int main(int argc, char** argv)
             const aidaTT::fitResults& result = fitTrajectory.getFitResults();
 
 
-	    if( ! success ) {
+            if(! success)
+                {
 
-	      std::cout << " ********** ERROR:  Fit Failed !!!!! ******************************* " << std::endl ;
-	    }
+                    std::cout << " ********** ERROR:  Fit Failed !!!!! ******************************* " << std::endl ;
+                }
 
             std::cout << " initial values vs. refitted: " << std::endl;
             std::cout << iTP << std::endl;
@@ -253,13 +255,13 @@ int main(int argc, char** argv)
 
 
             // add Track State to track:
-            TrackStateImpl* ts = aidaTT::createLCIO( result.estimatedParameters()  );
+            TrackStateImpl* ts = aidaTT::createLCIO(result.estimatedParameters());
 
-	    outTrk->setChi2( result.chiSquare() ) ;
-	    outTrk->setNdf( result.ndf() ) ;
-	    outTrk->subdetectorHitNumbers().resize(10.) ;
+            outTrk->setChi2(result.chiSquare()) ;
+            outTrk->setNdf(result.ndf()) ;
+            outTrk->subdetectorHitNumbers().resize(10.) ;
 
-	    outTrk->subdetectorHitNumbers()[0] = outTrk->getTrackerHits().size() ;
+            outTrk->subdetectorHitNumbers()[0] = outTrk->getTrackerHits().size() ;
 
 
             float ref[3] = { 0., 0. , 0. } ;
