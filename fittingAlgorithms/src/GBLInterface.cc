@@ -122,24 +122,18 @@ namespace aidaTT
 
         TVectorD tpCorr(5);
         TMatrixDSym trackcovariance(5);
-        //~ // get the results at a given label in local cl track parameters
-        //~ // the track parameters are corrections to the curvilinear track parameters
+
+        //~ get the results at a given label in local cl track parameters
+        //~ the track parameters are corrections to the curvilinear track parameters
         _trajectory->getResults(0, tpCorr, trackcovariance);
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
         fiveByFiveMatrix cl2PerJacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
+        fiveByFiveMatrix per2L3Jacobian  = perigeeToL3Jacobian(TRAJ.getInitialTrackParameters());
+        Vector5 L3corrections = per2L3Jacobian * cl2PerJacobian * clCorrections;
 
-        Vector5 corrections =  cl2PerJacobian * clCorrections;
-
-
-        //~ fiveByFiveMatrix cl2PerJac = curvilinearToPerigeeJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) ;
-//~
-        //~ fiveByFiveMatrix per2ILDJac = perigeeToILDJacobian( TRAJ.getInitialTrackParameters() , Vector5() ) ;
-//~
-        //~ fiveByFiveMatrix cl2PerJacobian = per2ILDJac * cl2PerJac ;
-
-        Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + corrections;
+        Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
 
         trackParameters tp;
         tp.setTrackParameters(fittedParameters);

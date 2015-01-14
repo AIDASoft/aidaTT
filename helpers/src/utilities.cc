@@ -303,11 +303,11 @@ namespace aidaTT
         fiveByFiveMatrix p2l3;
 
         // differences to zero matrix:
-        p2l3(0, 0) = -1.; // omega = -kappa
-        p2l3(1, 4) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
-        p2l3(2, 1) = +1.; // phi0 = phi
-        p2l3(3, 2) = -1.; // d0 = -epsilon
-        p2l3(4, 3) = +1.; //  z0 = z_p
+        p2l3(OMEGA, 0) = -1.; // omega = -kappa
+        p2l3(TANL, 4) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
+        p2l3(PHI0, 1) = +1.; // phi0 = phi
+        p2l3(D0, 2) = -1.; // d0 = -epsilon
+        p2l3(Z0, 3) = +1.; //  z0 = z_p
 
         return p2l3;
     }
