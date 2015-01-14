@@ -79,16 +79,19 @@ namespace aidaTT
     double moveHelixTo(trackParameters& tp,  const Vector3D& ref) ;
 
 
+/// a number of track parametrization conversion matrices
+/// externally/interface to outside is "L3" parametrization
+/// internally used is curvilinear track parametrization
+/// intermediate to them is a different kind of "perigee" parametrization
 
     fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector5&, const Vector3D&);
     fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
 
-/// FIXME/TODO: bad naming of "ILD" jacobians -> perigee and L3 are the ones that should be used
-    fiveByFiveMatrix perigeeToILDJacobian(const trackParameters&, const Vector5&);
-    fiveByFiveMatrix ildToPerigeeJacobian(const trackParameters&, const Vector5&);
+    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters&, const Vector5&);
+    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters&, const Vector5&);
 
-    fiveByFiveMatrix curvilinearToILDJacobian(const trackParameters&, const Vector5&, const Vector3D&);
-    fiveByFiveMatrix ildToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
+    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters&, const Vector5&, const Vector3D&);
+    fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
 }
 
 #endif // UTITILITIES_HH
