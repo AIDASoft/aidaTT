@@ -11,10 +11,8 @@ namespace aidaTT
     {
         public:
 
-            fitResults() : _valid(false)
-            {
-                ;
-            };
+            fitResults() : _valid(false), _chisquare(0.), _ndf(0.), _lostweight(0.) {};
+
 
             fitResults(bool valid, double chis, unsigned int ndf, double weightL, const trackParameters& tp)
                 : _valid(valid), _chisquare(chis), _ndf(ndf), _lostweight(weightL), _estParams(tp) {};

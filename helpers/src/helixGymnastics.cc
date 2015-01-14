@@ -18,8 +18,12 @@ namespace aidaTT
 
     double calculateXCenter(const trackParameters& tP)
     {
+        const double omega = calculateOmega(tP);
+        if(omega == 0.)
+            return 0.;
+
         //fg: need signed radius here (1/omega)
-        const double radius = 1. / calculateOmega(tP);
+        const double radius = 1. / omega;
         const double dzero = calculateD0(tP);
         const double phi0 = calculatePhi0(tP);
 
@@ -30,8 +34,11 @@ namespace aidaTT
 
     double calculateYCenter(const trackParameters& tP)
     {
-        //fg: need signed radius here (1/omega)
-        const double radius = 1. / calculateOmega(tP);
+        const double omega = calculateOmega(tP);
+        if(omega == 0.)
+            return 0.;
+
+        const double radius = 1. / omega;
         const double dzero = calculateD0(tP);
         const double phi0 = calculatePhi0(tP);
 

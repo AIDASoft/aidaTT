@@ -62,11 +62,11 @@ namespace aidaTT
     /// helper function to calculate the needed/wanted values from the current parametrization
     inline double calculateX0(const trackParameters& tp)
     {
-        return (sin(-tp.parameters()(PHI0)) * tp.parameters()(D0)) + tp.referencePoint().x();
+        return (sin(-tp.parameters()(PHI0)) * tp.parameters()(D0)) - tp.referencePoint().x();
     }
     inline double calculateY0(const trackParameters& tp)
     {
-        return (cos(tp.parameters()(PHI0)) * tp.parameters()(D0)) + tp.referencePoint().y();
+        return (cos(tp.parameters()(PHI0)) * tp.parameters()(D0)) - tp.referencePoint().y();
     }
 
     double calculateQoverP(const trackParameters& , double BField);
