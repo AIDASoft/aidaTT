@@ -91,15 +91,15 @@ namespace aidaTT
 
     bool trajectory::_calculateIntersectionWithSurface(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
-      /// currently three different types of surfaces are available
-      if(surf->type().isZCylinder())
-	return _intersectsWithinZCylinderBounds(surf, s, localUV, xx);
-      else if(surf->type().isZPlane())
-	return _intersectWithinZPlaneBounds(surf, s, localUV, xx);
-      else if(surf->type().isZDisk())
-	return _intersectWithinZDiskBounds(surf, s, localUV, xx);
-      else
-	throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+        /// currently three different types of surfaces are available
+        if(surf->type().isZCylinder())
+            return _intersectsWithinZCylinderBounds(surf, s, localUV, xx);
+        else if(surf->type().isZPlane())
+            return _intersectWithinZPlaneBounds(surf, s, localUV, xx);
+        else if(surf->type().isZDisk())
+            return _intersectWithinZDiskBounds(surf, s, localUV, xx);
+        else
+            throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
     }
 
 
@@ -114,16 +114,14 @@ namespace aidaTT
 
     bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
-        const Vector3D refpoint = _referenceParameters.referencePoint();
-
         // the straight line: normals plus distance; distance must be positive !
         const double nx = surf->normal().x();
         const double ny = surf->normal().y();
 
-	//fg: this is wrong - we need the distance from the origin
-	//    const double dist = fabs(surf->distance(refpoint));
-        const double dist = fabs(surf->distance( Vector3D() ));
+        // calculate distance from origin
+        const double dist = fabs(surf->distance(Vector3D()));
 
+        // define straight line from this
         straightLine line(nx, ny, dist);
         // create circle
         const double radius  = calculateRadius(_referenceParameters);
@@ -131,7 +129,7 @@ namespace aidaTT
         const double ycenter = calculateYCenter(_referenceParameters);
         circle circ(xcenter, ycenter, radius);
 
-	//	std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ; 
+        //  std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ;
 
         intersections candidates = intersectCircleStraightLine(circ, line);
 
@@ -150,7 +148,7 @@ namespace aidaTT
                         if(localUV != NULL)
                             _calculateLocalCoordinates(surf, thePlace, localUV);
 
-			if( xx ) xx->fill( thePlace ) ;
+                        if(xx) xx->fill(thePlace) ;
 
                         return true;
                     }
@@ -176,52 +174,52 @@ namespace aidaTT
         const bool insideFirst  = surf->insideBounds(sol0);
         const bool insideSecond = surf->insideBounds(sol1);
 
-        if(( !insideFirst && !insideSecond) ) // || (S0 < 0. && S1 < 0.))      //do not  discard negative or no solution
-	  return false;
+        if((!insideFirst && !insideSecond))   // || (S0 < 0. && S1 < 0.))      //do not  discard negative or no solution
+            return false;
 
-	else if(insideFirst && !insideSecond)
-	    {
-	        s = S0;
+        else if(insideFirst && !insideSecond)
+            {
+                s = S0;
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, sol0, localUV);
 
-		if( xx ) xx->fill( sol0 ) ;
+                if(xx) xx->fill(sol0) ;
 
-		//        return true;
+                //        return true;
             }
-        else if( !insideFirst && insideSecond )
+        else if(!insideFirst && insideSecond)
             {
                 s = S1;
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, sol1, localUV);
 
-		if( xx ) xx->fill( sol1 ) ;
+                if(xx) xx->fill(sol1) ;
 
                 // return true;
             }
         else // both are valid , choose the smaller absolute solution
-	  {
-	    if(std::fabs( S0 )  < std::fabs( S1 ) )
-	      {
-		s = S0;
-		if(localUV != NULL)
-		    _calculateLocalCoordinates(surf, sol0, localUV);
-		
-		if( xx ) xx->fill( sol0 ) ;
-	      }
-	    else
-	      {
-		s = S1;
-		if(localUV != NULL)
-		  _calculateLocalCoordinates(surf, sol1, localUV);
-		
-		if( xx ) xx->fill( sol1 ) ;
-	      }
-	  }
+            {
+                if(std::fabs(S0)  < std::fabs(S1))
+                    {
+                        s = S0;
+                        if(localUV != NULL)
+                            _calculateLocalCoordinates(surf, sol0, localUV);
 
-	//	std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
-	return true;
-	
+                        if(xx) xx->fill(sol0) ;
+                    }
+                else
+                    {
+                        s = S1;
+                        if(localUV != NULL)
+                            _calculateLocalCoordinates(surf, sol1, localUV);
+
+                        if(xx) xx->fill(sol1) ;
+                    }
+            }
+
+        //  std::cout << " _intersectWithinZPlaneBounds found soulution at s = " <<  s  << std::endl ;
+        return true;
+
     }
 
 
@@ -234,8 +232,8 @@ namespace aidaTT
     //     const double nx = surf->normal().x();
     //     const double ny = surf->normal().y();
 
-    // 	//fg: this is wrong - we need the distance from the origin
-    // 	//    const double dist = fabs(surf->distance(refpoint));
+    //  //fg: this is wrong - we need the distance from the origin
+    //  //    const double dist = fabs(surf->distance(refpoint));
     //     const double dist = fabs(surf->distance( Vector3D() ));
 
     //     straightLine line(nx, ny, dist);
@@ -245,7 +243,7 @@ namespace aidaTT
     //     const double ycenter = calculateYCenter(_referenceParameters);
     //     circle circ(xcenter, ycenter, radius);
 
-    // 	//	std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ; 
+    //  //  std::cout << " ++ trajectory::_intersectWithinZPlaneBounds: circle center:  ( " << xcenter << ", " << ycenter << ")" << std::endl ;
 
     //     intersections candidates = intersectCircleStraightLine(circ, line);
 
@@ -264,7 +262,7 @@ namespace aidaTT
     //                     if(localUV != NULL)
     //                         _calculateLocalCoordinates(surf, thePlace, localUV);
 
-    // 			if( xx ) xx->fill( thePlace ) ;
+    //          if( xx ) xx->fill( thePlace ) ;
 
     //                     return true;
     //                 }
@@ -298,7 +296,7 @@ namespace aidaTT
     //             if(localUV != NULL)
     //                 _calculateLocalCoordinates(surf, sol0, localUV);
 
-    // 		if( xx ) xx->fill( sol0 ) ;
+    //      if( xx ) xx->fill( sol0 ) ;
 
     //             return true;
     //         }
@@ -308,7 +306,7 @@ namespace aidaTT
     //             if(localUV != NULL)
     //                 _calculateLocalCoordinates(surf, sol1, localUV);
 
-    // 		if( xx ) xx->fill( sol1 ) ;
+    //      if( xx ) xx->fill( sol1 ) ;
 
     //             return true;
     //         }
@@ -321,7 +319,7 @@ namespace aidaTT
     //                     if(localUV != NULL)
     //                         _calculateLocalCoordinates(surf, sol0, localUV);
 
-    // 			if( xx ) xx->fill( sol0 ) ;
+    //          if( xx ) xx->fill( sol0 ) ;
     //                 }
     //             else if(S0 < 0. && S1 >= 0.)
     //                 {
@@ -329,7 +327,7 @@ namespace aidaTT
     //                     if(localUV != NULL)
     //                         _calculateLocalCoordinates(surf, sol1, localUV);
 
-    // 			if( xx ) xx->fill( sol1 ) ;
+    //          if( xx ) xx->fill( sol1 ) ;
     //                }
     //             else // both are positive
     //                 {
@@ -339,7 +337,7 @@ namespace aidaTT
     //                             if(localUV != NULL)
     //                                 _calculateLocalCoordinates(surf, sol0, localUV);
 
-    // 				if( xx ) xx->fill( sol0 ) ;
+    //              if( xx ) xx->fill( sol0 ) ;
     //                         }
     //                     else
     //                         {
@@ -347,7 +345,7 @@ namespace aidaTT
     //                             if(localUV != NULL)
     //                                 _calculateLocalCoordinates(surf, sol1, localUV);
 
-    // 				if( xx ) xx->fill( sol1 ) ;
+    //              if( xx ) xx->fill( sol1 ) ;
     //                          }
     //                 }
     //             return true;
@@ -371,7 +369,7 @@ namespace aidaTT
                 if(localUV != NULL)
                     _calculateLocalCoordinates(surf, thePlace, localUV);
 
-		if( xx ) xx->fill( thePlace ) ;
+                if(xx) xx->fill(thePlace) ;
 
                 return true;
             }
@@ -413,17 +411,20 @@ namespace aidaTT
         measDir->push_back(surface.v(position));
 
 
-	// std::cout << " trajectory::addMeasurement: intersects surface : " << intersects 
-	// 	  << " residuals: " <<  udiff << ", " << vdiff 
-	// 	  << " errors :   " <<  1./precision[0] << ", " << 1./precision[1]  
-	// 	  << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
+        // std::cout << " trajectory::addMeasurement: intersects surface : " << intersects
+        //    << " residuals: " <<  udiff << ", " << vdiff
+        //    << " errors :   " <<  1./precision[0] << ", " << 1./precision[1]
+        //    << " s: " << s << " at r (surf) : " << surface.origin().rho() << std::endl ;
 
-	if( intersects ){ 
-	  _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
-	}else{
-	  std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface 
-		    << "        hit will be ignored ! " << std::endl ;
-	}
+        if(intersects)
+            {
+                _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
+            }
+        else
+            {
+                std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
+                          << "        hit will be ignored ! " << std::endl ;
+            }
     }
 
 

@@ -126,8 +126,8 @@ namespace aidaTT
         double anrm  = 1.0 / std::sqrt(csf * csf + snf * snf);
         csf  *= anrm;
         snf  *= anrm;
-        double csfd  = csf * csf0 + snf * snf0;
-        double snfd  = snf * csf0 - csf * snf0;
+        //~ double csfd  = csf * csf0 + snf * snf0;
+        //~ double snfd  = snf * csf0 - csf * snf0;
 
         double fid   = fi0p - fi0;
         while(fid < 0)      fid += kTwoPi;
@@ -281,7 +281,7 @@ namespace aidaTT
 
     fiveByFiveMatrix perigeeToILDJacobian(const trackParameters& tP, const Vector5& perParams)
     {
-      const double tanLambda = calculateTanLambda(tP) + perParams( TANL ) ;
+        const double tanLambda = calculateTanLambda(tP) + perParams(TANL) ;
 
         fiveByFiveMatrix per2ILDjacobian;
         per2ILDjacobian.Unit();
@@ -298,7 +298,7 @@ namespace aidaTT
 
     fiveByFiveMatrix ildToPerigeeJacobian(const trackParameters& tP, const Vector5& ildParams)
     {
-      const double tanLambda = calculateTanLambda(tP) ;
+        const double tanLambda = calculateTanLambda(tP) ;
 
         fiveByFiveMatrix ild2PERjacobian;
         ild2PERjacobian.Unit();
@@ -315,9 +315,9 @@ namespace aidaTT
 
     fiveByFiveMatrix curvilinearToILDJacobian(const trackParameters& tP, const Vector5&  clParams, const Vector3D& bfield)
     {
-      
-      fiveByFiveMatrix cur2per = curvilinearToPerigeeJacobian(tP, clParams, bfield) ;
-	
+
+        fiveByFiveMatrix cur2per = curvilinearToPerigeeJacobian(tP, clParams, bfield) ;
+
         Vector5 perParams =  cur2per * clParams;
 
         return perigeeToILDJacobian(tP, perParams) * cur2per ;
