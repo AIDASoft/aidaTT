@@ -128,10 +128,23 @@ namespace aidaTT
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-	  //        Vector5 ildCorrections = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) * clCorrections;
-
+#if 1
+	
 	fiveByFiveMatrix cl2PerJacobian  = curvilinearToILDJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) ; 
-        Vector5 ildCorrections =  cl2PerJacobian * clCorrections;
+
+	Vector5 ildCorrections =  cl2PerJacobian * clCorrections;
+
+
+#else
+	fiveByFiveMatrix cl2PerJac = curvilinearToPerigeeJacobian(TRAJ.getInitialTrackParameters(), clCorrections, Vector3D(0., 0., TRAJ.Bz())) ;
+
+	fiveByFiveMatrix per2ILDJac = perigeeToILDJacobian( TRAJ.getInitialTrackParameters() , Vector5() ) ;
+
+	fiveByFiveMatrix cl2PerJacobian = per2ILDJac * cl2PerJac ;
+	
+	Vector5 ildCorrections =  cl2PerJacobian * clCorrections;
+#endif
+
 
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + ildCorrections;
 

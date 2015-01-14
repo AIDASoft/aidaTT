@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
-#define compute_start_helix 0
+#define compute_start_helix 1
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
 	    aidaTT::trackParameters startHelix ;
 
