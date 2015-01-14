@@ -64,9 +64,9 @@ namespace aidaTT
                 const double omcost = 1. - cost;
                 const double tmsint = theta - sint;
                 // M0-M
-                const Vector3D dx(-(gamma * tmsint * hn[0] + sint * tStart[0] + omcost * an1[0]) / q,
-                                  -(gamma * tmsint * hn[1] + sint * tStart[1] + omcost * an1[1]) / q,
-                                  -(gamma * tmsint * hn[2] + sint * tStart[2] + omcost * an1[2]) / q);
+                const Vector3D dx( -(gamma * tmsint * hn[0] + sint * tStart[0] + omcost * an1[0]) / q,
+                                    -(gamma * tmsint * hn[1] + sint * tStart[1] + omcost * an1[1]) / q,
+                                    -(gamma * tmsint * hn[2] + sint * tStart[2] + omcost * an1[2]) / q);
                 // HxU0
                 const Vector3D hu1 = hn.cross(u1);
                 // HxV0
