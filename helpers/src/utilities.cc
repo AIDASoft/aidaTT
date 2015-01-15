@@ -5,6 +5,8 @@
 
 namespace aidaTT
 {
+	enum { perigeeKAPPA, perigeeTHETA, perigeePHI, perigeeEPSILON, perigeeZP };
+	
     double calculateQoverP(const trackParameters& tp, double bfield)
     {
         if(bfield != 0.)
@@ -291,7 +293,7 @@ namespace aidaTT
 
 
     /// Calculate the simple transformation matrix from perigee to L3 parametrization
-    /// (kappa, theta, phi, epsilon, z_p) -> ( Omega, phi0, d0, z0, tanLambda)
+    /// (kappa, theta, phi, epsilon, z_p) -> ( Omega, tanLambda, phi0, d0, z0)
     /// with d0 = -epsilon, phi0 = phi, omega = -kappa, , z0 = z_p, lambda = pi/2 - theta
     /// \param [return] 5x5 matrix -- the transformation
     /// \param [input] trackParameters -- the reference parameters, at/towards which the corrections are to be applied
@@ -303,11 +305,11 @@ namespace aidaTT
         fiveByFiveMatrix p2l3;
 
         // differences to zero matrix:
-        p2l3(OMEGA, 0) = -1.; // omega = -kappa
-        p2l3(TANL, 4) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
-        p2l3(PHI0, 1) = +1.; // phi0 = phi
-        p2l3(D0, 2) = -1.; // d0 = -epsilon
-        p2l3(Z0, 3) = +1.; //  z0 = z_p
+        p2l3(OMEGA, perigeeKAPPA) = -1.; // omega = -kappa
+        p2l3(TANL,  perigeeTHETA) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
+        p2l3(PHI0, perigeePHI)    = +1.; // phi0 = phi
+        p2l3(D0, perigeeEPSILON)  = -1.; // d0 = -epsilon
+        p2l3(Z0, perigeeZP)       = +1.; //  z0 = z_p
 
         return p2l3;
     }

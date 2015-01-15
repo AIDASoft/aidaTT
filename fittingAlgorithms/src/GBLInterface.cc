@@ -131,7 +131,8 @@ namespace aidaTT
 
         fiveByFiveMatrix cl2PerJacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
         fiveByFiveMatrix per2L3Jacobian  = perigeeToL3Jacobian(TRAJ.getInitialTrackParameters());
-        Vector5 L3corrections = per2L3Jacobian * cl2PerJacobian * clCorrections;
+ 
+        Vector5 L3corrections = per2L3Jacobian * ( cl2PerJacobian * clCorrections );
 
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
 
