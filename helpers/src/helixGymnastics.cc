@@ -215,10 +215,10 @@ namespace aidaTT
 
         if(determinant != 0.)
             {
-                (*retVec)[0] = 1. / determinant * d;
-                (*retVec)[1] = 1. / determinant * (-b);
-                (*retVec)[2] = 1. / determinant * (-c);
-                (*retVec)[3] = 1. / determinant * a;
+                (*retVec)[0] =   d  / determinant;
+                (*retVec)[1] = (-b) / determinant;
+                (*retVec)[2] = (-c) / determinant;
+                (*retVec)[3] =   a  / determinant;
             }
         else
             {

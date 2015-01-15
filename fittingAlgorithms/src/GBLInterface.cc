@@ -56,8 +56,14 @@ namespace aidaTT
                         //~ 1) projection matrix -- the basis change matrix
                         const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
 
-                        ///~ convert the data from the vector into an array:
-                        const double* pL2M = projLocal2Meas.data();
+                        /// convert the data from the vector into the matrix:
+                        /// convention is that the first row comes first in the data
+                        TMatrixD pL2M(2, 2);
+                        pL2M(0, 0) = projLocal2Meas.at(0);
+                        pL2M(0, 1) = projLocal2Meas.at(1);
+                        pL2M(1, 0) = projLocal2Meas.at(2);
+                        pL2M(1, 1) = projLocal2Meas.at(3);
+
 
                         //~ 2) the residuals in the measurement direction
                         const std::vector<double>& residuals = (*element)->measurementResiduals();
@@ -72,7 +78,7 @@ namespace aidaTT
                         const double* prec = precision.data();
 
                         // fixed size of arguments: 2D in measurements!
-                        point.addMeasurement(TMatrixD(2, 2, pL2M), TVectorD(2, resid), TVectorD(2, prec));
+                        point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
                     }
                 if((*element)->isScatterer())
                     {
