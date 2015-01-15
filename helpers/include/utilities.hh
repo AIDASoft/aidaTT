@@ -28,6 +28,16 @@ namespace aidaTT
         Z0
     } ;
 
+    enum
+    {
+        perigeeKAPPA = 0,
+        perigeeTHETA,
+        perigeePHI,
+        perigeeEPSILON,
+        perigeeZP
+    };
+
+
     /// backward compatible accessors
     inline double calculateOmega(const trackParameters& tp)
     {

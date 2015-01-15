@@ -5,8 +5,7 @@
 
 namespace aidaTT
 {
-	enum { perigeeKAPPA, perigeeTHETA, perigeePHI, perigeeEPSILON, perigeeZP };
-	
+
     double calculateQoverP(const trackParameters& tp, double bfield)
     {
         if(bfield != 0.)
