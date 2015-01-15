@@ -66,7 +66,7 @@ void helixCalculations::_test()
     test_(floatCompare(calculateYCenter(*_two), -7.07106781186547524401));
     test_(floatCompare(calculatePhifromXY(0., 0., *_two), M_PI_4));
 
-    test_(floatCompare(calculateSfromXY(7.07106781186547524401., 2.92893218813452475599., *_two), 10. * M_PI_4));
+    test_(floatCompare(calculateSfromXY(7.07106781186547524401, 2.92893218813452475599, *_two), 10. * M_PI_4));
     test_(floatCompare(calculateXfromS(10. * M_PI_4, *_two), 7.07106781186547524401));
     test_(floatCompare(calculateYfromS(10. * M_PI_4, *_two),  2.92893218813452475599));
     test_(floatCompare(calculateZfromS(1.234567 / 10., *_two), 1.234567 / 10.));
