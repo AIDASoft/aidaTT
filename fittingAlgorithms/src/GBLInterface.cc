@@ -129,12 +129,11 @@ namespace aidaTT
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-        fiveByFiveMatrix cl2PerJacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
-        fiveByFiveMatrix per2L3Jacobian  = perigeeToL3Jacobian(TRAJ.getInitialTrackParameters());
- 
-        Vector5 L3corrections = per2L3Jacobian * ( cl2PerJacobian * clCorrections );
+        fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
+        Vector5 L3corrections           =  cl2L3Jacobian * clCorrections;
 
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
+
 
         trackParameters tp;
         tp.setTrackParameters(fittedParameters);
@@ -149,18 +148,18 @@ namespace aidaTT
             }
 
         //fg --- need to transform the covariance matrix from CL to perigee ----
-        fiveByFiveMatrix cl2PerJacobianT(cl2PerJacobian) ;
-        cl2PerJacobianT.Transpose() ;
+        fiveByFiveMatrix cl2L3JacobianT(cl2L3Jacobian) ;
+        cl2L3JacobianT.Transpose() ;
 
         // std::cout << " initial covariance: " << testCovMat << std::endl ;
-        // std::cout << " Jacobian :          " <<  cl2PerJacobian << std::endl ;
-        // std::cout << " JacobianT:          " <<  cl2PerJacobianT << std::endl ;
+        // std::cout << " Jacobian :          " <<  cl2L3Jacobian << std::endl ;
+        // std::cout << " JacobianT:          " <<  cl2L3JacobianT << std::endl ;
 
-        fiveByFiveMatrix finalCov  = testCovMat * cl2PerJacobianT ;
+        fiveByFiveMatrix finalCov  = testCovMat * cl2L3JacobianT ;
 
         // std::cout << " half transformed:  " << finalCov   << std::endl ;
 
-        finalCov = cl2PerJacobian * finalCov ;
+        finalCov = cl2L3Jacobian * finalCov ;
 
         // std::cout << " final   covariance: " << finalCov   << std::endl ;
 
