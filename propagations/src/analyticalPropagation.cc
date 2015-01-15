@@ -39,8 +39,8 @@ namespace aidaTT
                 const double coslambdaEnd = sqrt(tEnd[0] * tEnd[0] + tEnd[1] * tEnd[1]);
                 const double coslambdaEndInv = 1. / coslambdaEnd;
                 // magnetic field direction
-                Vector3D hn(bfield);
-                hn.unit();
+                Vector3D hn( bfield.unit() );
+		//                hn.unit();
                 // (signed) momentum
                 const double pav = 1.0 / qop;
                 //
