@@ -73,15 +73,8 @@ namespace aidaTT
         if(dphi != 0.)
             {
 
-                double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi)  ;
-
-                // std::cout <<  " *** calculateSfromXY :  s = " << s
-                //        << " dphi*R = " << dphi / std::fabs( calculateCurvature( tP ) )
-                //        << " dphi = " << dphi
-                //        << std::endl ;
-
+                double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi) ;
                 return s ;
-
             }
         else
             return 0.;
