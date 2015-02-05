@@ -227,7 +227,10 @@ namespace aidaTT
     {
         // the z position of the plane
         double planePositionZ = surf->origin().z();
-        s = (planePositionZ - calculateZ0(_referenceParameters)) / calculateTanLambda(_referenceParameters);
+	double helixPositionZ = _referenceParameters.referencePoint().z() + calculateZ0( _referenceParameters ) ;
+
+        s = ( planePositionZ - helixPositionZ ) / calculateTanLambda(_referenceParameters);
+
         double x = calculateXfromS(s, _referenceParameters);
         double y = calculateYfromS(s, _referenceParameters);
 
