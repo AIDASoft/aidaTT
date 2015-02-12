@@ -106,8 +106,116 @@ namespace aidaTT
 
     bool trajectory::_intersectsWithinZCylinderBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
     {
-        //// TODO:: MISSING IMPLEMENTATION
-        return false;
+      //// see: L3 internal note 1666 "Helicoidal tracks", J.Alcaraz
+
+      if( ! surf->type().isParallelToZ() ){
+
+	throw std::runtime_error( " **** _intersectsWithinZCylinderBounds: only works for xylinders parallel to the z-axis " ) ;
+      }
+
+      const double omega = calculateOmega( _referenceParameters);
+      const double phi0  = calculatePhi0(  _referenceParameters);
+
+      const Vector3D& rp =  _referenceParameters.referencePoint() ;
+      const double x0    = rp.x()  ;
+      const double y0    = rp.y()  ;
+      
+      const double rho = dynamic_cast<const ICylinder*>(surf)->radius() ;
+
+      const Vector3D&  cylc = surf->origin() - rho * surf->normal() ;
+      const double xrho = cylc.x()  ;
+      const double yrho = cylc.y()  ;
+
+      //--------
+
+      const double sinph = sin( phi0 ) ;
+      const double cosph = cos( phi0 ) ;
+
+      const double dx = xrho - x0 ;
+      const double dy = yrho - y0 ;
+
+      double sox = sinph - omega * dx  ;
+      double coy = cosph + omega * dy ;
+      
+      double gamma = ( 2*dx * sinph - 2 * dy * cosph - omega * rho * rho  - omega * ( dx*dx + dy*dy ) ) ;
+      gamma /= ( 2 * rho * sqrt( sox * sox + coy * coy) ) ;
+
+      if( std::fabs( gamma ) > 1. )  // no solution  ( could have faster check at beginning  ...  ) 
+	return false ;
+
+      const double phirho = atan2( sox , coy ) ;
+
+      const double asing = asin( gamma ) ;
+
+      const double phic0 = asing + phirho ;
+
+      double phic1 = ( asing  > 0. ?  M_PI - asing :  - M_PI - asing  ) ;
+      phic1 += phirho ;
+
+      const double X0 = xrho + rho * cos( phic0 )  ;
+      const double Y0 = yrho + rho * sin( phic0 )  ;
+      const double X1 = xrho + rho * cos( phic1 )  ;
+      const double Y1 = yrho + rho * sin( phic1 )  ;
+      
+      const double S0 = calculateSfromXY( std::make_pair( X0 , Y0 ) , _referenceParameters);
+      const double S1 = calculateSfromXY( std::make_pair( X1 , Y1 ) , _referenceParameters);
+
+      const double Z0 = calculateZfromS(S0, _referenceParameters);
+      const double Z1 = calculateZfromS(S1, _referenceParameters);
+
+      Vector3D sol0(X0, Y0, Z0);
+      Vector3D sol1(X1, Y1, Z1);
+
+      const bool insideFirst  = surf->insideBounds(sol0);
+      const bool insideSecond = surf->insideBounds(sol1);
+
+
+      if((!insideFirst && !insideSecond))   // || (S0 < 0. && S1 < 0.))      //do not  discard negative or no solution
+	return false;
+
+      else if(insideFirst && !insideSecond)
+	{
+	  s = S0;
+	  if(localUV != NULL)
+	    _calculateLocalCoordinates(surf, sol0, localUV);
+
+	  if(xx) xx->fill(sol0) ;
+
+	  //        return true;
+	}
+      else if(!insideFirst && insideSecond)
+	{
+	  s = S1;
+	  if(localUV != NULL)
+	    _calculateLocalCoordinates(surf, sol1, localUV);
+
+	  if(xx) xx->fill(sol1) ;
+
+	  // return true;
+	}
+      else // both are valid , choose the smaller absolute solution
+	{
+	  if(std::fabs(S0)  < std::fabs(S1))
+	    {
+	      s = S0;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol0, localUV);
+
+	      if(xx) xx->fill(sol0) ;
+	    }
+	  else
+	    {
+	      s = S1;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol1, localUV);
+
+	      if(xx) xx->fill(sol1) ;
+	    }
+	}
+
+      return true;
+
+
     }
 
 

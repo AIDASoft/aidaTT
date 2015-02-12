@@ -23,6 +23,7 @@
 namespace aidaTT
 {
     typedef DDSurfaces::ISurface ISurface;
+    typedef DDSurfaces::ICylinder ICylinder;
     typedef DDSurfaces::IMaterial IMaterial;
     typedef DDSurfaces::ISurface::Vector2D Vector2D;
 }
