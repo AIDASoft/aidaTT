@@ -7,6 +7,7 @@
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
 #include "helixGymnastics.hh"
+#include "utilities.hh"
 
 #include "IPropagation.hh"
 #include "IGeometry.hh"
@@ -76,6 +77,10 @@ namespace aidaTT
             IFittingAlgorithm* getFittingAlgorithm() const;
             IPropagation* getPropagation() const;
             IBField* getBField() const;
+
+            /// helper method: compute the point on the trajectory for a given value of s
+            Vector3D pointAt( double s) ;
+
 
             ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
             void prepareForFitting();

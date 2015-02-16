@@ -79,6 +79,9 @@ namespace aidaTT
         return (cos(tp.parameters()(PHI0)) * tp.parameters()(D0)) + tp.referencePoint().y();
     }
 
+    /// compute the point on the trajectory for a given value of s
+    Vector3D pointOnTrajectory(const trackParameters& tp,  double s) ;
+
     double calculateQoverP(const trackParameters& , double BField);
 
     /// compute start parameters for a helix from three points, e.g. first, last and middle point )

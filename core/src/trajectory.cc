@@ -53,6 +53,10 @@ namespace aidaTT
     }
 
 
+    Vector3D trajectory::pointAt( double s) {
+        return pointOnTrajectory( _referenceParameters, s ) ;
+    }
+
     const std::vector<trajectoryElement*>& trajectory::trajectoryElements() const
     {
         return _initialTrajectoryElements;
@@ -115,21 +119,23 @@ namespace aidaTT
 
       const double omega = calculateOmega( _referenceParameters);
       const double phi0  = calculatePhi0(  _referenceParameters);
+      const double d0    = calculateD0(    _referenceParameters);
+
+      const double sinph = sin( phi0 ) ;
+      const double cosph = cos( phi0 ) ;
 
       const Vector3D& rp =  _referenceParameters.referencePoint() ;
-      const double x0    = rp.x()  ;
-      const double y0    = rp.y()  ;
+      const double x0    = rp.x() - d0 * sinph ;
+      const double y0    = rp.y() + d0 * cosph ;
       
       const double rho = dynamic_cast<const ICylinder*>(surf)->radius() ;
 
-      const Vector3D&  cylc = surf->origin() - rho * surf->normal() ;
+      const Vector3D&  cylc = dynamic_cast<const ICylinder*>(surf)->center() ;
       const double xrho = cylc.x()  ;
       const double yrho = cylc.y()  ;
 
       //--------
 
-      const double sinph = sin( phi0 ) ;
-      const double cosph = cos( phi0 ) ;
 
       const double dx = xrho - x0 ;
       const double dy = yrho - y0 ;
@@ -154,6 +160,7 @@ namespace aidaTT
 
       const double X0 = xrho + rho * cos( phic0 )  ;
       const double Y0 = yrho + rho * sin( phic0 )  ;
+
       const double X1 = xrho + rho * cos( phic1 )  ;
       const double Y1 = yrho + rho * sin( phic1 )  ;
       
@@ -170,8 +177,49 @@ namespace aidaTT
       const bool insideSecond = surf->insideBounds(sol1);
 
 
+      // std::cout << " trajectory::_intersectsWithinZCylinderBounds:  sol0 x = " 
+      // 		<< X0 << " y = " << Y0 << " z = " << Z0 << " s = " << S0 << " isInside " << insideFirst << std::endl ;
+
+      // std::cout << " trajectory::_intersectsWithinZCylinderBounds:  sol1 x = " 
+      // 		<< X1 << " y = " << Y1 << " z = " << Z1 << " s = " << S1 << " isInside " << insideSecond << std::endl ;
+
+
       if((!insideFirst && !insideSecond))   // || (S0 < 0. && S1 < 0.))      //do not  discard negative or no solution
 	return false;
+
+
+#if 1 // fg: change the logic for cylinders: always only return the closest solution 
+      // to have same behaviour as KalTest
+      // FIXME: ideally the interscetion methods should return all solutions and have the 
+      //        calling program decide which to use ...
+
+      Vector3D& theSol = sol0 ;
+      bool isInside = insideFirst ;
+
+      if(std::fabs(S0)  < std::fabs(S1))
+	{
+	  s = S0;
+	  if(localUV != NULL)
+	    _calculateLocalCoordinates(surf, sol0, localUV);
+	  
+	  if(xx) xx->fill(sol0) ;
+
+	}
+      else
+	{
+	  s = S1;
+	  if(localUV != NULL)
+	    _calculateLocalCoordinates(surf, sol1, localUV);
+	  
+	  if(xx) xx->fill(sol1) ;
+
+	  theSol = sol1 ;
+	  isInside = insideSecond ;
+	}
+    
+      return isInside ;
+ 
+#else
 
       else if(insideFirst && !insideSecond)
 	{
@@ -214,6 +262,8 @@ namespace aidaTT
 	}
 
       return true;
+#endif
+
 
 
     }
