@@ -421,16 +421,16 @@ namespace aidaTT
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
     {
         /// get reference information
-        Vector2D* referenceUV = new Vector2D();
+        Vector2D referenceUV ;
         double s =  0;
-        double intersects = _calculateIntersectionWithSurface(&surface, s, referenceUV);
+        double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
         /// calculate measurement info
-        Vector2D* measuredUV = new Vector2D(surface.globalToLocal(position));
+        Vector2D measuredUV(surface.globalToLocal(position));
 
         // combining both delivers the actual residuals: measurement MINUS reference
-        const double udiff = measuredUV->u() - referenceUV->u();
-        const double vdiff = measuredUV->v() - referenceUV->v();
+        const double udiff = measuredUV.u() - referenceUV.u();
+        const double vdiff = measuredUV.v() - referenceUV.v();
 
         std::vector<double> residuals(2);
         residuals[0] = udiff;
@@ -446,8 +446,10 @@ namespace aidaTT
             }
         else
             {
-                std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
-                          << "        hit will be ignored ! " << std::endl ;
+	      delete measDir ;
+	      
+	      std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
+			<< "        hit will be ignored ! " << std::endl ;
             }
     }
 
