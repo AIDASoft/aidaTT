@@ -329,8 +329,10 @@ namespace aidaTT
         Vector3D sol0(X0, Y0, Z0);
         Vector3D sol1(X1, Y1, Z1);
 
-        const bool insideFirst  = surf->insideBounds(sol0);
-        const bool insideSecond = surf->insideBounds(sol1);
+	//	double epsilon = 1.e-3  ;
+
+        const bool insideFirst  = surf->insideBounds(sol0 ) ; // , epsilon );
+        const bool insideSecond = surf->insideBounds(sol1 ) ; // , epsilon );
 
         if((!insideFirst && !insideSecond))   // || (S0 < 0. && S1 < 0.))      //do not  discard negative or no solution
             return false;
@@ -412,8 +414,8 @@ namespace aidaTT
     void trajectory::_calculateLocalCoordinates(const ISurface* surf, const Vector3D& position, Vector2D* localUV, Vector3D* xx)
     {
         Vector2D local = surf->globalToLocal(position);
-        localUV->_u = local.u();
-        localUV->_v = local.v();
+        localUV->u() = local.u();
+        localUV->v() = local.v();
     }
 
 
