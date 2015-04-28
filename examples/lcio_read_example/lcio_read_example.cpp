@@ -12,7 +12,7 @@
 
 // DD4hep
 #include "DD4hep/LCDD.h"
-#include "DDRec/SurfaceManager.h"
+#include "DDRec/SurfaceHelper.h"
 
 #include <map>
 

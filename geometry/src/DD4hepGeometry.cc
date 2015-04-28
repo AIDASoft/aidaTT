@@ -4,7 +4,7 @@
 
 // DD4hep
 #include "DD4hep/LCDD.h"
-#include "DDRec/SurfaceManager.h"
+#include "DDRec/SurfaceHelper.h"
 
 namespace aidaTT
 {
@@ -17,7 +17,7 @@ namespace aidaTT
     const std::list<const ISurface*>& DD4hepGeometry::getSurfaces()
     {
         // create a list of all surfaces in the detector:
-        DD4hep::DDRec::SurfaceManager surfMan(_detelem) ;
+        DD4hep::DDRec::SurfaceHelper surfMan(_detelem) ;
 
         const DD4hep::DDRec::SurfaceList& sL = surfMan.surfaceList() ;
 

@@ -7,7 +7,7 @@
 
 // DD4hep
 #include "DD4hep/LCDD.h"
-#include "DDRec/SurfaceManager.h"
+#include "DDRec/SurfaceHelper.h"
 
 int main(int argc, char** argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     DD4hep::Geometry::DetElement world = lcdd.world() ;
 
     // create a list of all surfaces in the detector:
-    DD4hep::DDRec::SurfaceManager surfMan(world) ;
+    DD4hep::DDRec::SurfaceHelper surfMan(world) ;
 
     const DD4hep::DDRec::SurfaceList& sL = surfMan.surfaceList() ;
 

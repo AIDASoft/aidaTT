@@ -18,7 +18,7 @@
 #include "DD4hepGeometry.hh"
 #include "DD4hep/LCDD.h"
 #include "DD4hep/DD4hepUnits.h"
-#include "DDRec/SurfaceManager.h"
+#include "DDRec/SurfaceHelper.h"
 
 
 // aidaTT
