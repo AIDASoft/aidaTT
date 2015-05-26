@@ -56,7 +56,7 @@ namespace aidaTT
         public:
             /// Measurement constructor: arc length, surface, measurement direction(s), precision(s) and residual(s) plus the local curvilinear system and some identification
             trajectoryElement(double, const ISurface&, std::vector<Vector3D>*, const std::vector<double>&,
-                              const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL);
+                              const std::vector<double>&, std::pair<Vector3D, Vector3D>*,  void* = NULL, bool isScatterer=false);
 
             ///~ constructor B: only the arc length is given and some identification
             trajectoryElement(double, void* = NULL);

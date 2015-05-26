@@ -418,14 +418,96 @@ namespace aidaTT
         localUV->v() = local.v();
     }
 
+  
+  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
+  {
+   
+    std::cout << " I am calling addScatterer " << std::endl ;
+
+    /// get reference information
+    // I am not sure what to do with these stuff
+    Vector2D referenceUV ;
+    double s =  0;
+    double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
+
+    std::cout << " surface " << surface << " arc length " << s << std::endl ;
+
+    std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
+    measDir->push_back(surface.u(position));
+    measDir->push_back(surface.v(position));
+
+    std::vector<double> residuals(2);
+    residuals[0] = 0;
+    residuals[1] = 0;
+
+    // I mean the stuff up here
+
+    const Vector5 hel = seed_tp.parameters();
+
+    double tnl    = hel(1); 
+    double phi0   = hel(2);
+
+
+    const DDSurfaces::IMaterial& material_inn = surface.innerMaterial();
+    const DDSurfaces::IMaterial& material_out = surface.outerMaterial();
+
+    const double r_i = surface.innerThickness();
+    const double r_o = surface.outerThickness();
+
+    const double X0_o = material_out.radiationLength();
+    const double X0_i = material_inn.radiationLength();
+
+    double r_tot = r_i + r_o ;
+
+    //calculation of effective radiation length of the surface
+    double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
+
+    //calculation of the path of the particle inside the material
+    //compute path as projection of (straight) track to surface normal:
+    DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
+    DDSurfaces::Vector3D up = p.unit() ;
+    const DDSurfaces::Vector3D& n = surface.normal() ;
+    double cosTrk = std::fabs( up * n )  ;
+    
+    double path = r_i + r_o ;
+
+    //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
+    path /= cosTrk ; 
+
+    double X_X0 = path * X0_eff ;
+
+    double mom = ( fabs(1./hel(0) ) / 1000.0 ) ;
+
+    static const double mass = 0.13957018; // pion mass [GeV]
+    double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
+
+    double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
+
+    std::cout << " mom " << mom << " beta " << beta << " x/X0 " << X_X0 << " Qms = " << Qms << std::endl;
+
+    precision[0] = Qms*Qms ;  precision[1] = Qms*Qms ;
+    
+    if(intersects)
+      {
+	_initialTrajectoryElements.push_back(new trajectoryElement( s+0.0001 , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
+      }
+    
+  }
+  
+
 
 
     void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
     {
+
+      std::cout << " I am calling addMeasurenet " << std::endl ;
+
         /// get reference information
         Vector2D referenceUV ;
         double s =  0;
         double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
+
+	std::cout << " surface " << surface << " arc length " << s << std::endl ;
 
         /// calculate measurement info
         Vector2D measuredUV(surface.globalToLocal(position));
@@ -444,7 +526,7 @@ namespace aidaTT
 
         if(intersects)
             {
-                _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
+	      _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
             }
         else
             {
@@ -504,6 +586,7 @@ namespace aidaTT
         /// now the really interesting ones
         for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin() + 1, last = _initialTrajectoryElements.end(); element < last; ++element)
             {
+
                 ///~ obtain the two arc lengths
                 double prevS = (*(element - 1))->arcLength();
                 double currS = (*element)->arcLength();

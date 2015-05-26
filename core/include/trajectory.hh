@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <TMath.h>
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
@@ -68,6 +69,8 @@ namespace aidaTT
             ///~ optional: add a surface; e.g. which only contains material
             void addElement(const Vector3D&, void* id);
             void addElement(const Vector3D&, const ISurface&, void* id);
+            // add a scatterer
+            void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
 
             ///~ test whether/where a surface is intersected
             bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);

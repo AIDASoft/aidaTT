@@ -38,11 +38,16 @@ namespace aidaTT
                 ///~ initialise point with jacobian from last to the current element
                 gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
-                std::cout << " ---  GBLInterface::fit - element : " <<  **element << std::endl ;
+                //std::cout << " ---  GBLInterface::fit - element : " <<  **element << std::endl ;
 
+		//std::cout << " Now I am working on surface " << (*element)->surface();
 
+		std::cout << " testing condition if measurement " << std::endl ;
                 if((*element)->hasMeasurement())
                     {
+
+		      std::cout << " we have a measurement in the surface " << std::endl ;
+
                         /// three elements are needed to add a measurement to a gblpoint:
                         /// 1) the projection matrix from the local track frame to the measurement system
                         /// 2) the residuals in the measurement directions
@@ -80,8 +85,12 @@ namespace aidaTT
                         // fixed size of arguments: 2D in measurements!
                         point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
                     }
+
+		std::cout << " testing condition if scatterer " << std::endl ;
                 if((*element)->isScatterer())
                     {
+
+		      std::cout << " we have a scatterer in the surface " << std::endl ;
                         // TODO :: implement!
                         //~ now evaluate the scattering material
                         //~ the addScatterer routine will add a thin scatterer at the given position
@@ -92,12 +101,113 @@ namespace aidaTT
                         //~ the scattering info enters through the inverse covariance matrix, doesn't need to be diagonalized before invocation
                         //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
 
+                        //~ 1) projection matrix -- the basis change matrix
+                        const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
 
+			std::cout << " size of projection vector " << projLocal2Meas.size() << std::endl ;
+
+                        /// convert the data from the vector into the matrix:
+                        /// convention is that the first row comes first in the data
+                        TMatrixD pL2M(2, 2);
+                        pL2M(0, 0) = projLocal2Meas.at(0);
+                        pL2M(0, 1) = projLocal2Meas.at(1);
+                        pL2M(1, 0) = projLocal2Meas.at(2);
+                        pL2M(1, 1) = projLocal2Meas.at(3);
+
+			//~ 2) the residuals in the measurement direction
+                        const std::vector<double>& residuals = (*element)->measurementResiduals();
+			//~ convert the vector to an array:
+                        const double* resid = residuals.data();
+
+			//~ 3) precision - MPS
+			/*
+
+			TMatrixDSym testPrecision(2) ;
+			testPrecision(0,0) = 1 -  (pL2M(1, 1)* pL2M(1, 1)) ;
+			testPrecision(0,1) = pL2M(0, 0)*pL2M(1, 1) ;
+			testPrecision(1,0) = pL2M(0, 0)*pL2M(1, 1) ;
+			testPrecision(1,1) = 1 -  (pL2M(0, 0)* pL2M(0, 0)) ;
+
+			std::vector<double> precision = (*element)->precisions();
+
+			//std::cout << " What precision do I feed to  the gbl point? " << precision[0] << " , " << precision[1] << std::endl;
+
+			//precision[0] = precision[0] / ( 1 - (pL2M(0, 0)* pL2M(0, 0)) - (pL2M(1, 1)* pL2M(1, 1) ) ) * ( 1 - (pL2M(0, 0)* pL2M(0, 0)) - (pL2M(1, 1)* pL2M(1, 1) ) )  ;
+			precision[0] = precision[0] / ( 1 - (pL2M(0, 0)* pL2M(0, 0)) - (pL2M(1, 1)* pL2M(1, 1) ) ) ;
+			precision[0] = 1. / precision[0] ;
+
+			testPrecision(0,0) = testPrecision(0,0) * precision[0] ;
+			testPrecision(0,1) = testPrecision(0,1) * precision[0] ;
+			testPrecision(1,0) = testPrecision(1,0) * precision[0] ;
+			testPrecision(1,1) = testPrecision(1,1) * precision[0] ;
+
+			point.addScatterer( TVectorD(2, resid), testPrecision);
+			*/
+
+			std::vector<double> precision = (*element)->precisions();
+
+			TMatrixD pL2M_T(2, 2);
+                        pL2M_T(0, 0) = projLocal2Meas.at(0);
+                        pL2M_T(1, 0) = projLocal2Meas.at(1);
+                        pL2M_T(0, 1) = projLocal2Meas.at(2);
+                        pL2M_T(1, 1) = projLocal2Meas.at(3);
+
+			TMatrixD Var(2,2);
+			//Var(0, 0) = 1.0 / precision[0];
+			Var(0, 0) = precision[0];
+			Var(0, 1) = 0;
+			Var(1, 0) = 0;
+			//Var(1, 1) = 1.0 / precision[0];
+			Var(1, 1) = precision[0];
+
+			TMatrixD Vk(2, 2);
+			Vk = pL2M * Var * pL2M_T ;
+
+			//TMatrixD testMatrix(2, 2);
+			//testMatrix = pL2M * pL2M_T ;
+			//double det = Vk.Determinant(); 
+			//std::cout << " Variance matrix determinant " << det << std::endl ;
+			//double det = testMatrix.Determinant(); 
+			//std::cout << " Variance matrix determinant " << det << std::endl ;
+
+			TMatrixD Vk_inv(2, 2);
+			Vk_inv = Vk.Invert();
+
+			TMatrixDSym Vk_sym(2);
+			
+                        Vk_sym(0, 0) = Vk_inv(0, 0);
+                        Vk_sym(0, 1) = Vk_inv(0, 1);
+                        Vk_sym(1, 0) = Vk_inv(1, 0);
+                        Vk_sym(1, 1) = Vk_inv(1, 1);
+			
+
+			
+			TMatrixD Var_inv(2, 2);
+			Var_inv = Var.Invert();
+			/*
+                        Vk_sym(0, 0) = Var_inv(0, 0);
+                        Vk_sym(0, 1) = Var_inv(0, 1);
+                        Vk_sym(1, 0) = Var_inv(1, 0);
+                        Vk_sym(1, 1) = Var_inv(1, 1);
+			*/
+
+			std::cout << " Symmetric matrix Vk " << std::endl;
+			std::cout << " | " << Vk_sym(0, 0) << " " << Vk_sym(0, 1) << " | " << std::endl;
+			std::cout << " | " << Vk_sym(1, 0) << " " << Vk_sym(1, 1) << " | " << std::endl;
+
+			std::cout << " Inverted variance matrix " << std::endl;
+			std::cout << " | " << Var_inv(0, 0) << " " << Var_inv(0, 1) << " | " << std::endl;
+			std::cout << " | " << Var_inv(1, 0) << " " << Var_inv(1, 1) << " | " << std::endl;
+
+			point.addScatterer( TVectorD(2, resid), Vk_sym);
                     }
 
                 // store the point in the list that will be handed to the trajectory
                 theListOfPoints.push_back(point);
             }
+
+	std::cout << " we have added " << theListOfPoints.size() << " points to the track " << std::endl ;
+
         /// TODO :: check validity before continuing!
 
         //~ this is not elegant -- delete previous data before starting again
