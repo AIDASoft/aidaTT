@@ -69,7 +69,7 @@ namespace aidaTT
                 return *_surface;
             };
 
-            const double arcLength() const
+            double arcLength() const
             {
                 return _arclength;
             };

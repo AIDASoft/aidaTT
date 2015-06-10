@@ -24,7 +24,7 @@ namespace aidaTT
             {
                 return Vector3D(0., 0., _bz);
             };
-            Vector3D BField(const double x, const double y, const double z) const
+            Vector3D BField(const double /*x*/, const double /*y*/, const double /*z*/) const
             {
                 return Vector3D(0., 0., _bz);
             };
