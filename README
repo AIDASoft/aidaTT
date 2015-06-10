@@ -1,0 +1,23 @@
+#########################################################################
+#
+#   aidaTT - tracking toolkit developed in the AIDA project
+#
+#
+#  C.Rosemann, Y. Voutsinas, DESY 
+#  June, 2015
+#
+#########################################################################
+
+
+  A brief introduction can be found in ./doc/description/description.pdf
+  ( after running:  cd ./doc/description ;  make ).
+
+
+
+  --------
+ | v00-01 | 
+  --------
+   - first release:
+      - implementation of GBL fitting using a DD4hep model that provides DDRec::Surfaces
+      - implementation of multiple scattering still under validation.
+
