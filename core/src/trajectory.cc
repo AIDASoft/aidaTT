@@ -490,6 +490,13 @@ namespace aidaTT
     if(intersects)
       {
 	_initialTrajectoryElements.push_back(new trajectoryElement( s+0.0001 , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
+      } 
+    else
+      {
+	delete measDir ;
+	
+	std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
+		  << "        hit will be ignored ! " << std::endl ;
       }
     
   }
