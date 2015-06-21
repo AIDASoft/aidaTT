@@ -358,7 +358,7 @@ int main(int argc, char** argv)
 		  if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
 		    continue;
 
-
+		  /*
 		  if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
 		    {
 		      idDecoder[lcio::ILDCellID0::side] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
@@ -369,7 +369,7 @@ int main(int argc, char** argv)
 		      
 		      hitid = idDecoder.lowWord() ;
 		    }
-		  
+		  */
 		  const aidaTT::ISurface* surf = surfMap[ hitid ] ;
 		  
 		  if(surf == NULL)
@@ -425,7 +425,7 @@ int main(int argc, char** argv)
                 
 		long64 hitid = (*fthit)->getCellID0() ;
 		idDecoder.setValue(hitid) ;
-		idDecoder[lcio::ILDCellID0::side] = ((*fthit)->getPosition()[2]  >  0  ?   +1 : -1) ;
+		//idDecoder[lcio::ILDCellID0::side] = ((*fthit)->getPosition()[2]  >  0  ?   +1 : -1) ;
 		hitid = idDecoder.lowWord() ;
 
 		int layerVXD = idDecoder[lcio::ILDCellID0::layer] ;
