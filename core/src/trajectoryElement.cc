@@ -46,8 +46,8 @@ namespace aidaTT
 
     void trajectoryElement::_calculateLocalToMeasurementProjectionMatrix()
     {
-        if(!_measurement)
-            return;
+      //if(!_measurement)
+      //      return;
 
         _localToMeasurementProjection = calculateLocalToMeasurementProjectionMatrix(_localCurvilinearSystem->first, _localCurvilinearSystem->second, *_measDirections);
     }

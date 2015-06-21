@@ -444,6 +444,7 @@ namespace aidaTT
 
     const Vector5 hel = seed_tp.parameters();
 
+    double omega  = hel(0);
     double tnl    = hel(1); 
     double phi0   = hel(2);
 
@@ -472,18 +473,18 @@ namespace aidaTT
     double path = r_i + r_o ;
 
     //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
-    path /= cosTrk ; 
+    path = path/cosTrk ; 
 
     double X_X0 = path * X0_eff ;
 
-    double mom = ( fabs(1./hel(0) ) / 1000.0 ) ;
+    double mom = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
 
     static const double mass = 0.13957018; // pion mass [GeV]
     double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
 
     double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
 
-    std::cout << " mom " << mom << " beta " << beta << " x/X0 " << X_X0 << " Qms = " << Qms << std::endl;
+    std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms = " << Qms << std::endl;
 
     precision[0] = Qms*Qms ;  precision[1] = Qms*Qms ;
     

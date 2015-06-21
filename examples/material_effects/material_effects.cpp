@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     char* ofile_name = argv[4] ;
 
     int counter = 0 ;
-    /*
+
     TFile *ofile = new TFile(ofile_name, "RECREATE");
     //Create tree
     TTree *t1 = new TTree("t1", "t1");
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
     t1->Branch("TrackHitResidualsU_LCIO", &TrackHitResidualsU_LCIO);
     vector<double> TrackHitResidualsV_LCIO ;
     t1->Branch("TrackHitResidualsV_LCIO", &TrackHitResidualsV_LCIO);
-    */
+
 
     //*********************************************************************
 
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
     while((evt = rdr->readNextEvent()) != 0)
         {
 
-	  /*
+	  
             TrackHitResidualsU.clear();
             TrackHitResidualsV.clear();
             pullU.clear();
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
             pullLCIO_V.clear();
 	    TrackHitResidualsU_LCIO.clear();
             TrackHitResidualsV_LCIO.clear();
-	  */
+
             LCCollection* trackCollection = evt->getCollection(trackCollectionName) ;
 
             // add output track collection to the event
@@ -187,6 +187,11 @@ int main(int argc, char** argv)
                 continue;
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
+	    // checking lcio track
+	    std::cout << " checking lcio track " << std::endl ;
+	    double lcio_omega = initialTrack->getOmega() ;
+	    double lcio_mom = ( fabs(1./lcio_omega ) / 1000.0 ) ;
+	    std::cout << " lcio omega par. " << lcio_omega << " P of initial track = " << lcio_mom << std::endl ;
 
             aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(lcio::TrackState::AtIP)));
 
@@ -206,7 +211,7 @@ int main(int argc, char** argv)
 
             //********************************************************************************************
             // Checking for LCIO track - hit residuals
-	    /*
+
             for(std::vector<TrackerHit*>::iterator lhit = initialHits.begin(), endIter = initialHits.end(); lhit < endIter; ++lhit)
                 {
                     long64 hitid = (*lhit)->getCellID0() ;
@@ -306,7 +311,7 @@ int main(int argc, char** argv)
 			    }
                         }
                 }
-	    */
+
             //********************************************************************************************
 
             for(int n = 0; n < 1 ; n++)
@@ -455,7 +460,7 @@ int main(int argc, char** argv)
                     // Examining track - hit residuals
                     // And write them down to a tree
                     //**********************************************************************************************************
-		    /*
+		    
                     aidaTT::trackParameters aidaFittedTP = result->estimatedParameters();
 
                     aidaTT::trajectory fitTrajectoryDebug(aidaFittedTP, fitter, bfield, propagation, &geom);
@@ -533,7 +538,7 @@ int main(int argc, char** argv)
                         }
 
                     t1->Fill();
-		    */
+		    
                     //***********************************************************************************************************
 
                     //~ std::cout << " loop " << n << std::endl ;
@@ -582,7 +587,7 @@ int main(int argc, char** argv)
 
         }
 
-    //ofile->Write("t1");
+    ofile->Write("t1");
 
     std::cout << " counter = " << counter << std::endl ;
 
