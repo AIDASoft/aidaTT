@@ -111,6 +111,10 @@ int main(int argc, char** argv)
     t1->Branch("pullLCIO_U",&pullLCIO_U);
     vector<double> pullLCIO_V ;
     t1->Branch("pullLCIO_V",&pullLCIO_V);
+    vector<double> TrkHitRes_LCIO_U ;
+    t1->Branch("TrkHitRes_LCIO_U",&TrkHitRes_LCIO_U );
+    vector<double> TrkHitRes_LCIO_V ;
+    t1->Branch("TrkHitRes_LCIO_V",&TrkHitRes_LCIO_V );
 
     //*********************************************************************
 
@@ -156,6 +160,8 @@ int main(int argc, char** argv)
 	   VXDlayer.clear();
 	   pullLCIO_U.clear();
 	   pullLCIO_V.clear();
+	   TrkHitRes_LCIO_U.clear(); 
+	   TrkHitRes_LCIO_V.clear(); 
 	  
 	   LCCollection* trackCollection = evt->getCollection(trackCollectionName) ;
 	  
@@ -247,13 +253,13 @@ int main(int argc, char** argv)
 	      {
 		long64 hitid = (*lhit)->getCellID0() ;
 		idDecoder.setValue(hitid) ;
-
+		/*
 		if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
 		  {
 		    idDecoder[lcio::ILDCellID0::side] = ((*lhit)->getPosition()[2]  >  0  ?   +1 : -1) ;
 		    hitid = idDecoder.lowWord() ;
 		  }		    
-
+		*/
 		int test_layer = idDecoder[lcio::ILDCellID0::layer] ;
 		
 		const aidaTT::ISurface* surf3 = surfMap[ hitid ] ;
@@ -337,6 +343,9 @@ int main(int argc, char** argv)
 			
 			pullLCIO_U.push_back(resU/deltaU);
 			pullLCIO_V.push_back(resV/deltaV);
+
+			TrkHitRes_LCIO_U.push_back(resU);
+			TrkHitRes_LCIO_V.push_back(resV);
 		      }
 		    }
 		  }
@@ -475,8 +484,8 @@ int main(int argc, char** argv)
 
 		  std::cout << " res in U = " << resU << " res in V = " << resV << std::endl ;
 
-		  TrackHitResidualsU.push_back(resU*10000.0);
-		  TrackHitResidualsV.push_back(resV*10000.0);
+		  TrackHitResidualsU.push_back(resU);
+		  TrackHitResidualsV.push_back(resV);
 
 		  VXDlayer.push_back(layerVXD);
 

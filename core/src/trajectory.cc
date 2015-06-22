@@ -477,7 +477,8 @@ namespace aidaTT
 
     double X_X0 = path * X0_eff ;
 
-    double mom = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
+    double Pt = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
+    double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
 
     static const double mass = 0.13957018; // pion mass [GeV]
     double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);

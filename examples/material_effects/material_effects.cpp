@@ -298,9 +298,11 @@ int main(int argc, char** argv)
 				  double deltaU = planarhit3->getdU() * dd4hep::mm  ;
 				  double deltaV = planarhit3->getdV() * dd4hep::mm  ;
 					
-				  //~ std::cout << " AND THE PLANARHIT EXISTS!?!?! dU, dV " << deltaU << ", " << deltaV << std::endl ;
+				  std::cout << " AND THE PLANARHIT EXISTS!?!?! dU, dV " << deltaU << ", " << deltaV << std::endl ;
 				  TrackHitResidualsU_LCIO.push_back(resU);
 				  TrackHitResidualsV_LCIO.push_back(resV);
+
+				  std::cout << " LCIO:: Track's U " << tU << " hit's U " << U << " res in U = " << resU << " Track's V " << tV << " hit's V " << V <<  " res in V = " << resV << std::endl ;
 				  
 				  if (fabs(resU / deltaU)<1000 && fabs(resV / deltaV) ){
 				    pullLCIO_U.push_back(resU / deltaU);
@@ -521,7 +523,7 @@ int main(int argc, char** argv)
 				    if (fabs(resU / deltaU)<1000 && fabs(resV / deltaV) ){
 				      pullU.push_back(resU / deltaU);
 				      pullV.push_back(resV / deltaV);
-				    }
+				      }
 
                                     std::cout << " Track's U " << tU << " hit's U " << U << " res in U = " << resU << " Track's V " << tV << " hit's V " << V <<  " res in V = " << resV << std::endl ;
 
