@@ -57,6 +57,12 @@ void initialTrackTest::_test()
   test_(floatCompare(iTP.parameters()(4), hp[4]));
 
 
+  double calcLambda = calculateLambda(iTP);
+  double calcCurv = calculateCurvature(iTP);
+
+
+  test_(floatCompare(iTP.parameters()(0), calcCurv));
+  test_(floatCompare(atan(iTP.parameters()(1)), calcLambda));
 
 }
 

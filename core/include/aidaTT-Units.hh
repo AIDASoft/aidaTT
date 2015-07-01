@@ -45,6 +45,7 @@ namespace aidaTT
     using  dd4hep::TeV;
     using  dd4hep::PeV;
 
+  //static const double convertBr2P_cm = 0.000299792458  ;
   static const double convertBr2P_cm = 0.299792458 * (centimeter / meter);
   //static const double convertBr2P_cm = 1.* (centimeter / meter);
 }

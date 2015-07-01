@@ -222,9 +222,12 @@ namespace aidaTT
 
         // differences to unit matrix:
 
+	//std::cout << " z coordinate of magnetic field " << bfield.z() << " magnitude of magnetic field " << bfield.r() << std::endl ;
+
         /// TODO: more comments on the conversion of the actual "B" field values
         /// actually (!) they are defined WITH the conversion to 1/R already /intended/
         const double Q    = - qop * bfield.r() * convertBr2P_cm ; // -B*c*q/p
+	//const double Q    = - qop * bfield.z() * convertBr2P_cm ; 
         const double qbar =   qop * bfield.z() * convertBr2P_cm;
         jacobian(0, 0) = - bfield.z() * convertBr2P_cm / cosLambda;
         jacobian(0, 1) = -qbar * tanLambda / cosLambda;
