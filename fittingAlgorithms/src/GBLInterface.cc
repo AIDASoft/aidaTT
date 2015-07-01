@@ -42,7 +42,6 @@ namespace aidaTT
 
 		//std::cout << " Now I am working on surface " << (*element)->surface();
 
-		std::cout << " testing condition if measurement " << std::endl ;
                 if((*element)->hasMeasurement())
                     {
 
@@ -226,10 +225,14 @@ namespace aidaTT
 
         Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-        fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
+	fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
         Vector5 L3corrections           =  cl2L3Jacobian * clCorrections;
 
+ 
+
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
+
+
 
 
         trackParameters tp;

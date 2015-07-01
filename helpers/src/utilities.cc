@@ -330,7 +330,8 @@ namespace aidaTT
 
         // differences to zero matrix:
         p2l3(OMEGA, perigeeKAPPA) = -1.; // omega = -kappa
-        p2l3(TANL,  perigeeTHETA) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
+        p2l3(TANL,  perigeeTHETA) = -1. * (1. + tanLambda * tanLambda);
+        //p2l3(TANL,  perigeeTHETA) = -1. / (1. + tanLambda * tanLambda); // lambda = pi/2 - theta -> theta( tanLambda = pi/2 - arctan (tanLambda)
         p2l3(PHI0, perigeePHI)    = +1.; // phi0 = phi
         p2l3(D0, perigeeEPSILON)  = -1.; // d0 = -epsilon
         p2l3(Z0, perigeeZP)       = +1.; //  z0 = z_p

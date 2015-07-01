@@ -245,6 +245,8 @@ int main(int argc, char** argv)
 	    aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 	    const aidaTT::fitResults* result = &fitTrajectory.getFitResults();
 
+	    std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
+
 
 	    //********************************************************************************************
 	    // Checking for LCIO track - hit residuals
