@@ -15,6 +15,22 @@
 
 
   --------
+ | v00-02 | 
+  --------
+    -F.Gaede:
+      - fixed major memory leak in Vector5 and fiveByFiveMatrix 
+        ( unneeded alloc in assignment operator)
+
+      - made c'tors and accessors in Vector5 and fiveByFiveMatrix 
+        more efficient by removing unneeded range checks and
+        initializations
+
+    -Y.Voutsinas:
+      -  adding test for functions calculateCurvature & calculateLambda
+      -  correcting transformation from perigee to L3
+
+
+  --------
  | v00-01 | 
   --------
    - first release:
