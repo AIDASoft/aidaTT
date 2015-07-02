@@ -32,20 +32,20 @@ namespace aidaTT
 
     double trackParameters::operator()(unsigned int index) const
     {
-        if(index > 4)
-            throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for reading.");
-        else
-            return _helixparams(index);
+        // if(index > 4)
+        //     throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for reading.");
+        // else
+      return _helixparams(index);
     }
 
 
 
     double& trackParameters::operator()(unsigned int index)
     {
-        if(index > 4)
-            throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for writing.");
-        else
-            return _helixparams(index);
+        // if(index > 4)
+        //     throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for writing.");
+        // else
+      return _helixparams(index);
     }
 
 
