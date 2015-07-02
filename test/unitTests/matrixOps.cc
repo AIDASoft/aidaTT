@@ -20,7 +20,10 @@ matrixOps::matrixOps() : UnitTest("MatrixOperations", __FILE__)
     _vec1 = new Vector5(1.1, 2.2, 3.3, 4.4, 5.5);
     _vec2 = new Vector5();
     _vec3 = new Vector5(*_vec1);
-    //_vec4 = new Vector5(vv);
+
+    double* vvP = vv ;
+    _vec4 = new Vector5(vvP);
+
     _vec5 = new Vector5(_vvv);
 
 }
@@ -107,8 +110,32 @@ void matrixOps::_test()
             test_(floatCompare((*_vec2)(j), 0.));
             test_(floatCompare((*_vec1)(j), (*_vec3)(j)));
             test_(floatCompare((*_vec5)(j), _vvv[j]));
-            // test_( floatCompare ( (*_vec4)(j), (*_vec5)(j) ) );
+	    test_( floatCompare ( (*_vec4)(j), (*_vec5)(j) ) );
         }
+
+
+    // test some range checks
+    // --- these only work if we throw the exception - not
+    //     if we rely on gsl range checks (which we do ...)
+    // double dummy = 0. ;
+
+    // try{
+    //   dummy  = (*_matrix1)( 42, 42 ) ; 
+    // } catch(...){
+    //   dummy = 42. ;
+    // }
+    // test_( floatCompare ( dummy , 42. ) ) ;
+
+
+    // dummy = 0. ;
+    // try{
+    //   dummy  = (*_vec4)( 5 ) ; 
+    // } catch(...){
+    //   dummy = 42. ;
+    // }
+    // test_( floatCompare ( dummy , 42. ) ) ;
+
+
 }
 
 
