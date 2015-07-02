@@ -77,8 +77,8 @@ namespace aidaTT
         if(this == &vec)
             return *this;
 
-	gsl_vector_free(_vector);
-        _vector = gsl_vector_alloc(5);
+	// gsl_vector_free(_vector);
+        // _vector = gsl_vector_alloc(5);
         gsl_vector_memcpy(_vector, vec._vector);
         return (*this);
     }

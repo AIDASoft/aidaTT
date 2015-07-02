@@ -55,8 +55,8 @@ namespace aidaTT
         if(this == &fbfm)
             return *this;
 
-       	gsl_matrix_free(_matrix);
-        _matrix = gsl_matrix_alloc(5, 5);
+       	// gsl_matrix_free(_matrix);
+        // _matrix = gsl_matrix_alloc(5, 5);
         gsl_matrix_memcpy(_matrix, fbfm._matrix);
         return *this;
     }
