@@ -11,6 +11,7 @@
 #include "unitTests/resultTest.hh"
 #include "unitTests/helixCalculations.hh"
 #include "unitTests/initialTrackTest.hh"
+#include "unitTests/finalTrackTest.hh"
 using namespace UnitTesting;
 using namespace std;
 
@@ -24,6 +25,7 @@ void addSimpleTests(UnitTestSuite& _test)
     _test.addTest(new resultTest);
     _test.addTest(new helixCalculations);
     _test.addTest(new initialTrackTest);
+    _test.addTest(new finalTrackTest);
 }
 
 

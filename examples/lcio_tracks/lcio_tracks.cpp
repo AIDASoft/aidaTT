@@ -133,6 +133,8 @@ int main(int argc, char** argv)
     LCEvent* evt = 0 ;
 
     std::string trackCollectionName = "SiTracks";
+    //std::string trackCollectionName = "CATracks";
+
 
     UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
 
@@ -457,13 +459,15 @@ int main(int argc, char** argv)
 		aidaTT::Vector3D globalPos(globpos) ;
 		aidaTT::Vector2D* localPos = new Vector2D() ;
 
-		fitTrajectoryDebug._calculateLocalCoordinates(surf2, globalPos, localPos);
+		//fitTrajectoryDebug._calculateLocalCoordinates(surf2, globalPos, localPos);
+		fitTrajectory._calculateLocalCoordinates(surf2, globalPos, localPos);
 
 		aidaTT::Vector2D* localUV = new Vector2D();
 		//Vector3D* xx = new Vector3D();
 		double s = 0.;
 		
-		bool doesIt = fitTrajectoryDebug._calculateIntersectionWithSurface(surf2, s, localUV);
+		//bool doesIt = fitTrajectoryDebug._calculateIntersectionWithSurface(surf2, s, localUV);
+		bool doesIt = fitTrajectory._calculateIntersectionWithSurface(surf2, s, localUV);
 
 		if (doesIt){
 
