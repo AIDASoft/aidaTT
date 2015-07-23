@@ -542,8 +542,20 @@ int main(int argc, char** argv)
 	    ts->setReferencePoint(ref);
 	    
 	    ts->setLocation(lcio::TrackState::AtIP);
+
+	    // checking the covariance matrix
+	    //--------------------------------------------------------------------
+	    std::vector<float> cm  =  ts->getCovMatrix();
+	    trackParameters finalAidaTP = result->estimatedParameters();
+	    fiveByFiveMatrix  finalAidaCovMat = finalAidaTP.covarianceMatrix();
 	    
-	    
+	    std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << ", " << cm[12] / dd4hep::mm << std::endl ;
+	    //std::cout << " aida trajectory cov mat " << finalAidaCovMat(0,0) << ", " << finalAidaCovMat(0,1) << ", " << finalAidaCovMat(0,2) << ", " << finalAidaCovMat(0,3) << ", " << finalAidaCovMat(0,4) << std::endl ;
+
+	    //std::cout << " lcio track state " << ts->getOmega() / dd4hep::mm << ", " <<  ts->getTanLambda() << ", " << ts->getPhi() << ", " << ts->getD0()  * dd4hep::mm << ", " << ts->getZ0() * dd4hep::mm << std::endl ; 
+
+	    //---------------------------------------------------------------------
+
 	    outTrk->addTrackState(ts);
 	
             wrt->writeEvent(evt) ;

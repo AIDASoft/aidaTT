@@ -51,31 +51,31 @@ void finalTrackTest::_test()
   fiveByFiveMatrix  CovMat = fTP.covarianceMatrix();
   std::vector<float> cm  =  trkState->getCovMatrix();
 
-  test_(floatCompare(CovMat(0,0), cm[0]));
-  test_(floatCompare(CovMat(0,1), cm[1]));
-  test_(floatCompare(CovMat(0,2), cm[2]));
+  test_(floatCompare(CovMat(0,0), cm[5] / (dd4hep::mm * dd4hep::mm)));
+  test_(floatCompare(CovMat(0,1), cm[12] / dd4hep::mm));
+  test_(floatCompare(CovMat(0,2), cm[4] / dd4hep::mm));
   test_(floatCompare(CovMat(0,3), cm[3]));
-  test_(floatCompare(CovMat(0,4), cm[4]));
-  test_(floatCompare(CovMat(1,0), cm[5]));
-  test_(floatCompare(CovMat(1,1), cm[6]));
-  test_(floatCompare(CovMat(1,2), cm[7]));
-  test_(floatCompare(CovMat(1,3), cm[8]));
-  test_(floatCompare(CovMat(1,4), cm[9]));
-  test_(floatCompare(CovMat(2,0), cm[10]));
+  test_(floatCompare(CovMat(0,4), cm[8]));
+  test_(floatCompare(CovMat(1,0), cm[12] / dd4hep::mm));
+  test_(floatCompare(CovMat(1,1), cm[14]));
+  test_(floatCompare(CovMat(1,2), cm[11]));
+  test_(floatCompare(CovMat(1,3), cm[10] * dd4hep::mm));
+  test_(floatCompare(CovMat(1,4), cm[13] * dd4hep::mm));
+  test_(floatCompare(CovMat(2,0), cm[4] / dd4hep::mm));
   test_(floatCompare(CovMat(2,1), cm[11]));
-  test_(floatCompare(CovMat(2,2), cm[12]));
-  test_(floatCompare(CovMat(2,3), cm[13]));
-  test_(floatCompare(CovMat(2,4), cm[14]));
-  test_(floatCompare(CovMat(3,0), cm[15]));
-  test_(floatCompare(CovMat(3,1), cm[16]));
-  test_(floatCompare(CovMat(3,2), cm[17]));
-  test_(floatCompare(CovMat(3,3), cm[18]));
-  test_(floatCompare(CovMat(3,4), cm[19]));
-  test_(floatCompare(CovMat(4,0), cm[20]));
-  test_(floatCompare(CovMat(4,1), cm[21]));
-  test_(floatCompare(CovMat(4,2), cm[22]));
-  test_(floatCompare(CovMat(4,3), cm[23]));
-  test_(floatCompare(CovMat(4,4), cm[24]));
+  test_(floatCompare(CovMat(2,2), cm[2]));
+  test_(floatCompare(CovMat(2,3), cm[1] * dd4hep::mm));
+  test_(floatCompare(CovMat(2,4), cm[7] * dd4hep::mm));
+  test_(floatCompare(CovMat(3,0), cm[3]));
+  test_(floatCompare(CovMat(3,1), cm[10] * dd4hep::mm));
+  test_(floatCompare(CovMat(3,2), cm[1] * dd4hep::mm));
+  test_(floatCompare(CovMat(3,3), cm[0] * dd4hep::mm * dd4hep::mm));
+  test_(floatCompare(CovMat(3,4), cm[6] * dd4hep::mm * dd4hep::mm));
+  test_(floatCompare(CovMat(4,0), cm[8]));
+  test_(floatCompare(CovMat(4,1), cm[13] * dd4hep::mm));
+  test_(floatCompare(CovMat(4,2), cm[7] * dd4hep::mm ));
+  test_(floatCompare(CovMat(4,3), cm[6] * dd4hep::mm * dd4hep::mm));
+  test_(floatCompare(CovMat(4,4), cm[9] * dd4hep::mm * dd4hep::mm));
 
 
 
