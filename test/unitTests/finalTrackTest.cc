@@ -21,7 +21,7 @@ void finalTrackTest::_test()
   aidaTT::trackParameters fTP ;  
 
 
-  const Vector5& paramVec(-0.00021121, 00.874685, -0.411434, 9.3253e-06, -0.000176128 ) ;
+  Vector5 paramVec(-0.00021121, 00.874685, -0.411434, 9.3253e-06, -0.000176128 ) ;
 
   fTP.setTrackParameters(paramVec) ;
 
