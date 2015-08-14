@@ -399,6 +399,7 @@ int main(int argc, char** argv)
 		  std::vector<double> precision;
 		  
 		  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
+		  
 		  if(planarhit != NULL)
 		    {
 		      //we need 1./variance for the precision: 
@@ -410,12 +411,33 @@ int main(int argc, char** argv)
 		      
 		    }
 		  
+		  /*
+		  double du = planarhit->getdU() * dd4hep::mm  ;
+		  double dv = planarhit->getdV() * dd4hep::mm  ;
+
+		  //alternative calculation of hit's precision
+		  TMatrixDSym precision(2);
+		  const double cosPhi = cos(planarhit->getPhi());
+		  const double sinPhi = sin(planarhit->getPhi());
+		  const double varRad = cosPhi * cosPhi * du + sinPhi * sinPhi * dv;
+		  const double varPhi = sinPhi * sinPhi * du + cosPhi * cosPhi * dv;
+		  const double derXY = tan(_seedPhi - _hitPhi);
+		  const double derZS = tan(_seedLambda) / cos(_seedPhi - _hitPhi);
+		  // covariance matrix
+		  precision[0][0] = varPhi + varRad * derXY * derXY;
+		  precision[0][1] = (varRad > 1.0E-6 * varPhi) ? varRad * derXY * derZS : 0.; // avoid correlations only from float precision
+		  precision[1][0] = precision[0][1];
+		  precision[1][1] = varZ + varRad * derZS * derZS;
+
+		  //alternative calculation of precision ends
+		  */
 		  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 		  
 		  outTrk->addHit(*thit) ;
 		  
 		}
 
+	      std::cout << " calling prepareForFitting " << std::endl ;
 	      fitTrajectory.prepareForFitting();
 	      
 	      success = fitTrajectory.fit();
@@ -549,7 +571,7 @@ int main(int argc, char** argv)
 	    trackParameters finalAidaTP = result->estimatedParameters();
 	    fiveByFiveMatrix  finalAidaCovMat = finalAidaTP.covarianceMatrix();
 	    
-	    std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << ", " << cm[12] / dd4hep::mm << std::endl ;
+	    //std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << ", " << cm[12] / dd4hep::mm << std::endl ;
 	    //std::cout << " aida trajectory cov mat " << finalAidaCovMat(0,0) << ", " << finalAidaCovMat(0,1) << ", " << finalAidaCovMat(0,2) << ", " << finalAidaCovMat(0,3) << ", " << finalAidaCovMat(0,4) << std::endl ;
 
 	    //std::cout << " lcio track state " << ts->getOmega() / dd4hep::mm << ", " <<  ts->getTanLambda() << ", " << ts->getPhi() << ", " << ts->getD0()  * dd4hep::mm << ", " << ts->getZ0() * dd4hep::mm << std::endl ; 

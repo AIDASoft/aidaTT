@@ -20,6 +20,8 @@ namespace aidaTT
          * \return bool for success
          */
 
+      std::cout << " Am I calling this function ?????????????????? " << std::endl ;
+
         // TODO: explain WHY the conversion factor is needed -> see paper
         const double qp = -bfield.r() * convertBr2P_cm ; // -|B*c|
         const double q = qp * qop; // Q

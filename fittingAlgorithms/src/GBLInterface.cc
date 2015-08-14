@@ -233,38 +233,97 @@ namespace aidaTT
         Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
 
 
-
-
-        trackParameters tp;
-        tp.setTrackParameters(fittedParameters);
-
-        fiveByFiveMatrix testCovMat;
+	TMatrixD cl2L3_copy(5,5);
         for(int i = 0 ; i < 5 ; i++)
             {
                 for(int j = 0 ; j < 5 ; j++)
                     {
-                        testCovMat(i, j) = trackcovariance(i, j);
+                        cl2L3_copy(i, j) = cl2L3Jacobian(i, j);
+                    }
+            }
+
+        trackParameters tp;
+        tp.setTrackParameters(fittedParameters);
+
+	TMatrixD covarianceMatrix = trackcovariance.Similarity(cl2L3_copy);
+
+        fiveByFiveMatrix finalCov;
+        for(int i = 0 ; i < 5 ; i++)
+            {
+                for(int j = 0 ; j < 5 ; j++)
+                    {
+                        finalCov(i, j) = covarianceMatrix(i, j);
                     }
             }
 
 
 
+	/*
+	//effort to invert the cl2L3Jacobian
+	//--------------------------------------------------
+	TMatrixD cl2L3_copy(5,5);
+        for(int i = 0 ; i < 5 ; i++)
+            {
+                for(int j = 0 ; j < 5 ; j++)
+                    {
+                        cl2L3_copy(i, j) = cl2L3Jacobian(i, j);
+                    }
+            }
+
+        for(int i = 0 ; i < 5 ; i++)
+            {
+                for(int j = 0 ; j < 5 ; j++)
+                    {
+		      std::cout << " original jacobian " << cl2L3Jacobian(i, j) << " copied jacobian " << cl2L3_copy(i, j) << std::endl ;
+                    }
+            }
+
+	TMatrixD cl2L3_copy_Inv = cl2L3_copy.Invert();
+
+	fiveByFiveMatrix cl2L3JacobianInv ;
+        for(int i = 0 ; i < 5 ; i++)
+            {
+                for(int j = 0 ; j < 5 ; j++)
+                    {
+		      cl2L3JacobianInv(i, j) = cl2L3_copy_Inv(i, j);
+                    }
+            }
+
+
+	fiveByFiveMatrix CandUnitary = cl2L3JacobianInv*cl2L3Jacobian ;
+	*/
+
+	//--------------------------------------------------
+	/*
         //fg --- need to transform the covariance matrix from CL to perigee ----
         fiveByFiveMatrix cl2L3JacobianT(cl2L3Jacobian) ;
         cl2L3JacobianT.Transpose() ;
+
+
+        for(int i = 0 ; i < 5 ; i++)
+            {
+                for(int j = 0 ; j < 5 ; j++)
+                    {
+		      std::cout << " Unitary matrix??? " << CandUnitary(i, j) << std::endl ;
+                    }
+            }
+
+        //fiveByFiveMatrix cl2L3JacobianInv(cl2L3Jacobian) ;
+        //cl2L3JacobianInv.Invert() ;
 
         // std::cout << " initial covariance: " << testCovMat << std::endl ;
         // std::cout << " Jacobian :          " <<  cl2L3Jacobian << std::endl ;
         // std::cout << " JacobianT:          " <<  cl2L3JacobianT << std::endl ;
 
-        fiveByFiveMatrix finalCov  = testCovMat * cl2L3JacobianT ;
+        //fiveByFiveMatrix finalCov  = testCovMat * cl2L3JacobianT ;
+	fiveByFiveMatrix finalCov  = testCovMat * cl2L3JacobianInv ;
 
         // std::cout << " half transformed:  " << finalCov   << std::endl ;
 
         finalCov = cl2L3Jacobian * finalCov ;
 
         // std::cout << " final   covariance: " << finalCov   << std::endl ;
-
+	*/
         tp.setCovarianceMatrix(finalCov);
 
         _theResults.setResults(v, chs, n, wl, tp);

@@ -335,7 +335,7 @@ namespace aidaTT
         const double tanLambda = calculateTanLambda(tP);
 
         fiveByFiveMatrix p2l3;
-
+	
         // differences to zero matrix:
         p2l3(OMEGA, perigeeKAPPA) = -1.; // omega = -kappa
         p2l3(TANL,  perigeeTHETA) = -1. * (1. + tanLambda * tanLambda);
@@ -343,8 +343,16 @@ namespace aidaTT
         p2l3(PHI0, perigeePHI)    = +1.; // phi0 = phi
         p2l3(D0, perigeeEPSILON)  = -1.; // d0 = -epsilon
         p2l3(Z0, perigeeZP)       = +1.; //  z0 = z_p
-
+	
+	/*	
+	p2l3(0, 3) = -1.;
+	p2l3(4, 3) = 1.;
+	p2l3(2, 1) = 1.;
+	p2l3(3, 0) = -1.;
+	p2l3(1, 4) = -1. * (1. + tanLambda * tanLambda);
+	*/
         return p2l3;
+
     }
 
 
@@ -388,6 +396,7 @@ namespace aidaTT
 
         // and return the product
         return p2L3 * cl2p;
+	//return cl2p;
     }
 
 
