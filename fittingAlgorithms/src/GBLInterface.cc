@@ -77,12 +77,15 @@ namespace aidaTT
 
                         //~ 3) the precision of the measurements -- the inverse of the resolution
                         const std::vector<double>& precision = (*element)->precisions();
+			//const TMatrixDSym& precision = (*element)->precisions();
+
 
                         //~ convert the vector to an array:
                         const double* prec = precision.data();
 
                         // fixed size of arguments: 2D in measurements!
-                        point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
+			point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
+                        //point.addMeasurement(pL2M, TVectorD(2, resid), precision);
                     }
 
 		std::cout << " testing condition if scatterer " << std::endl ;
@@ -125,18 +128,20 @@ namespace aidaTT
 
 
 			std::vector<double> precision = (*element)->precisions();
+			//TMatrixDSym precision = (*element)->precisions();
 			
 			TMatrixD pL2M_T(2, 2);
                         pL2M_T(0, 0) = projLocal2Meas.at(0);
                         pL2M_T(1, 0) = projLocal2Meas.at(1);
                         pL2M_T(0, 1) = projLocal2Meas.at(2);
                         pL2M_T(1, 1) = projLocal2Meas.at(3);
-			
+		
+			//wrong for the time being	
 			TMatrixD Var(2,2);
-			Var(0, 0) = precision[0];
+			Var(0, 0) = 1.;
 			Var(0, 1) = 0;
 			Var(1, 0) = 0;
-			Var(1, 1) = precision[0];
+			Var(1, 1) = 1.;
 			
 			TMatrixD Vk(2, 2);
 			Vk = pL2M * Var * pL2M_T ;
@@ -241,7 +246,15 @@ namespace aidaTT
                         cl2L3_copy(i, j) = cl2L3Jacobian(i, j);
                     }
             }
-
+	/*
+        for(int i = 0 ; i < 5 ; i++)
+	  {
+	    for(int j = 0 ; j < 5 ; j++)
+	      {
+		std::cout << " original jacobian " << cl2L3Jacobian(i, j) << " copied jacobian " << cl2L3_copy(i, j) << std::endl ;
+                    }
+	  }
+	*/
         trackParameters tp;
         tp.setTrackParameters(fittedParameters);
 

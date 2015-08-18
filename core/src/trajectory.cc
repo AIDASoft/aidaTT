@@ -418,8 +418,8 @@ namespace aidaTT
         localUV->v() = local.v();
     }
 
-  
   void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
+  //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
   {
    
     std::cout << " I am calling addScatterer " << std::endl ;
@@ -506,7 +506,8 @@ namespace aidaTT
 
 
 
-    void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
+  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
+  //void trajectory::addMeasurement(const Vector3D& position, const TMatrixDSym& precision, const ISurface& surface, void* id)
     {
 
       std::cout << " I am calling addMeasurenet " << std::endl ;

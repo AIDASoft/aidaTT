@@ -63,6 +63,7 @@ namespace aidaTT
             ///~ add a measurement/hit to trajectory; identified by:
             ///~     a position, the resolution, the surface and some id
             void addMeasurement(const Vector3D&, const std::vector<double>&, const ISurface&, void*);
+            //void addMeasurement(const Vector3D&, const TMatrixDSym&, const ISurface&, void*);
 
             ///~ TODO:: needs more thought!
             ///~ manually add an element to the trajectory; e.g. a point of interest
@@ -71,6 +72,7 @@ namespace aidaTT
             void addElement(const Vector3D&, const ISurface&, void* id);
             // add a scatterer
             void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
+           //void addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface, const trackParameters& seed_tp, void* id); // alternative constructor for addScatterer that utilises a symmetric matrix for precision
 
             ///~ test whether/where a surface is intersected
             bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);

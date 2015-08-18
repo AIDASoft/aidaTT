@@ -185,62 +185,17 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )    );  
+            aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )   );  
 
-	    //std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
+	    aidaTT::trackParameters iTP_again (  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )   ); 
+	    aidaTT::trajectory fitInitialTrajectory(iTP_again, fitter, bfield, propagation, &geom);
+
+	    std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
-#define compute_start_helix 0
-#if compute_start_helix //----------------------------------------------------------------------------------------------------
-	    aidaTT::trackParameters startHelix ;
-
-	    unsigned nHits = initialHits.size() ;
-	    if( nHits > 2 ) {  
-	      //--------- get the start helix from three points
-	      bool backwards = false ;
-
-	      lcio::TrackerHit* h1 = ( backwards ?  initialHits[ nHits-1 ] : initialHits[    0    ] ) ;
-	      lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
-	      lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
-
-	      aidaTT::Vector3D x1( h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm ) ;
-	      aidaTT::Vector3D x2( h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm ) ;
-	      aidaTT::Vector3D x3( h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm ) ;
-	      
-	      calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
-	      
-	      moveHelixTo( startHelix, aidaTT::Vector3D()  ) ; // move to origin
-
-	      // --- set some large errors to the covariance matrix
-	      startHelix.covarianceMatrix().Unit() ;
-	      startHelix.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
-	      startHelix.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
-	      startHelix.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
-	      startHelix.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
-	      startHelix.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
-
-	      // std::cout << "  start helix from three points : " << startHelix << std::endl ;
-
-	      // use this helix as start for the fit:
-	      iTP = startHelix ;
-
-	    }
-#else
-	    // --- set some large errors to the covariance matrix
-	    iTP.covarianceMatrix().Unit() ;
-	    iTP.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
-	    iTP.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
-	    iTP.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
-	    iTP.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
-	    iTP.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
-	    
-#endif //----------------------------------------------------------------------------------------------------------------------
-
-
-
-
-	    TrackStateImpl* ts; 	      
+	    TrackStateImpl* ts;
+ 	    TrackStateImpl* initial_ts;	      
 
 	    bool success;	      
 
@@ -286,13 +241,13 @@ int main(int argc, char** argv)
 		  aidaTT::Vector3D globalPos2(globpos2) ;
 		  aidaTT::Vector2D* localPos2 = new Vector2D() ;
 		  
-		  fitTrajectory._calculateLocalCoordinates(surf3, globalPos2, localPos2);
+		  fitInitialTrajectory._calculateLocalCoordinates(surf3, globalPos2, localPos2);
 		  
 		  aidaTT::Vector2D* localUV2 = new Vector2D();
 		  //Vector3D* xx = new Vector3D();
 		  double s2 = 0.;
 		  
-		  bool doesIt2 = fitTrajectory._calculateIntersectionWithSurface(surf3, s2, localUV2);
+		  bool doesIt2 = fitInitialTrajectory._calculateIntersectionWithSurface(surf3, s2, localUV2);
 		  
 		  if (doesIt2){
 
@@ -397,6 +352,7 @@ int main(int argc, char** argv)
 		    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
 		  
 		  std::vector<double> precision;
+		  //TMatrixDSym precision(2);
 		  
 		  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
 		  
@@ -408,29 +364,46 @@ int main(int argc, char** argv)
 		      
 		      precision.push_back( 1. /  (du*du) ) ;
 		      precision.push_back( 1. /  (dv*dv) ) ;
-		      
+		      /*		      
+		      //alternative calculation of hit's precision
+		      FloatVec covMatrix = planarhit->getCovMatrix();
+
+		      for (int hh=0; hh < covMatrix.size(); hh++){
+			std::cout << " hit's cov matrix " << covMatrix[hh] << std::endl ;
+		      }
+
+		      double _hitPhi = atan(planarhit->getPosition()[1] / planarhit->getPosition()[0]);
+
+		      double _seedPhi = initialTrack->getPhi();
+		      double _seedLambda = initialTrack->getTanLambda();
+
+		      const double cosPhi = cos(_hitPhi);
+		      const double sinPhi = sin(_hitPhi);
+		      const double varRad = cosPhi * cosPhi * covMatrix[0] + 2. * sinPhi * cosPhi * covMatrix[1] + sinPhi * sinPhi * covMatrix[2];
+		      const double varPhi = sinPhi * sinPhi * covMatrix[0] - 2. * sinPhi * cosPhi * covMatrix[1] + cosPhi * cosPhi * covMatrix[2];
+		      const double varZ = covMatrix[5];
+		      const double derXY = tan(_seedPhi - _hitPhi);
+		      const double derZS = tan(_seedLambda) / cos(_seedPhi - _hitPhi);
+
+		      // covariance matrix
+		      precision[0][0] = varPhi + varRad * derXY * derXY;
+		      precision[0][1] = (varRad > 1.0E-6 * varPhi) ? varRad * derXY * derZS : 0.; // avoid correlations only from float precision
+		      precision[1][0] = precision[0][1];
+		      precision[1][1] = varZ + varRad * derZS * derZS;
+		      // needs to be inverted
+		      const double det = precision[0][0] * precision[1][1] - precision[0][1] * precision[1][0];
+		      std::cout << " det = " << det << std::endl ;
+		      if (det)
+			precision.InvertFast();
+		      else {
+			precision.Zero();
+			//m_out(ERROR) << "Singular covariance matrix" << std::endl;
+		      }
+		      //alternative calculation of precision ends
+		      */
 		    }
-		  
-		  /*
-		  double du = planarhit->getdU() * dd4hep::mm  ;
-		  double dv = planarhit->getdV() * dd4hep::mm  ;
 
-		  //alternative calculation of hit's precision
-		  TMatrixDSym precision(2);
-		  const double cosPhi = cos(planarhit->getPhi());
-		  const double sinPhi = sin(planarhit->getPhi());
-		  const double varRad = cosPhi * cosPhi * du + sinPhi * sinPhi * dv;
-		  const double varPhi = sinPhi * sinPhi * du + cosPhi * cosPhi * dv;
-		  const double derXY = tan(_seedPhi - _hitPhi);
-		  const double derZS = tan(_seedLambda) / cos(_seedPhi - _hitPhi);
-		  // covariance matrix
-		  precision[0][0] = varPhi + varRad * derXY * derXY;
-		  precision[0][1] = (varRad > 1.0E-6 * varPhi) ? varRad * derXY * derZS : 0.; // avoid correlations only from float precision
-		  precision[1][0] = precision[0][1];
-		  precision[1][1] = varZ + varRad * derZS * derZS;
 
-		  //alternative calculation of precision ends
-		  */
 		  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 		  
 		  outTrk->addHit(*thit) ;
@@ -481,15 +454,15 @@ int main(int argc, char** argv)
 		aidaTT::Vector3D globalPos(globpos) ;
 		aidaTT::Vector2D* localPos = new Vector2D() ;
 
-		//fitTrajectoryDebug._calculateLocalCoordinates(surf2, globalPos, localPos);
-		fitTrajectory._calculateLocalCoordinates(surf2, globalPos, localPos);
+		fitTrajectoryDebug._calculateLocalCoordinates(surf2, globalPos, localPos);
+		//fitTrajectory._calculateLocalCoordinates(surf2, globalPos, localPos);
 
 		aidaTT::Vector2D* localUV = new Vector2D();
 		//Vector3D* xx = new Vector3D();
 		double s = 0.;
 		
-		//bool doesIt = fitTrajectoryDebug._calculateIntersectionWithSurface(surf2, s, localUV);
-		bool doesIt = fitTrajectory._calculateIntersectionWithSurface(surf2, s, localUV);
+		bool doesIt = fitTrajectoryDebug._calculateIntersectionWithSurface(surf2, s, localUV);
+		//bool doesIt = fitTrajectory._calculateIntersectionWithSurface(surf2, s, localUV);
 
 		if (doesIt){
 
@@ -552,7 +525,7 @@ int main(int argc, char** argv)
 	    
 	    // add Track State to track:
 	    ts = aidaTT::createLCIO( result->estimatedParameters() );
-	    //ts = aidaTT::createLCIO( iTP );  // only to check the initial helix
+	    initial_ts = aidaTT::createLCIO( iTP_again );  // only to check the initial helix
 	      
 	    outTrk->setChi2( result->chiSquare() ) ;
 	    outTrk->setNdf( result->ndf() ) ;
@@ -561,9 +534,11 @@ int main(int argc, char** argv)
 	    outTrk->subdetectorHitNumbers()[0] = outTrk->getTrackerHits().size() ;
 	    
 	    float ref[3] = { 0., 0. , 0. } ;
-	    ts->setReferencePoint(ref);
-	    
+	    ts->setReferencePoint(ref);	    
 	    ts->setLocation(lcio::TrackState::AtIP);
+
+	    initial_ts->setReferencePoint(ref);	    
+	    initial_ts->setLocation(lcio::TrackState::AtIP);
 
 	    // checking the covariance matrix
 	    //--------------------------------------------------------------------
@@ -571,8 +546,8 @@ int main(int argc, char** argv)
 	    trackParameters finalAidaTP = result->estimatedParameters();
 	    fiveByFiveMatrix  finalAidaCovMat = finalAidaTP.covarianceMatrix();
 	    
-	    //std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << ", " << cm[12] / dd4hep::mm << std::endl ;
-	    //std::cout << " aida trajectory cov mat " << finalAidaCovMat(0,0) << ", " << finalAidaCovMat(0,1) << ", " << finalAidaCovMat(0,2) << ", " << finalAidaCovMat(0,3) << ", " << finalAidaCovMat(0,4) << std::endl ;
+	    std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << std::endl ;
+	    std::cout << " aida trajectory cov mat " << finalAidaCovMat(0,0) << std::endl ;
 
 	    //std::cout << " lcio track state " << ts->getOmega() / dd4hep::mm << ", " <<  ts->getTanLambda() << ", " << ts->getPhi() << ", " << ts->getD0()  * dd4hep::mm << ", " << ts->getZ0() * dd4hep::mm << std::endl ; 
 
