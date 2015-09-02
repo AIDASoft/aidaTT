@@ -102,8 +102,9 @@ namespace aidaTT
             return _intersectWithinZPlaneBounds(surf, s, localUV, xx);
         else if(surf->type().isZDisk())
             return _intersectWithinZDiskBounds(surf, s, localUV, xx);
-        else
-            throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+	else
+	  return false ; 
+	  //     throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
     }
 
 
