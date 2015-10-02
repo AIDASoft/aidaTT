@@ -7,6 +7,7 @@
 #include "EVENT/LCCollection.h"
 #include "EVENT/TrackerHit.h"
 #include "EVENT/TrackerHitPlane.h"
+#include "EVENT/TrackerHitZCylinder.h"
 #include "EVENT/Track.h"
 #include "UTIL/ILDConf.h"
 
@@ -132,7 +133,7 @@ int main(int argc, char** argv)
 
     LCEvent* evt = 0 ;
 
-    std::string trackCollectionName = "SiTracks";
+    std::string trackCollectionName = "ClupatraTracks";
     //std::string trackCollectionName = "CATracks";
 
 
@@ -207,18 +208,12 @@ int main(int argc, char** argv)
 
 	    //********************************************************************************************
 	    // Checking for LCIO track - hit residuals
-	    
+	    /*	    
 	    for(std::vector<TrackerHit*>::iterator lhit = initialHits.begin(), endIter = initialHits.end(); lhit < endIter; ++lhit)
 	      {
 		long64 hitid = (*lhit)->getCellID0() ;
 		idDecoder.setValue(hitid) ;
-		/*
-		if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
-		  {
-		    idDecoder[lcio::ILDCellID0::side] = ((*lhit)->getPosition()[2]  >  0  ?   +1 : -1) ;
-		    hitid = idDecoder.lowWord() ;
-		  }		    
-		*/
+
 		int test_layer = idDecoder[lcio::ILDCellID0::layer] ;
 		
 		const aidaTT::ISurface* surf3 = surfMap[ hitid ] ;
@@ -310,7 +305,7 @@ int main(int argc, char** argv)
 		  }
 		}
 	      }
-	    
+	    */
 	    //********************************************************************************************
 	    
 	    for (int n=0; n < 1 ; n++){
@@ -322,22 +317,12 @@ int main(int argc, char** argv)
                 {
 		  long64 hitid = (*thit)->getCellID0() ;
 		  idDecoder.setValue(hitid) ;
-		  
-		  if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
-		    continue;
 
-		  /*
-		  if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD)
-		    {
-		      idDecoder[lcio::ILDCellID0::side] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
-		      
-		      // increase the layerid by one:
-		      unsigned layerID = idDecoder[lcio::ILDCellID0::layer] ;
-		      //idDecoder[lcio::ILDCellID0::layer] = layerID + 1 ;
-		      
-		      hitid = idDecoder.lowWord() ;
-		    }
-		  */
+		  //std::cout << " hit id = " << hitid << std::endl ;
+		  
+		  //if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
+		  //  continue;
+
 		  const aidaTT::ISurface* surf = surfMap[ hitid ] ;
 		  
 		  if(surf == NULL)
@@ -350,59 +335,34 @@ int main(int argc, char** argv)
 		  double hitpos[3] = {0., 0., 0.};
 		  for(unsigned int i = 0; i < 3; ++i)
 		    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
-		  
+
+		  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
+
 		  std::vector<double> precision;
 		  //TMatrixDSym precision(2);
 		  
-		  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
-		  
-		  if(planarhit != NULL)
+		  //TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
+		  //TrackerHitZCylinder* tpchit = dynamic_cast<TrackerHitZCylinder*>(*thit);   // for TPC hits - they are not planar hits!
+
+		  //std::cout << " tpc hit exist? " << tpchit << std::endl ;
+		  FloatVec TPChitCovMat = (*thit)->getCovMatrix();
+
+		  if((*thit) != NULL)
 		    {
-		      //we need 1./variance for the precision: 
-		      double du = planarhit->getdU() * dd4hep::mm  ;
-		      double dv = planarhit->getdV() * dd4hep::mm  ;
-		      
+		      //we need 1./variance for the precision:
+		      //what are the values for resolutiuon?
+
+		      double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+		      double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+
+		      //double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]);
+		      //double dv = sqrt( TPChitCovMat[5] );
+
+		      std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
+				      
 		      precision.push_back( 1. /  (du*du) ) ;
 		      precision.push_back( 1. /  (dv*dv) ) ;
-		      /*		      
-		      //alternative calculation of hit's precision
-		      FloatVec covMatrix = planarhit->getCovMatrix();
-
-		      for (int hh=0; hh < covMatrix.size(); hh++){
-			std::cout << " hit's cov matrix " << covMatrix[hh] << std::endl ;
-		      }
-
-		      double _hitPhi = atan(planarhit->getPosition()[1] / planarhit->getPosition()[0]);
-
-		      double _seedPhi = initialTrack->getPhi();
-		      double _seedLambda = initialTrack->getTanLambda();
-
-		      const double cosPhi = cos(_hitPhi);
-		      const double sinPhi = sin(_hitPhi);
-		      const double varRad = cosPhi * cosPhi * covMatrix[0] + 2. * sinPhi * cosPhi * covMatrix[1] + sinPhi * sinPhi * covMatrix[2];
-		      const double varPhi = sinPhi * sinPhi * covMatrix[0] - 2. * sinPhi * cosPhi * covMatrix[1] + cosPhi * cosPhi * covMatrix[2];
-		      const double varZ = covMatrix[5];
-		      const double derXY = tan(_seedPhi - _hitPhi);
-		      const double derZS = tan(_seedLambda) / cos(_seedPhi - _hitPhi);
-
-		      // covariance matrix
-		      precision[0][0] = varPhi + varRad * derXY * derXY;
-		      precision[0][1] = (varRad > 1.0E-6 * varPhi) ? varRad * derXY * derZS : 0.; // avoid correlations only from float precision
-		      precision[1][0] = precision[0][1];
-		      precision[1][1] = varZ + varRad * derZS * derZS;
-		      // needs to be inverted
-		      const double det = precision[0][0] * precision[1][1] - precision[0][1] * precision[1][0];
-		      std::cout << " det = " << det << std::endl ;
-		      if (det)
-			precision.InvertFast();
-		      else {
-			precision.Zero();
-			//m_out(ERROR) << "Singular covariance matrix" << std::endl;
-		      }
-		      //alternative calculation of precision ends
-		      */
 		    }
-
 
 		  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 		  
@@ -410,7 +370,6 @@ int main(int argc, char** argv)
 		  
 		}
 
-	      std::cout << " calling prepareForFitting " << std::endl ;
 	      fitTrajectory.prepareForFitting();
 	      
 	      success = fitTrajectory.fit();
@@ -422,7 +381,7 @@ int main(int argc, char** argv)
 	      // Examining track - hit residuals
 	      // And write them down to a tree
 	      //**********************************************************************************************************
-
+	      /*
 	      aidaTT::trackParameters aidaFittedTP = result->estimatedParameters();
 
 	      aidaTT::trajectory fitTrajectoryDebug(aidaFittedTP, fitter, bfield, propagation, &geom);
@@ -497,7 +456,7 @@ int main(int argc, char** argv)
 	      }
 
 	      t1->Fill();
-
+	      */
 	      //***********************************************************************************************************
 
 	      std::cout << " loop " << n << std::endl ;

@@ -575,6 +575,7 @@ namespace aidaTT
 
 
 
+
     void trajectory::prepareForFitting()
     {
         ///~ first sort the trajectory elements by arclength
@@ -588,6 +589,8 @@ namespace aidaTT
 
         ///~ calculate and add the jacobians
 
+	double prevS = 0. ;
+
         /// the first jacobian is useless, just use an empty 5x5 matrix
         if(_initialTrajectoryElements.size() > 0)
             {
@@ -599,7 +602,7 @@ namespace aidaTT
             {
 
                 ///~ obtain the two arc lengths
-                double prevS = (*(element - 1))->arcLength();
+                //double prevS = (*(element - 1))->arcLength();
                 double currS = (*element)->arcLength();
                 ///~ calculate 3D arclength -> divide 2D arc length by cos lambda
                 double dw = (currS - prevS) / cosLambda;
@@ -610,9 +613,11 @@ namespace aidaTT
                 fiveByFiveMatrix* jacob = new fiveByFiveMatrix;
                 _propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField);
                 (*element)->setJacobian(jacob);
+
+		prevS = currS ;
+
             }
     }
-
 
 
     bool trajectory::fit()
