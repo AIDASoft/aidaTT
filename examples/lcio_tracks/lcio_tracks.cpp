@@ -197,7 +197,7 @@ int main(int argc, char** argv)
 
 
 
-#define compute_start_helix 0
+#define compute_start_helix 1
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
             aidaTT::trackParameters startHelix ;
 
@@ -259,170 +259,64 @@ int main(int argc, char** argv)
 	    std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
 
 
-	    //********************************************************************************************
-	    // Checking for LCIO track - hit residuals
-	    /*	    
-	    for(std::vector<TrackerHit*>::iterator lhit = initialHits.begin(), endIter = initialHits.end(); lhit < endIter; ++lhit)
-	      {
-		long64 hitid = (*lhit)->getCellID0() ;
-		idDecoder.setValue(hitid) ;
 
-		int test_layer = idDecoder[lcio::ILDCellID0::layer] ;
-		
-		const aidaTT::ISurface* surf3 = surfMap[ hitid ] ;
-
-		std::cout << " hit's layer " << test_layer << " surface " << surf3 << std::endl ;
-
-		if (surf3 != NULL){
-
-		  TrackerHit* testhit3 = dynamic_cast<TrackerHit*>(*lhit);
-		  
-		  //in order to calculate track-hit residuals
-		  double X2 = testhit3->getPosition()[0] * dd4hep::mm;
-		  double Y2 = testhit3->getPosition()[1] * dd4hep::mm;
-		  double Z2 = testhit3->getPosition()[2] * dd4hep::mm;
-		  
-		  std::cout << " layer " << test_layer << " X " << X2 << " Y " << Y2 << " Z " << Z2 << std::endl ;
-
-		  float globpos2[3] = {X2,Y2,Z2};
-		  
-		  aidaTT::Vector3D globalPos2(globpos2) ;
-		  aidaTT::Vector2D* localPos2 = new Vector2D() ;
-		  
-		  fitInitialTrajectory._calculateLocalCoordinates(surf3, globalPos2, localPos2);
-		  
-		  aidaTT::Vector2D* localUV2 = new Vector2D();
-		  //Vector3D* xx = new Vector3D();
-		  double s2 = 0.;
-		  
-		  bool doesIt2 = fitInitialTrajectory._calculateIntersectionWithSurface(surf3, s2, localUV2);
-		  
-		  if (doesIt2){
-
-
-		    double U = localPos2->u();
-		    double V = localPos2->v();
-
-		    double tU = localUV2->u();
-		    double tV = localUV2->v();
-		    
-		    double resU = tU - U ;
-		    double resV = tV - V ;
-		    
-		    std::cout << " ########## I found the intersection in tU, TV "  << tU << ", "  << tV << " while hit position is at " << U << ", " << V <<  std::endl ;
-
-		    
-		    if( BitSet32( testhit3->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ //it is a composite spacepoint
-
-		      // backup stupid methode		      
-		      //double deltaU = 0.007 * dd4hep::mm  ;
-		      //double deltaV = 0.050 * dd4hep::mm  ;
-
-		      const LCObjectVec rawObjects = testhit3->getRawHits();	
-		      
-		      for( unsigned k=0; k< rawObjects.size(); k++ ){
-			
-			TrackerHit* rawHit = dynamic_cast< TrackerHit* >( rawObjects[k] );
-
-			TrackerHitPlane* planarhit3 = dynamic_cast<TrackerHitPlane*>(rawHit);	
-
-			double deltaU = planarhit3->getdU() * dd4hep::mm  ;		
-
-			pullLCIO_U.push_back(resU/deltaU);
-
-			std::cout << " 1-dim hit uncertainty in U " << deltaU << std::endl ;
-
-		      }
-
-		    }
-		    
-		    else {
-		      
-		      TrackerHitPlane* planarhit3 = dynamic_cast<TrackerHitPlane*>(*lhit);
-		      
-		      if (planarhit3 != NULL) {
-
-			
-			double deltaU = planarhit3->getdU() * dd4hep::mm  ;
-			double deltaV = planarhit3->getdV() * dd4hep::mm  ;
-			
-			std::cout << " AND THE PLANARHIT EXISTS!?!?! dU, dV " << deltaU << ", " << deltaV << std::endl ;
-			
-			pullLCIO_U.push_back(resU/deltaU);
-			pullLCIO_V.push_back(resV/deltaV);
-
-			TrkHitRes_LCIO_U.push_back(resU);
-			TrkHitRes_LCIO_V.push_back(resV);
-		      }
-		    }
-		  }
-		}
-	      }
-	    */
-	    //********************************************************************************************
+	    //aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 	    
-	    for (int n=0; n < 1 ; n++){
-
-
-	      //aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
-	      
-	      for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
-                {
-		  long64 hitid = (*thit)->getCellID0() ;
-		  idDecoder.setValue(hitid) ;
-
-		  //std::cout << " hit id = " << hitid << std::endl ;
-		  
-		  //if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
-		  //  continue;
-
-		  const aidaTT::ISurface* surf = surfMap[ hitid ] ;
-		  
-		  if(surf == NULL)
-		    {
-		      std::cerr << " lcio_tracks : no surface found for id : " << idDecoder.valueString() << std::endl ;
-		      continue;
-		    }
-		  
-		  
-		  double hitpos[3] = {0., 0., 0.};
-		  for(unsigned int i = 0; i < 3; ++i)
-		    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
-
-		  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
-
-		  std::vector<double> precision;
-		  //TMatrixDSym precision(2);
-		  
-		  //TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
-		  //TrackerHitZCylinder* tpchit = dynamic_cast<TrackerHitZCylinder*>(*thit);   // for TPC hits - they are not planar hits!
-
-		  //std::cout << " tpc hit exist? " << tpchit << std::endl ;
-		  FloatVec TPChitCovMat = (*thit)->getCovMatrix();
-
-		  if((*thit) != NULL)
-		    {
-		      //we need 1./variance for the precision:
-		      //what are the values for resolutiuon?
-
-		      double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
-		      double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
-
-		      //double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]);
-		      //double dv = sqrt( TPChitCovMat[5] );
-
-		      std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
+	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
+	      {
+		long64 hitid = (*thit)->getCellID0() ;
+		idDecoder.setValue(hitid) ;
+		
+		//std::cout << " hit id = " << hitid << std::endl ;
+		
+		//if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
+		//  continue;
+		
+		const aidaTT::ISurface* surf = surfMap[ hitid ] ;
+		
+		if(surf == NULL)
+		  {
+		    std::cerr << " lcio_tracks : no surface found for id : " << idDecoder.valueString() << std::endl ;
+		    continue;
+		  }
+		
+		
+		double hitpos[3] = {0., 0., 0.};
+		for(unsigned int i = 0; i < 3; ++i)
+		  hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
+		
+		//std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
+		
+		std::vector<double> precision;
+		//TMatrixDSym precision(2);
+		
+		//TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
+		
+		FloatVec TPChitCovMat = (*thit)->getCovMatrix();
+		
+		if((*thit) != NULL)
+		  {
+		    //we need 1./variance for the precision:
+		    //what are the values for resolutiuon?
+		    
+		    double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+		    double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+		    
+		    //std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
 				      
-		      precision.push_back( 1. /  (du*du) ) ;
-		      precision.push_back( 1. /  (dv*dv) ) ;
-		    }
+		    precision.push_back( 1. /  (du*du) ) ;
+		    precision.push_back( 1. /  (dv*dv) ) ;
+		  }
+		
+		fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
+		
+		outTrk->addHit(*thit) ;
+		
+	      }
 
-		  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
-		  
-		  outTrk->addHit(*thit) ;
-		  
-		}
 
+	    for (int n=0; n < 4 ; n++){
+	      
 	      fitTrajectory.prepareForFitting();
 	      
 	      success = fitTrajectory.fit();
@@ -430,93 +324,15 @@ int main(int argc, char** argv)
 	      result = &fitTrajectory.getFitResults();
 
 
-	      //**********************************************************************************************************
-	      // Examining track - hit residuals
-	      // And write them down to a tree
-	      //**********************************************************************************************************
-	      /*
-	      aidaTT::trackParameters aidaFittedTP = result->estimatedParameters();
-
-	      aidaTT::trajectory fitTrajectoryDebug(aidaFittedTP, fitter, bfield, propagation, &geom);
-
-	      std::vector<TrackerHit*> finalHits = outTrk->getTrackerHits();
-
-	      for(std::vector<TrackerHit*>::iterator fthit = finalHits.begin(), endIter = finalHits.end(); fthit < endIter; ++fthit){
-                
-		long64 hitid = (*fthit)->getCellID0() ;
-		idDecoder.setValue(hitid) ;
-		//idDecoder[lcio::ILDCellID0::side] = ((*fthit)->getPosition()[2]  >  0  ?   +1 : -1) ;
-		hitid = idDecoder.lowWord() ;
-
-		int layerVXD = idDecoder[lcio::ILDCellID0::layer] ;
-
-		const aidaTT::ISurface* surf2 = surfMap[ hitid ] ;
-
-		//std::cout << " hit's layer " << layerVXD << " surface " << surf2 << std::endl ;
-
-		TrackerHit* testhit = dynamic_cast<TrackerHit*>(*fthit);
-		
-		//in order to calculate track-hit residuals
-		double X = testhit->getPosition()[0] * dd4hep::mm;
-		double Y = testhit->getPosition()[1] * dd4hep::mm;
-		double Z = testhit->getPosition()[2] * dd4hep::mm;
-
-		float globpos[3] = {X,Y,Z};
-
-		aidaTT::Vector3D globalPos(globpos) ;
-		aidaTT::Vector2D* localPos = new Vector2D() ;
-
-		fitTrajectoryDebug._calculateLocalCoordinates(surf2, globalPos, localPos);
-		//fitTrajectory._calculateLocalCoordinates(surf2, globalPos, localPos);
-
-		aidaTT::Vector2D* localUV = new Vector2D();
-		//Vector3D* xx = new Vector3D();
-		double s = 0.;
-		
-		bool doesIt = fitTrajectoryDebug._calculateIntersectionWithSurface(surf2, s, localUV);
-		//bool doesIt = fitTrajectory._calculateIntersectionWithSurface(surf2, s, localUV);
-
-		if (doesIt){
-
-		  double U = localPos->u();
-		  double V = localPos->v();
-
-		  double tU = localUV->u();
-		  double tV = localUV->v();
-
-		  double resU = tU - U ;
-		  double resV = tV - V ;
-
-		  TrackerHitPlane* planarhit2 = dynamic_cast<TrackerHitPlane*>(*fthit);
-
-		  double deltaU = planarhit2->getdU() * dd4hep::mm  ;
-		  double deltaV = planarhit2->getdV() * dd4hep::mm  ;
-
-		  pullU.push_back(resU/deltaU);
-		  pullV.push_back(resV/deltaV);
-
-		  std::cout << " res in U = " << resU << " res in V = " << resV << std::endl ;
-
-		  TrackHitResidualsU.push_back(resU);
-		  TrackHitResidualsV.push_back(resV);
-
-		  VXDlayer.push_back(layerVXD);
-
-		  counter++;
-
-		}
-	      
-	      }
-
-	      t1->Fill();
-	      */
 	      //***********************************************************************************************************
 
 	      std::cout << " loop " << n << std::endl ;
+	      std::cout << " initial values " << std::endl;
+	      std::cout << iTP << std::endl;
 	      std::cout << " refitted values " << std::endl;
 	      std::cout << result->estimatedParameters() << std::endl;
 	      
-	      //iTP = result->estimatedParameters();  // valid only when we make an iterative fitting 
+	      iTP = result->estimatedParameters();  // valid only when we make an iterative fitting 
 	      
 
 	      if( ! success ) {
@@ -529,7 +345,7 @@ int main(int argc, char** argv)
 
 	         
 
-
+	    std::cout << " End of the loop " << std::endl ;
 	    std::cout << " initial values " << std::endl;
 	    std::cout << iTP << std::endl;
 	    std::cout << " refitted values " << std::endl;
@@ -558,11 +374,6 @@ int main(int argc, char** argv)
 	    trackParameters finalAidaTP = result->estimatedParameters();
 	    fiveByFiveMatrix  finalAidaCovMat = finalAidaTP.covarianceMatrix();
 	    
-	    std::cout << " lcio cov mat " << cm[5] / (dd4hep::mm * dd4hep::mm) << std::endl ;
-	    std::cout << " aida trajectory cov mat " << finalAidaCovMat(0,0) << std::endl ;
-
-	    //std::cout << " lcio track state " << ts->getOmega() / dd4hep::mm << ", " <<  ts->getTanLambda() << ", " << ts->getPhi() << ", " << ts->getD0()  * dd4hep::mm << ", " << ts->getZ0() * dd4hep::mm << std::endl ; 
-
 	    //---------------------------------------------------------------------
 
 	    outTrk->addTrackState(ts);

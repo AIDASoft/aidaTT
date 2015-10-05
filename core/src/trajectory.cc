@@ -511,7 +511,7 @@ namespace aidaTT
   //void trajectory::addMeasurement(const Vector3D& position, const TMatrixDSym& precision, const ISurface& surface, void* id)
     {
 
-      std::cout << " I am calling addMeasurenet " << std::endl ;
+      //std::cout << " I am calling addMeasurenet " << std::endl ;
 
         /// get reference information
         Vector2D referenceUV ;

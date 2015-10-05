@@ -45,8 +45,6 @@ namespace aidaTT
                 if((*element)->hasMeasurement())
                     {
 
-		      std::cout << " we have a measurement in the surface " << std::endl ;
-
                         /// three elements are needed to add a measurement to a gblpoint:
                         /// 1) the projection matrix from the local track frame to the measurement system
                         /// 2) the residuals in the measurement directions
@@ -88,11 +86,10 @@ namespace aidaTT
                         //point.addMeasurement(pL2M, TVectorD(2, resid), precision);
                     }
 
-		std::cout << " testing condition if scatterer " << std::endl ;
+
                 if((*element)->isScatterer())
                     {
 
-		      std::cout << " we have a scatterer in the surface " << std::endl ;
                         // TODO :: implement!
                         //~ now evaluate the scattering material
                         //~ the addScatterer routine will add a thin scatterer at the given position
