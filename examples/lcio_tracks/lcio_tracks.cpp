@@ -195,6 +195,59 @@ int main(int argc, char** argv)
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
+
+
+#define compute_start_helix 0
+#if compute_start_helix //----------------------------------------------------------------------------------------------------
+            aidaTT::trackParameters startHelix ;
+
+            unsigned nHits = initialHits.size() ;
+            if( nHits > 2 ) {  
+              //--------- get the start helix from three points
+              bool backwards = false ;
+
+              lcio::TrackerHit* h1 = ( backwards ?  initialHits[ nHits-1 ] : initialHits[    0    ] ) ;
+              lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
+              lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
+
+              aidaTT::Vector3D x1( h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm ) ;
+              aidaTT::Vector3D x2( h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm ) ;
+              aidaTT::Vector3D x3( h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm ) ;
+             
+              calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
+             
+              moveHelixTo( startHelix, aidaTT::Vector3D()  ) ; // move to origin
+
+              // --- set some large errors to the covariance matrix
+              startHelix.covarianceMatrix().Unit() ;
+              startHelix.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
+              startHelix.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
+              startHelix.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
+              startHelix.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
+              startHelix.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
+
+              std::cout << "  start helix from three points : " << startHelix << std::endl ;
+
+              // use this helix as start for the fit:
+              iTP = startHelix ;
+
+            }
+#else
+            // --- set some large errors to the covariance matrix
+            iTP.covarianceMatrix().Unit() ;
+            iTP.covarianceMatrix()( aidaTT::OMEGA, aidaTT::OMEGA ) = 1.e-2 ;
+            iTP.covarianceMatrix()( aidaTT::TANL , aidaTT::TANL  ) = 1.e2 ;
+            iTP.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
+            iTP.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
+            iTP.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
+           
+#endif //----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 	    TrackStateImpl* ts;
  	    TrackStateImpl* initial_ts;	      
 
@@ -463,7 +516,7 @@ int main(int argc, char** argv)
 	      std::cout << " refitted values " << std::endl;
 	      std::cout << result->estimatedParameters() << std::endl;
 	      
-	      //iTP = result->estimatedParameters();  // valid only when we make an iterative fitting
+	      //iTP = result->estimatedParameters();  // valid only when we make an iterative fitting 
 	      
 
 	      if( ! success ) {

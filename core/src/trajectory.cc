@@ -189,7 +189,7 @@ namespace aidaTT
 	return false;
 
 
-#if 1 // fg: change the logic for cylinders: always only return the closest solution 
+#if 0 // fg: change the logic for cylinders: always only return the closest solution 
       // to have same behaviour as KalTest
       // FIXME: ideally the interscetion methods should return all solutions and have the 
       //        calling program decide which to use ...
@@ -518,7 +518,7 @@ namespace aidaTT
         double s =  0;
         double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
-	std::cout << " surface " << surface << " arc length " << s << std::endl ;
+	//std::cout << " surface " << surface << " arc length " << s << std::endl ;
 
         /// calculate measurement info
         Vector2D measuredUV(surface.globalToLocal(position));
