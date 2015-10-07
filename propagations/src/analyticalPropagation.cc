@@ -78,6 +78,34 @@ namespace aidaTT
                 const double tEndu1 = tEnd.dot(u1), tEndv1 = tEnd.dot(v1);
                 const double tEnddx = tEnd.dot(dx), u2dx = u2.dot(dx), v2dx = v2.dot(dx);
                 const double an2u1 = an2.dot(u1), an2v1 = an2.dot(v1);
+
+		// some debugging output
+
+		std::cout << " dw " << dw << 
+		  " qp " << qp <<
+		  " q " << q << 
+		  " coslambdaStart " << coslambdaStart <<
+		  " coslambdaEnd " << coslambdaEnd << 
+		  " pav " << pav << 
+		  " theta " << theta <<
+		  " sint " << sint << 
+		  " cost " << cost << 
+		  " gamma " << gamma <<
+		  " au1 " << au1 <<
+		  " au2 " << au2 <<
+		  " anv " << anv <<
+		  " anu " << anu << 
+		  " omcost " << omcost <<
+		  " tmsint " << tmsint << 
+		  " u1u2 " << u1u2 << 
+		  " hu1u2 " << hu1u2 <<
+		  " hnu1 " << hnu1 <<
+		  " tEndu1 " << tEndu1 <<
+		  " tEnddx " << tEnddx <<
+		  " an2u1 " << an2u1 << std::endl; 
+
+		// debugging ends here
+
                 // jacobian
                 // 1/P
                 jac(0, 0) = 1.;

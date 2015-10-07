@@ -35,6 +35,8 @@ namespace aidaTT
             {
                 const fiveByFiveMatrix& jac = (*element)->jacobian();
 
+		//std::cout << " input jacobian " << jac << std::endl ;
+
                 ///~ initialise point with jacobian from last to the current element
                 gbl::GblPoint point(TMatrixD(5, 5, jac.array()));
 
@@ -109,6 +111,8 @@ namespace aidaTT
                         /// convert the data from the vector into the matrix:
                         /// convention is that the first row comes first in the data
 
+
+			std::cout << " Am I entering into isScatterer????? " << std::endl;
 		      
                         TMatrixD pL2M(2, 2);
                         pL2M(0, 0) = projLocal2Meas.at(0);
@@ -213,6 +217,7 @@ namespace aidaTT
 
     void GBLInterface::_fillResults(const trajectory& TRAJ)
     {
+
         bool v = true;
         double chs = _chisquare;
         unsigned int n = _ndf;

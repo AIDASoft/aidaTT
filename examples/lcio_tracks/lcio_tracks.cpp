@@ -134,7 +134,7 @@ int main(int argc, char** argv)
     LCEvent* evt = 0 ;
 
     std::string trackCollectionName = "ClupatraTracks";
-    //std::string trackCollectionName = "CATracks";
+    //std::string trackCollectionName = "SiTracks";
 
 
     UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
@@ -188,16 +188,13 @@ int main(int argc, char** argv)
 
             aidaTT::trackParameters iTP(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )   );  
 
-	    aidaTT::trackParameters iTP_again (  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtIP) )   ); 
-	    aidaTT::trajectory fitInitialTrajectory(iTP_again, fitter, bfield, propagation, &geom);
-
-	    std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
+	    //std::cout << "  start helix from LCIO      : " << iTP << std::endl ; 
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
 
 
-#define compute_start_helix 1
+#define compute_start_helix 0
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
             aidaTT::trackParameters startHelix ;
 
@@ -232,6 +229,7 @@ int main(int argc, char** argv)
               iTP = startHelix ;
 
             }
+	    /*
 #else
             // --- set some large errors to the covariance matrix
             iTP.covarianceMatrix().Unit() ;
@@ -240,7 +238,7 @@ int main(int argc, char** argv)
             iTP.covarianceMatrix()( aidaTT::PHI0 , aidaTT::PHI0  ) = 1.e2 ;
             iTP.covarianceMatrix()( aidaTT::D0   , aidaTT::D0    ) = 1.e5 ;
             iTP.covarianceMatrix()( aidaTT::Z0   , aidaTT::Z0    ) = 1.e5 ;
-           
+	    */
 #endif //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -249,7 +247,6 @@ int main(int argc, char** argv)
 
 
 	    TrackStateImpl* ts;
- 	    TrackStateImpl* initial_ts;	      
 
 	    bool success;	      
 
@@ -258,7 +255,13 @@ int main(int argc, char** argv)
 
 	    std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
 
+	    
+	    // Add the Interaction Point as the first element of the trajectory
+	    int ID = 1;
+	    Vector3D IntPoint(0,0,0);
 
+	    fitTrajectory.addElement(IntPoint, &ID);
+	    
 
 	    //aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 	    
@@ -268,9 +271,6 @@ int main(int argc, char** argv)
 		idDecoder.setValue(hitid) ;
 		
 		//std::cout << " hit id = " << hitid << std::endl ;
-		
-		//if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
-		//  continue;
 		
 		const aidaTT::ISurface* surf = surfMap[ hitid ] ;
 		
@@ -290,17 +290,23 @@ int main(int argc, char** argv)
 		std::vector<double> precision;
 		//TMatrixDSym precision(2);
 		
-		//TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
+		TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
 		
 		FloatVec TPChitCovMat = (*thit)->getCovMatrix();
 		
+		//if (planarhit != NULL)
 		if((*thit) != NULL)
 		  {
 		    //we need 1./variance for the precision:
 		    //what are the values for resolutiuon?
 		    
+		    //Calculation of resolution for TPC hits
 		    double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
 		    double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+
+		    //Resulotion for planar (Si hits)
+		    //double du = planarhit->getdU() * dd4hep::mm  ;
+		    //double dv = planarhit->getdV() * dd4hep::mm  ;
 		    
 		    //std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
 				      
@@ -315,7 +321,7 @@ int main(int argc, char** argv)
 	      }
 
 
-	    for (int n=0; n < 4 ; n++){
+	    for (int n=0; n < 1 ; n++){
 	      
 	      fitTrajectory.prepareForFitting();
 	      
@@ -325,14 +331,14 @@ int main(int argc, char** argv)
 
 
 	      //***********************************************************************************************************
-
+	      /*
 	      std::cout << " loop " << n << std::endl ;
 	      std::cout << " initial values " << std::endl;
 	      std::cout << iTP << std::endl;
 	      std::cout << " refitted values " << std::endl;
 	      std::cout << result->estimatedParameters() << std::endl;
-	      
-	      iTP = result->estimatedParameters();  // valid only when we make an iterative fitting 
+	      */
+	      //iTP = result->estimatedParameters();  // valid only when we make an iterative fitting 
 	      
 
 	      if( ! success ) {
@@ -353,7 +359,6 @@ int main(int argc, char** argv)
 	    
 	    // add Track State to track:
 	    ts = aidaTT::createLCIO( result->estimatedParameters() );
-	    initial_ts = aidaTT::createLCIO( iTP_again );  // only to check the initial helix
 	      
 	    outTrk->setChi2( result->chiSquare() ) ;
 	    outTrk->setNdf( result->ndf() ) ;
@@ -365,8 +370,6 @@ int main(int argc, char** argv)
 	    ts->setReferencePoint(ref);	    
 	    ts->setLocation(lcio::TrackState::AtIP);
 
-	    initial_ts->setReferencePoint(ref);	    
-	    initial_ts->setLocation(lcio::TrackState::AtIP);
 
 	    // checking the covariance matrix
 	    //--------------------------------------------------------------------
@@ -379,7 +382,6 @@ int main(int argc, char** argv)
 	    outTrk->addTrackState(ts);
 	
             wrt->writeEvent(evt) ;
-
         }
 
     ofile->Write("t1");

@@ -8,7 +8,7 @@ namespace aidaTT
 
     double calculateQoverP(const trackParameters& tp, double bfield)
     {
-      std::cout << " MAGNETIC FIELD CONVERSION FACTOR " <<  convertBr2P_cm << std::endl ;
+      //std::cout << " MAGNETIC FIELD CONVERSION FACTOR " <<  convertBr2P_cm << std::endl ;
       if(bfield != 0.)
             return (cos(calculateLambda(tp)) * calculateCurvature(tp) / (bfield * convertBr2P_cm));
         else

@@ -34,7 +34,7 @@ namespace aidaTT
   
 
     ///~ constructor B: only the arc length is given and some identification
-    trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _measurement(false), _id(id)
+  trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _localCurvilinearSystem(NULL), _localToMeasurementProjection(NULL), _measDirections(NULL), _measurement(false), _scatterer(false), _id(id)
     {}
 
 
@@ -47,14 +47,22 @@ namespace aidaTT
 
     trajectoryElement::~trajectoryElement()
     {
-        if(_localCurvilinearSystem)
+      if(_localCurvilinearSystem){
+	//std::cout << " now i delete the curvilinear system " << std::endl ;
             delete _localCurvilinearSystem;
-        if(_measDirections)
+      } 
+      if(_measDirections){
+	//std::cout << " now i delete the measurement directions " << std::endl ;
             delete _measDirections;
-        if(_jacobianFromPrevious)
+      }
+      if(_jacobianFromPrevious){
+	//std::cout << " now i delete the jecobian from the previous element " << std::endl ;
             delete _jacobianFromPrevious;
-        if(_localToMeasurementProjection)
+      }
+      if(_localToMeasurementProjection){
+	//std::cout << " now i delete the projection from local to measurement system " << std::endl ;
             delete _localToMeasurementProjection;
+      }
     }
 
 

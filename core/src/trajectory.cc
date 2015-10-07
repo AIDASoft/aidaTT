@@ -48,8 +48,10 @@ namespace aidaTT
 
     trajectory::~trajectory()
     {
-        for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin(), last = _initialTrajectoryElements.end(); element < last; ++element)
-            delete *element;
+      for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin(), last = _initialTrajectoryElements.end(); element < last; ++element){
+	//std::cout << " Now I register element with arc length " << (*element)->arcLength() << " for deletion " << std::endl ;
+	delete *element;
+      }
     }
 
 
@@ -595,10 +597,11 @@ namespace aidaTT
         if(_initialTrajectoryElements.size() > 0)
             {
                 fiveByFiveMatrix* j = new fiveByFiveMatrix;
+		j->Unit();
                 (_initialTrajectoryElements.at(0))->setJacobian(j);
             }
         /// now the really interesting ones
-        for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin() + 1, last = _initialTrajectoryElements.end(); element < last; ++element)
+        for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin()+1, last = _initialTrajectoryElements.end(); element < last; ++element)
             {
 
                 ///~ obtain the two arc lengths
@@ -606,6 +609,10 @@ namespace aidaTT
                 double currS = (*element)->arcLength();
                 ///~ calculate 3D arclength -> divide 2D arc length by cos lambda
                 double dw = (currS - prevS) / cosLambda;
+
+		std::cout << std::endl ;
+		std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
+		std::cout << std::endl ;
 
                 Vector3D tstart = calculateTangent(prevS, _referenceParameters);
                 Vector3D tend   = calculateTangent(currS, _referenceParameters);
