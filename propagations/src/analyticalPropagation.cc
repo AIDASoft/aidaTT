@@ -81,28 +81,28 @@ namespace aidaTT
 
 		// some debugging output
 
-		std::cout << " dw " << dw << 
-		  " qp " << qp <<
-		  " q " << q << 
-		  " coslambdaStart " << coslambdaStart <<
-		  " coslambdaEnd " << coslambdaEnd << 
-		  " pav " << pav << 
-		  " theta " << theta <<
-		  " sint " << sint << 
-		  " cost " << cost << 
-		  " gamma " << gamma <<
-		  " au1 " << au1 <<
-		  " au2 " << au2 <<
-		  " anv " << anv <<
-		  " anu " << anu << 
-		  " omcost " << omcost <<
-		  " tmsint " << tmsint << 
-		  " u1u2 " << u1u2 << 
-		  " hu1u2 " << hu1u2 <<
-		  " hnu1 " << hnu1 <<
-		  " tEndu1 " << tEndu1 <<
-		  " tEnddx " << tEnddx <<
-		  " an2u1 " << an2u1 << std::endl; 
+		// std::cout << " dw " << dw << 
+		//   " qp " << qp <<
+		//   " q " << q << 
+		//   " coslambdaStart " << coslambdaStart <<
+		//   " coslambdaEnd " << coslambdaEnd << 
+		//   " pav " << pav << 
+		//   " theta " << theta <<
+		//   " sint " << sint << 
+		//   " cost " << cost << 
+		//   " gamma " << gamma <<
+		//   " au1 " << au1 <<
+		//   " au2 " << au2 <<
+		//   " anv " << anv <<
+		//   " anu " << anu << 
+		//   " omcost " << omcost <<
+		//   " tmsint " << tmsint << 
+		//   " u1u2 " << u1u2 << 
+		//   " hu1u2 " << hu1u2 <<
+		//   " hnu1 " << hnu1 <<
+		//   " tEndu1 " << tEndu1 <<
+		//   " tEnddx " << tEnddx <<
+		//   " an2u1 " << an2u1 << std::endl; 
 
 		// debugging ends here
 

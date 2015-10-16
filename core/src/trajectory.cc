@@ -488,7 +488,7 @@ namespace aidaTT
 
     double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
 
-    std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms = " << Qms << std::endl;
+    // std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms = " << Qms << std::endl;
 
     precision[0] = Qms*Qms ;  precision[1] = Qms*Qms ;
     
@@ -610,9 +610,9 @@ namespace aidaTT
                 ///~ calculate 3D arclength -> divide 2D arc length by cos lambda
                 double dw = (currS - prevS) / cosLambda;
 
-		std::cout << std::endl ;
-		std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
-		std::cout << std::endl ;
+		// std::cout << std::endl ;
+		// std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
+		// std::cout << std::endl ;
 
                 Vector3D tstart = calculateTangent(prevS, _referenceParameters);
                 Vector3D tend   = calculateTangent(currS, _referenceParameters);

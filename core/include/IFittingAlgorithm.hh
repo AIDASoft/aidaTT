@@ -12,6 +12,7 @@ namespace aidaTT
         public:
             virtual bool fit(const trajectory&)   = 0;
             virtual const fitResults& getResults() const  = 0;
+            virtual ~IFittingAlgorithm(){}
     };
 }
 

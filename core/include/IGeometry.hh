@@ -22,10 +22,15 @@
 
 namespace aidaTT
 {
-    typedef DDSurfaces::ISurface ISurface;
-    typedef DDSurfaces::ICylinder ICylinder;
-    typedef DDSurfaces::IMaterial IMaterial;
-    typedef DDSurfaces::Vector2D Vector2D;
+  using DDSurfaces::ISurface ;
+  using DDSurfaces::ICylinder ;
+  using DDSurfaces::IMaterial ;
+  using DDSurfaces::Vector2D ;
+  using namespace DDSurfaces ;
+    // typedef DDSurfaces::ISurface ISurface;
+    // typedef DDSurfaces::ICylinder ICylinder;
+    // typedef DDSurfaces::IMaterial IMaterial;
+    // typedef DDSurfaces::Vector2D Vector2D;
 }
 #else
 #include "Vector3D.hh"
@@ -308,35 +313,35 @@ namespace aidaTT
             mutable std::bitset<32> _bits ;
     } ;
 
-    /// dump SurfaceType operator
-    //~ inline std::ostream& operator<<( std::ostream& os , const SurfaceType& t ) {
-//~
-    //~ os << "sensitive[" << t.isSensitive() << "] helper[" << t.isHelper() << "] plane[" << t.isPlane()  << "] cylinder[" << t.isCylinder()
-    //~ << "] parallelToZ[" << t.isParallelToZ()  << "] orthogonalToZ[" << t. isOrthogonalToZ()  << "] zCylinder[" << t.isZCylinder()
-    //~ <<  "] zPlane[" << t.isZPlane()  <<  "] zDisk[" << t.isZDisk() << "]"  ;
-//~
-    //~ return os ;
-    //~ }
-
-
-
-    /// dump ISurface operator
-    //~ inline std::ostream& operator<<( std::ostream& os , const ISurface& s ) {
-    //~
-    //~ os <<  "   id: " << std::hex << s.id() << std::dec << " type : " << s.type() << std::endl
-    //~ <<  "   u : " << s.u() << " v : " << s.v() << " normal : " << s.normal() << " origin : " << s.origin() << std::endl   ;
-    //~ os <<  "   inner material : " << s.innerMaterial() << "  thickness: " <<  s.innerThickness()  << std::endl
-    //~ <<  "   outerMaterial :  " << s.outerMaterial() << "  thickness: " <<  s.outerThickness()  << std::endl   ;
-//~
-    //~ const ICylinder* cyl = dynamic_cast< const ICylinder* > ( &s ) ;
-//~
-    //~ if( cyl )
-    //~ os << "   cylinder radius : " << cyl->radius() <<  std::endl   ;
-//~
-    //~ return os ;
-    //~ }
-
-
+  /// dump SurfaceType operator
+  inline std::ostream& operator<<( std::ostream& os , const SurfaceType& t ) {
+    
+    os << "sensitive[" << t.isSensitive() << "] helper[" << t.isHelper() << "] plane[" << t.isPlane()  << "] cylinder[" << t.isCylinder()
+       << "] parallelToZ[" << t.isParallelToZ()  << "] orthogonalToZ[" << t. isOrthogonalToZ()  << "] zCylinder[" << t.isZCylinder()
+       <<  "] zPlane[" << t.isZPlane()  <<  "] zDisk[" << t.isZDisk() << "]"  ;
+    
+    return os ;
+  }
+  
+  
+  
+  /// dump ISurface operator
+  inline std::ostream& operator<<( std::ostream& os , const ISurface& s ) {
+    
+    os <<  "   id: " << std::hex << s.id() << std::dec << " type : " << s.type() << std::endl
+       <<  "   u : " << s.u() << " v : " << s.v() << " normal : " << s.normal() << " origin : " << s.origin() << std::endl   ;
+    os <<  "   inner material : " << s.innerMaterial() << "  thickness: " <<  s.innerThickness()  << std::endl
+       <<  "   outerMaterial :  " << s.outerMaterial() << "  thickness: " <<  s.outerThickness()  << std::endl   ;
+    
+    const ICylinder* cyl = dynamic_cast< const ICylinder* > ( &s ) ;
+    
+    if( cyl )
+      os << "   cylinder radius : " << cyl->radius() <<  std::endl   ;
+    
+    return os ;
+  }
+  
+  
     class IMaterial
     {
 
@@ -363,12 +368,13 @@ namespace aidaTT
 
 namespace aidaTT
 {
-    class IGeometry
-    {
-        public:
-            virtual const std::list<const ISurface*>& getSurfaces() = 0;
-    };
-
+  class IGeometry
+  {
+  public:
+    virtual const std::list<const ISurface*>& getSurfaces() = 0;
+    virtual ~IGeometry(){}
+  };
+  
 
 }
 #endif // IGEOMETRY_HH

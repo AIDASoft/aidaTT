@@ -25,6 +25,7 @@ namespace aidaTT
             virtual double Bx(const Vector3D&) const = 0;
             virtual double By(const Vector3D&) const = 0;
             virtual double Bz(const Vector3D&) const = 0;
+            virtual ~IBField(){}
     };
 }
 #endif // IBFIELD_HH
