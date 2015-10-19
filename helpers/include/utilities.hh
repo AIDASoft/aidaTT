@@ -10,8 +10,6 @@
  * the current name "utilities" is a misnomer
  * everything revolves around the transformation or conversion of track parameters
  * -> !!! it should be explicit that the track parameters ARE FIXED in l3 convention
- *
- * the two helix helpers should be moved out into a separate class (and verified btw.)
  */
 
 
@@ -83,13 +81,6 @@ namespace aidaTT
     Vector3D pointOnTrajectory(const trackParameters& tp,  double s) ;
 
     double calculateQoverP(const trackParameters& , double BField);
-
-    /// compute start parameters for a helix from three points, e.g. first, last and middle point )
-    void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward = false) ;
-
-    /// move the helix parameters to a new reference point
-    /// FIXME: covariance matrix is not yet updated !
-    double moveHelixTo(trackParameters& tp,  const Vector3D& ref) ;
 
 
 /// a number of track parametrization conversion matrices

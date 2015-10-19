@@ -421,19 +421,17 @@ namespace aidaTT
         localUV->v() = local.v();
     }
 
-  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
+  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, double sScat, void* id)
   //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
   {
    
-    std::cout << " I am calling addScatterer " << std::endl ;
-
     /// get reference information
     // I am not sure what to do with these stuff
     Vector2D referenceUV ;
     double s =  0;
     double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
-    std::cout << " surface " << surface << " arc length " << s << std::endl ;
+    std::cout << " scatterer surface " << surface << " arc length " << sScat << std::endl ;
 
     std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
     measDir->push_back(surface.u(position));
@@ -445,7 +443,18 @@ namespace aidaTT
 
     // I mean the stuff up here
 
-    const Vector5 hel = seed_tp.parameters();
+    aidaTT::trackParameters test_tp = seed_tp ;
+    /*
+    Vector5 hel_IP = seed_tp.parameters();
+    double omega_IP  = hel_IP(0);
+    double tnl_IP    = hel_IP(1); 
+    double phi0_IP   = hel_IP(2);
+
+    std::cout << " track parameters in IP omega: " << omega_IP << " tanl " << tnl_IP << " AND phi0 " << phi0_IP << std::endl ; 
+    */
+    moveHelixTo( test_tp, position ) ; // move helix to the scatterer
+
+    Vector5 hel = test_tp.parameters();
 
     double omega  = hel(0);
     double tnl    = hel(1); 
@@ -464,13 +473,21 @@ namespace aidaTT
     double r_tot = r_i + r_o ;
 
     //calculation of effective radiation length of the surface
-    double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
+    //double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
+    double X0_eff = ( r_i/X0_i + r_o/X0_o ) / ( r_i + r_o ) ; 
 
     //calculation of the path of the particle inside the material
     //compute path as projection of (straight) track to surface normal:
     DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
     DDSurfaces::Vector3D up = p.unit() ;
-    const DDSurfaces::Vector3D& n = surface.normal() ;
+
+    //const DDSurfaces::Vector3D& n = surface.normal() ;
+    // need to get the normal at crossing point ( should be the current helix' reference point)
+    const Vector3D& piv = seed_tp.referencePoint() ;
+    DDSurfaces::Vector3D xx( piv.x(),piv.y(),piv.z()) ;
+    const DDSurfaces::Vector3D& n = surface.normal( xx ) ;
+    
+
     double cosTrk = std::fabs( up * n )  ;
     
     double path = r_i + r_o ;
@@ -494,7 +511,7 @@ namespace aidaTT
     
     if(intersects)
       {
-	_initialTrajectoryElements.push_back(new trajectoryElement( s+0.0001 , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
+	_initialTrajectoryElements.push_back(new trajectoryElement( sScat , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
       } 
     else
       {
@@ -520,7 +537,7 @@ namespace aidaTT
         double s =  0;
         double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
-	//std::cout << " surface " << surface << " arc length " << s << std::endl ;
+	std::cout << "MEASUREMENT surface " << surface << " arc length " << s << std::endl ;
 
         /// calculate measurement info
         Vector2D measuredUV(surface.globalToLocal(position));

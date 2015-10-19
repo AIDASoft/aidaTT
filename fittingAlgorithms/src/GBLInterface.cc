@@ -112,8 +112,6 @@ namespace aidaTT
                         /// convention is that the first row comes first in the data
 
 
-			std::cout << " Am I entering into isScatterer????? " << std::endl;
-		      
                         TMatrixD pL2M(2, 2);
                         pL2M(0, 0) = projLocal2Meas.at(0);
                         pL2M(0, 1) = projLocal2Meas.at(1);
@@ -130,23 +128,24 @@ namespace aidaTT
 
 			std::vector<double> precision = (*element)->precisions();
 			//TMatrixDSym precision = (*element)->precisions();
-			
+			/*
 			TMatrixD pL2M_T(2, 2);
                         pL2M_T(0, 0) = projLocal2Meas.at(0);
                         pL2M_T(1, 0) = projLocal2Meas.at(1);
                         pL2M_T(0, 1) = projLocal2Meas.at(2);
                         pL2M_T(1, 1) = projLocal2Meas.at(3);
-		
-			//wrong for the time being	
+			*/
+			std::cout << " what's the precision " << precision[0] << std::endl ;
+			/*
 			TMatrixD Var(2,2);
-			Var(0, 0) = 1.;
+			Var(0, 0) = 1.*precision[0];
 			Var(0, 1) = 0;
 			Var(1, 0) = 0;
-			Var(1, 1) = 1.;
+			Var(1, 1) = 1.*precision[1];
 			
 			TMatrixD Vk(2, 2);
 			Vk = pL2M * Var * pL2M_T ;
-			
+			*/
 			//TMatrixD testMatrix(2, 2);
 			//testMatrix = pL2M * pL2M_T ;
 			//double det = Vk.Determinant(); 
@@ -154,9 +153,16 @@ namespace aidaTT
 			//double det = testMatrix.Determinant(); 
 			//std::cout << " Variance matrix determinant " << det << std::endl ;
 
-			TMatrixDSym Vk_sym(2);
+			double Scalar_value = 0 ;
+			Scalar_value = (1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1))*(1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1)) / precision[0] ;
 
-			
+			TMatrixDSym Vk_sym(2);
+                        Vk_sym(0, 0) = Scalar_value * (1 - pL2M(0, 0)*pL2M(0, 0));
+                        Vk_sym(0, 1) = -1.*Scalar_value * (pL2M(1, 1)*pL2M(0, 0));
+                        Vk_sym(1, 0) = -1.*Scalar_value * (pL2M(1, 1)*pL2M(0, 0));
+                        Vk_sym(1, 1) = Scalar_value * (1 - pL2M(1, 1)*pL2M(1, 1));
+
+			/*
 			TMatrixD Vk_inv(2, 2);
 			Vk_inv = Vk.Invert();
 			
@@ -164,7 +170,7 @@ namespace aidaTT
                         Vk_sym(0, 1) = Vk_inv(0, 1);
                         Vk_sym(1, 0) = Vk_inv(1, 0);
                         Vk_sym(1, 1) = Vk_inv(1, 1);
-			
+			*/
 			/*
 			TMatrixD Var_inv(2, 2);
 			Var_inv = Var.Invert();

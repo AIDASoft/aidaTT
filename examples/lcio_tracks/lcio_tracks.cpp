@@ -31,6 +31,7 @@
 #include "fitResults.hh"
 #include "Vector5.hh"
 #include "utilities.hh"
+#include "helixHelpers.hh"
 #include "LCIOPersistency.hh"
 #include "Vector3D.hh"
 #include "IGeometry.hh"
@@ -133,8 +134,8 @@ int main(int argc, char** argv)
 
     LCEvent* evt = 0 ;
 
-    std::string trackCollectionName = "ClupatraTracks";
-    //std::string trackCollectionName = "SiTracks";
+    //std::string trackCollectionName = "ClupatraTracks";
+    std::string trackCollectionName = "SiTracks";
 
 
     UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
@@ -193,8 +194,16 @@ int main(int argc, char** argv)
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
 
 
+	    //*****************************************************************************************************
+	    // Simple test of MoveTo function
+	    std::cout << " parameters of lcioo track at IP " << iTP << std::endl ;
+            aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
+	    std::cout << " parameters of lcioo track at first hit " << iTP_AtFirstHit << std::endl ;
+	    moveHelixTo( iTP_AtFirstHit, aidaTT::Vector3D()  ) ;
+	    std::cout << " parameters of lcioo track moved from first hit to IP" << iTP_AtFirstHit << std::endl ;
+	    //****************************************************************************************************
 
-#define compute_start_helix 0
+#define compute_start_helix 1
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
             aidaTT::trackParameters startHelix ;
 
@@ -294,19 +303,19 @@ int main(int argc, char** argv)
 		
 		FloatVec TPChitCovMat = (*thit)->getCovMatrix();
 		
-		//if (planarhit != NULL)
-		if((*thit) != NULL)
+		if (planarhit != NULL)
+		  //if((*thit) != NULL)
 		  {
 		    //we need 1./variance for the precision:
 		    //what are the values for resolutiuon?
 		    
 		    //Calculation of resolution for TPC hits
-		    double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
-		    double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+		    //double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+		    //double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
 
 		    //Resulotion for planar (Si hits)
-		    //double du = planarhit->getdU() * dd4hep::mm  ;
-		    //double dv = planarhit->getdV() * dd4hep::mm  ;
+		    double du = planarhit->getdU() * dd4hep::mm  ;
+		    double dv = planarhit->getdV() * dd4hep::mm  ;
 		    
 		    //std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
 				      
