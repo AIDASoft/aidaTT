@@ -72,7 +72,7 @@ namespace aidaTT
             void addElement(const Vector3D&, void* id);
             void addElement(const Vector3D&, const ISurface&, void* id);
             // add a scatterer
-      void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, double sScat, void* id);
+      void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
            //void addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface, const trackParameters& seed_tp, void* id); // alternative constructor for addScatterer that utilises a symmetric matrix for precision
 
             ///~ test whether/where a surface is intersected

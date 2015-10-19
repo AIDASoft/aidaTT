@@ -80,7 +80,7 @@ int main(int argc, char** argv)
     const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
     // create map of surfaces
-    std::map< long64, const aidaTT::ISurface* > surfMap ;
+    std::map< long, const aidaTT::ISurface* > surfMap ;
 
     for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
         {
@@ -267,7 +267,7 @@ int main(int argc, char** argv)
 	    
 	    // Add the Interaction Point as the first element of the trajectory
 	    int ID = 1;
-	    Vector3D IntPoint(0,0,0);
+	    aidaTT::Vector3D IntPoint(0,0,0);
 
 	    fitTrajectory.addElement(IntPoint, &ID);
 	    
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
 	    
 	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
 	      {
-		long64 hitid = (*thit)->getCellID0() ;
+		long hitid = (*thit)->getCellID0() ;
 		idDecoder.setValue(hitid) ;
 		
 		//std::cout << " hit id = " << hitid << std::endl ;

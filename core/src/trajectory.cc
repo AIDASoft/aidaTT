@@ -421,7 +421,7 @@ namespace aidaTT
         localUV->v() = local.v();
     }
 
-  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, double sScat, void* id)
+  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id)
   //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
   {
    
@@ -430,8 +430,6 @@ namespace aidaTT
     Vector2D referenceUV ;
     double s =  0;
     double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
-
-    std::cout << " scatterer surface " << surface << " arc length " << sScat << std::endl ;
 
     std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
     measDir->push_back(surface.u(position));
@@ -511,7 +509,7 @@ namespace aidaTT
     
     if(intersects)
       {
-	_initialTrajectoryElements.push_back(new trajectoryElement( sScat , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
+	_initialTrajectoryElements.push_back(new trajectoryElement( s , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
       } 
     else
       {
