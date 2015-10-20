@@ -206,7 +206,7 @@ int main(int argc, char** argv)
             bool success;
 
             aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
-            //const aidaTT::fitResults* result = &fitTrajectory.getFitResults();
+            //const aidaTT::fitResults* result = fitTrajectory.getFitResults();
 	    const aidaTT::fitResults* result;
 
 
@@ -377,7 +377,7 @@ int main(int argc, char** argv)
 	    
 	    success = fitTrajectory.fit();
 	    
-	    result = &fitTrajectory.getFitResults();
+	    result = fitTrajectory.getFitResults();
 	    
 	    
 	    //~ std::cout << " loop " << n << std::endl ;

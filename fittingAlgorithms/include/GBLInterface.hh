@@ -8,6 +8,7 @@
 #include "Vector5.hh"
 
 #include <vector>
+#include <map>
 
 // GBL:
 #include "GblTrajectory.h"
@@ -23,58 +24,81 @@
  * For information on the General Broken Lines, please refer to the publication and/or the wiki pages:
  *   - C. Kleinwort, General Broken Lines as advanced track fitting method, NIM A, 673 (2012), 107-110, doi:10.1016/j.nima.2012.01.024
  *   - http://www.wiki.terascale.de/index.php/GeneralBrokenLines
-*/
+ */
 
 namespace aidaTT
 {
 
-    class GBLInterface : public IFittingAlgorithm
+  class GBLInterface : public IFittingAlgorithm
+  {
+    typedef  std::map< int, fitResults* > ResMap ;
+
+  public:
+    GBLInterface();
+    ~GBLInterface();
+
+    /// inherited methods:
+    bool fit(const trajectory&);
+
+    const fitResults* getResults(int label=0) const
     {
-        public:
-            GBLInterface();
-            ~GBLInterface();
 
-            /// inherited methods:
-            bool fit(const trajectory&);
+      const fitResults* res = 0 ;
 
-            const fitResults& getResults() const
-            {
-                return _theResults;
-            };
+      ResMap::const_iterator it = _theResults.find( label ) ;
+      
+      if( it == _theResults.end() ){
+	
+	res = _fillResults( *_fittedTraj , label ) ; 
 
-        private:
-            GBLInterface(const GBLInterface&);
-            GBLInterface& operator=(const GBLInterface&);
+      } else {
 
-            ///< GBL trajectory
-            gbl::GblTrajectory* _trajectory;
-            ///< flag for curved track (helix, else straight line)
-            bool _curvature;
-
-            ///< correction vector from GBL fit (for track parameters)
-            Vector5* _correctionVector;
-
-            ///< covariance matrix from GBL
-            fullCovariance* _covarianceMatrix;
-
-            ///< number of degrees of freedom in GBL fit
-            int _ndf;
-
-            ///< chi2 from GBL fit
-            double _chisquare;
-
-            ///< weight lost by down-weighting, not used for now!
-            double _lostweight;
-
-            ///< arc-length of reference point
-            double _refPointS;
-
-            ///< label of reference point
-            unsigned int _refPointIndex;
-
-            void _fillResults(const trajectory&);
-            fitResults _theResults;
+	res = it->second ;
+      }
+      
+      return res ;
     };
+
+  private:
+    GBLInterface(const GBLInterface&);
+    GBLInterface& operator=(const GBLInterface&);
+
+    ///< GBL trajectory
+    gbl::GblTrajectory* _trajectory;
+    ///< flag for curved track (helix, else straight line)
+    bool _curvature;
+
+    ///< correction vector from GBL fit (for track parameters)
+    Vector5* _correctionVector;
+
+    ///< covariance matrix from GBL
+    fullCovariance* _covarianceMatrix;
+
+    ///< number of degrees of freedom in GBL fit
+    int _ndf;
+
+    ///< chi2 from GBL fit
+    double _chisquare;
+
+    ///< weight lost by down-weighting, not used for now!
+    double _lostweight;
+
+    ///< arc-length of reference point
+    double _refPointS;
+
+    ///< label of reference point
+    unsigned int _refPointIndex;
+
+    const fitResults* _fillResults(const trajectory&, int label=0) const ;
+
+    void _clear() ;
+
+    const trajectory* _fittedTraj ;
+    
+    mutable ResMap _theResults;
+
+
+  };
 
 }
 

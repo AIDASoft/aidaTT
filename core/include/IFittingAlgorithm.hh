@@ -5,15 +5,15 @@
 
 namespace aidaTT
 {
-    class trajectory; // needs forward declaration to build
+  class trajectory; // needs forward declaration to build
 
-    class IFittingAlgorithm
-    {
-        public:
-            virtual bool fit(const trajectory&)   = 0;
-            virtual const fitResults& getResults() const  = 0;
-            virtual ~IFittingAlgorithm(){}
-    };
+  class IFittingAlgorithm
+  {
+  public:
+    virtual bool fit(const trajectory&)   = 0;
+    virtual const fitResults* getResults(int label=0) const  = 0;
+    virtual ~IFittingAlgorithm(){}
+  };
 }
 
 #endif // IFITTINGALGORITHM_HH
