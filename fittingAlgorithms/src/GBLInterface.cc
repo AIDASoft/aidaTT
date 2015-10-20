@@ -97,7 +97,6 @@ namespace aidaTT
 	    point.setLabel( (*element)->surface().id() ) ;
 	  }
 
-
 	if((*element)->isScatterer())
 	  {
 

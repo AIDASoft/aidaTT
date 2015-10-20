@@ -1,5 +1,6 @@
 #ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
+#ifdef USE_MarlinUtil
 
 #include "lcio.h"
 #include "IO/LCReader.h"
@@ -20,6 +21,9 @@
 #include "DD4hep/LCDD.h"
 #include "DD4hep/DD4hepUnits.h"
 #include "DDRec/SurfaceHelper.h"
+
+// MarlinUtil
+#include "HelixClass.h"
 
 
 // aidaTT
@@ -197,10 +201,15 @@ int main(int argc, char** argv)
       //*****************************************************************************************************
       // Simple test of MoveTo function
       std::cout << " parameters of lcioo track at IP " << iTP << std::endl ;
-      aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
-      std::cout << " parameters of lcioo track at first hit " << iTP_AtFirstHit << std::endl ;
-      moveHelixTo( iTP_AtFirstHit, aidaTT::Vector3D()  ) ;
-      std::cout << " parameters of lcioo track moved from first hit to IP" << iTP_AtFirstHit << std::endl ;
+      //aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
+      //std::cout << " parameters of lcioo track at the first hit " << iTP_AtFirstHit << std::endl ;
+
+
+
+      moveHelixTo( iTP, aidaTT::Vector3D(1.,1.,1.), true  ) ;
+      std::cout << " parameters of lcioo track at random point " << iTP << std::endl ;
+      moveHelixTo( iTP, aidaTT::Vector3D(), true  ) ;
+      std::cout << " parameters of lcioo track moved to a random point and then back to IP" << iTP << std::endl ;
       //****************************************************************************************************
 
 #define compute_start_helix 1
@@ -222,7 +231,7 @@ int main(int argc, char** argv)
              
 	calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
              
-	moveHelixTo( startHelix, aidaTT::Vector3D()  ) ; // move to origin
+	moveHelixTo( startHelix, aidaTT::Vector3D(), false  ) ; // move to origin
 
 	// --- set some large errors to the covariance matrix
 	startHelix.covarianceMatrix().Unit() ;
@@ -398,6 +407,6 @@ int main(int argc, char** argv)
   return 0;
 }
 
-
+#endif // USE_MarlinUtil
 #endif // USE_LCIO
 #endif // USE_DD4HEP

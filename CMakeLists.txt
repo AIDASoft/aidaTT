@@ -47,8 +47,9 @@ FIND_PACKAGE( GSL REQUIRED)
 FIND_PACKAGE( GBL )
 FIND_PACKAGE( DD4hep REQUIRED COMPONENTS DDRec )
 FIND_PACKAGE( LCIO )
+FIND_PACKAGE( MarlinUtil )
 
-FOREACH( pkg  GSL GBL DD4hep LCIO)  
+FOREACH( pkg  GSL GBL DD4hep LCIO MarlinUtil)  
     IF( ${pkg}_FOUND )
         INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
@@ -95,6 +96,12 @@ IF( LCIO_FOUND )
         ADD_DEFINITIONS( "-DUSE_LCIO" )
 ELSE()
     MESSAGE( STATUS "LCIO not found, LCIO persistency will not be available." )
+ENDIF()
+
+IF( MarlinUtil_FOUND )
+        ADD_DEFINITIONS( "-DUSE_MarlinUtil" )
+ELSE()
+    MESSAGE( STATUS "MarlinUtil not found, MarlinUtil functionality will not be available." )
 ENDIF()
 
 # add the examples directory; only contains executables

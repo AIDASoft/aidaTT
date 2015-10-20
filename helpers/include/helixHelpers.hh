@@ -18,9 +18,7 @@ namespace aidaTT
     void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward = false) ;
 
     /// move the helix parameters to a new reference point
-    /// FIXME: covariance matrix is not yet updated !
-    double moveHelixTo(trackParameters& tp,  const Vector3D& ref) ;
-
+  double moveHelixTo(trackParameters& tp,  const Vector3D& ref, bool CovMat=false) ;
 
 }
 
