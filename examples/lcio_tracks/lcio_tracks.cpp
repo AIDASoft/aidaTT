@@ -260,7 +260,7 @@ int main(int argc, char** argv)
       bool success;	      
 
       aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
-      const aidaTT::fitResults* result = fitTrajectory.getFitResults();
+      const aidaTT::fitResults* result = 0 ; //fitTrajectory.getFitResults();
 
       std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
 
@@ -296,33 +296,31 @@ int main(int argc, char** argv)
 		
 	  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
 		
-	  std::vector<double> precision;
-	  //TMatrixDSym precision(2);
+	  std::vector<double> precision(2) ;
 		
 	  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
 		
 	  FloatVec TPChitCovMat = (*thit)->getCovMatrix();
 		
-	  if (planarhit != NULL)
-	    //if((*thit) != NULL)
-	    {
-	      //we need 1./variance for the precision:
-	      //what are the values for resolutiuon?
-		    
-	      //Calculation of resolution for TPC hits
-	      //double du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
-	      //double dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+	  double du, dv ;
 
-	      //Resulotion for planar (Si hits)
-	      double du = planarhit->getdU() * dd4hep::mm  ;
-	      double dv = planarhit->getdV() * dd4hep::mm  ;
-		    
-	      //std::cout << " U resolution " << du << " V resolution " << dv << std::endl;
-				      
-	      precision.push_back( 1. /  (du*du) ) ;
-	      precision.push_back( 1. /  (dv*dv) ) ;
-	    }
-		
+	  if (planarhit != NULL) {
+
+	    du = planarhit->getdU() * dd4hep::mm  ;
+	    dv = planarhit->getdV() * dd4hep::mm  ;
+	    
+	  } else {
+	    
+	    du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+	    dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+	  }
+	  
+	  //we need 1./variance for the precision:
+	  //what are the values for resolutiuon?
+	  
+	  precision[0] =  1. /  (du*du) ;
+	  precision[1] =  1. /  (dv*dv) ;
+	  
 	  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
 		
 	  outTrk->addHit(*thit) ;
