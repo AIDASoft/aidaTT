@@ -1,6 +1,6 @@
 #ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
-#ifdef USE_MarlinUtil
+
 
 #include "lcio.h"
 #include "IO/LCReader.h"
@@ -21,10 +21,6 @@
 #include "DD4hep/LCDD.h"
 #include "DD4hep/DD4hepUnits.h"
 #include "DDRec/SurfaceHelper.h"
-
-// MarlinUtil
-#include "HelixClass.h"
-
 
 // aidaTT
 #include "AidaTT.hh"
@@ -407,6 +403,5 @@ int main(int argc, char** argv)
   return 0;
 }
 
-#endif // USE_MarlinUtil
 #endif // USE_LCIO
 #endif // USE_DD4HEP
