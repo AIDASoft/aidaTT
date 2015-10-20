@@ -88,7 +88,7 @@ namespace aidaTT
 
 
 
-  const fitResults* trajectory::getFitResults(long label)
+  const fitResults* trajectory::getFitResults(int label)
   {
     return _fittingAlgorithm->getResults(label);
   }
