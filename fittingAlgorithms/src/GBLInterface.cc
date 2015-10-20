@@ -93,10 +93,9 @@ namespace aidaTT
 	    // fixed size of arguments: 2D in measurements!
 	    point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
 	    //point.addMeasurement(pL2M, TVectorD(2, resid), precision);
-
-	    point.setLabel( (*element)->surface().id() ) ;
 	  }
-
+	
+	
 	if((*element)->isScatterer())
 	  {
 
@@ -135,6 +134,10 @@ namespace aidaTT
 
 
 	    std::vector<double> precision = (*element)->precisions();
+
+	    // fg: get the multiple scattering sigma from the precision vector - either first element or first element after measurement's precisions
+	    double qms = (  (*element)->hasMeasurement() ?  precision[  (*element)->measurementDimension() ] : precision[0]   )  ;
+	    
 	    //TMatrixDSym precision = (*element)->precisions();
 	    /*
 	      TMatrixD pL2M_T(2, 2);
@@ -143,7 +146,7 @@ namespace aidaTT
 	      pL2M_T(0, 1) = projLocal2Meas.at(2);
 	      pL2M_T(1, 1) = projLocal2Meas.at(3);
 	    */
-	    std::cout << " what's the precision " << precision[0] << std::endl ;
+	    std::cout << " what's the precision " << qms << std::endl ;
 	    /*
 	      TMatrixD Var(2,2);
 	      Var(0, 0) = 1.*precision[0];
@@ -162,7 +165,7 @@ namespace aidaTT
 	    //std::cout << " Variance matrix determinant " << det << std::endl ;
 
 	    double Scalar_value = 0 ;
-	    Scalar_value = (1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1))*(1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1)) / precision[0] ;
+	    Scalar_value = (1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1))*(1 - pL2M(0, 0)*pL2M(0, 0) - pL2M(1, 1)*pL2M(1, 1)) / qms ;
 
 	    TMatrixDSym Vk_sym(2);
 	    Vk_sym(0, 0) = Scalar_value * (1 - pL2M(0, 0)*pL2M(0, 0));

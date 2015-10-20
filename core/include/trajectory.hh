@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 #include <TMath.h>
 
 #include "trackParameters.hh"
@@ -63,8 +64,19 @@ namespace aidaTT
 
     ///~ add a measurement/hit to trajectory; identified by:
     ///~     a position, the resolution, the surface and some id
-    void addMeasurement(const Vector3D&, const std::vector<double>&, const ISurface&, void*);
-    //void addMeasurement(const Vector3D&, const TMatrixDSym&, const ISurface&, void*);
+    void addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id, bool isScatterer=false ) ;
+
+    /** Compute the multiple scattering parameter for the track at the given surface, 
+     *  either using specified parameters (if given) or reference parameters.
+     *  Returns 0. if no interesection is found.
+     */
+    double computeQMS( const ISurface* surface, const trackParameters* tp= 0) ;
+    
+    /// add a scatterer for the track going through the surface
+    void addScatterer( const ISurface& surface ) ;
+
+
+
 
     ///~ TODO:: needs more thought!
     ///~ manually add an element to the trajectory; e.g. a point of interest
@@ -73,7 +85,6 @@ namespace aidaTT
     void addElement(const Vector3D&, const ISurface&, void* id);
     // add a scatterer
     void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
-    //void addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface, const trackParameters& seed_tp, void* id); // alternative constructor for addScatterer that utilises a symmetric matrix for precision
 
     ///~ test whether/where a surface is intersected
     bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);
@@ -128,11 +139,29 @@ namespace aidaTT
 
     double _bfieldZ;
 
+    /// helper struct for caching the surface intersections
+    struct SurfIntersection{
+      const ISurface* Surf ;
+      double  S ;
+      Vector2D UV ;
+      Vector3D XX ;
+      SurfIntersection(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx ) : 
+	Surf( surf ) ,
+	S( s) ,
+	UV( *localUV )  ,
+	XX( *xx )   {}
+    } ;
+    /// map for caching surface intersections
+    typedef std::map<const ISurface*, SurfIntersection> SIMap ;
+    
+    SIMap _surfIntersections ; 
+
   public:
 
     bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
     void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*, Vector3D* = NULL);
       
+  protected:
     bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
     bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
     bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);

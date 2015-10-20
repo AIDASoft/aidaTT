@@ -15,6 +15,9 @@
 
 namespace aidaTT
 {
+  
+    
+
   // constructor (A) for a trajectory -- track found, but needs fitting
   trajectory::trajectory(const trackParameters& tp, IFittingAlgorithm* fa,
 			 const IBField* bfield, IPropagation* pm, const IGeometry* geom)
@@ -76,37 +79,60 @@ namespace aidaTT
 
     for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
       {
-	double s = 0.; /// random value for init, never used
-	bool intersects = _calculateIntersectionWithSurface(*surf, s);
-
+	double s = 0.;  
+	
+	bool intersects = _calculateIntersectionWithSurface(*surf, s );
+	
 	if(intersects)
 	  _intersectionsList.push_back(std::make_pair(s, (*surf)));
       }
-
+    
     return _intersectionsList;
   }
-
-
-
+  
+  
+  
   const fitResults* trajectory::getFitResults(int label)
   {
     return _fittingAlgorithm->getResults(label);
   }
-
-
-
+  
+  
+  
   bool trajectory::_calculateIntersectionWithSurface(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
   {
+
+    // check if we have a chached intersection
+    SIMap::iterator it = _surfIntersections.find( surf ) ;
+    if( it != _surfIntersections.end() ) {
+      s = it->second.S ;
+      if(localUV) *localUV = it->second.UV ;
+      if(xx) *xx = it->second.XX ;
+      return true ;
+    }
+
+    bool intersects = false ;
+    
+    static Vector2D _localUV ;
+    static Vector3D _xx ;
+    
+    if( localUV == 0 ) localUV = &_localUV ;
+    if( xx == 0 ) xx = &_xx ;
+    
     /// currently three different types of surfaces are available
     if(surf->type().isZCylinder())
-      return _intersectsWithinZCylinderBounds(surf, s, localUV, xx);
+      intersects = _intersectsWithinZCylinderBounds(surf, s, localUV, xx);
     else if(surf->type().isZPlane())
-      return _intersectWithinZPlaneBounds(surf, s, localUV, xx);
+      intersects = _intersectWithinZPlaneBounds(surf, s, localUV, xx);
     else if(surf->type().isZDisk())
-      return _intersectWithinZDiskBounds(surf, s, localUV, xx);
-    else
-      return false ; 
-    //     throw std::invalid_argument("[aidaTT::trajectory::getIntersectionWithSurfaces] Unknown surface type!");
+      intersects = _intersectWithinZDiskBounds(surf, s, localUV, xx);
+    
+
+    if( intersects ){ // cache result
+      _surfIntersections.insert( std::make_pair(  surf, SurfIntersection( surf, s, localUV, xx ) ) ) ;
+    }
+
+    return intersects ;
   }
 
 
@@ -421,6 +447,71 @@ namespace aidaTT
     localUV->v() = local.v();
   }
 
+
+  double trajectory::computeQMS( const ISurface* surface, const trackParameters* tp){
+    
+    double s ; Vector2D uv ; Vector3D position ;
+    double intersects = _calculateIntersectionWithSurface( surface, s , &uv, &position );
+    
+    if( ! intersects ) 
+      return 0 ;
+
+    aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
+    
+    moveHelixTo( test_tp, position ) ; // move helix to the scatterer
+    
+    Vector5 hel = test_tp.parameters();
+    
+    double omega  = hel(OMEGA);
+    double tnl    = hel(TANL); 
+    double phi0   = hel(PHI0);
+    
+    
+    const DDSurfaces::IMaterial& material_inn = surface->innerMaterial();
+    const DDSurfaces::IMaterial& material_out = surface->outerMaterial();
+    
+    const double r_i = surface->innerThickness();
+    const double r_o = surface->outerThickness();
+    
+    const double X0_o = material_out.radiationLength();
+    const double X0_i = material_inn.radiationLength();
+    
+    double r_tot = r_i + r_o ;
+    
+    //calculation of effective radiation length of the surface
+    //double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
+    double X0_eff = ( r_i/X0_i + r_o/X0_o ) / ( r_i + r_o ) ; 
+    
+    //calculation of the path of the particle inside the material
+    //compute path as projection of (straight) track to surface normal:
+    DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
+    DDSurfaces::Vector3D up = p.unit() ;
+    
+    // need to get the normal at crossing point 
+    const DDSurfaces::Vector3D& n = surface->normal( position ) ;
+    
+    
+    double cosTrk = std::fabs( up * n )  ;
+    
+    double path = r_i + r_o ;
+    
+    //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
+    path = path/cosTrk ; 
+    
+    double X_X0 = path * X0_eff ;
+    
+    double Pt = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
+    double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
+    
+    static const double mass = 0.13957018; // pion mass [GeV]
+    double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
+    
+    double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
+
+    return Qms ;
+  }
+
+
   void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id)
   //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
   {
@@ -524,19 +615,22 @@ namespace aidaTT
 
 
 
-  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id)
-  //void trajectory::addMeasurement(const Vector3D& position, const TMatrixDSym& precision, const ISurface& surface, void* id)
+  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id, bool isScatterer)
   {
-
-    //std::cout << " I am calling addMeasurenet " << std::endl ;
 
     /// get reference information
     Vector2D referenceUV ;
     double s =  0;
     double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
-    std::cout << "MEASUREMENT surface " << surface << " arc length " << s << std::endl ;
-
+    if( !intersects ){
+      
+      std::cout << " ERROR: trajectory::addMeasurement() hit at " << position << "  does not intersect with surface : " <<  surface
+		<< "        hit will be ignored ! " << std::endl ;
+      
+      return ;
+    }
+    
     /// calculate measurement info
     Vector2D measuredUV(surface.globalToLocal(position));
 
@@ -552,19 +646,44 @@ namespace aidaTT
     measDir->push_back(surface.u(position));
     measDir->push_back(surface.v(position));
 
-    if(intersects)
-      {
-	_initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id));
-      }
-    else
-      {
-	delete measDir ;
-	      
-	std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
-		  << "        hit will be ignored ! " << std::endl ;
-      }
+
+    std::vector<double> new_prec = precision ;
+
+    if( isScatterer ){ // also  add a scattering to the trajectory element
+      
+      double qms = computeQMS( &surface ) ;
+      
+      new_prec.push_back(  qms*qms  ) ;
+    }
+    
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id , isScatterer ));
   }
 
+  void trajectory::addScatterer( const ISurface& surface ){
+    
+    double s ; Vector2D uv ; Vector3D position ;
+    double intersects = _calculateIntersectionWithSurface( &surface, s , &uv, &position );
+    
+    if( !intersects ){
+      std::cout << " ERROR: trajectory::addScatterer: track does not intersect with surface : " <<  surface << std::endl ;      
+      return ;
+    }
+
+    std::vector<double> residuals(2);
+    residuals[0] = 0 ;
+    residuals[1] = 0 ;
+
+    std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
+    measDir->push_back(surface.u(position));
+    measDir->push_back(surface.v(position));
+
+    double qms = computeQMS( &surface ) ;
+    
+    std::vector<double> precision(1) ;
+    precision[0] =  qms*qms  ;
+    
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), 0 , true ));
+  }
 
 
   void trajectory::addElement(const Vector3D& point, void* id)
