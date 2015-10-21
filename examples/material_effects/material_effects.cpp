@@ -79,13 +79,8 @@ int main(int argc, char** argv)
 
     const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
-    // create map of surfaces
-    std::map< long, const aidaTT::ISurface* > surfMap ;
-
-    for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
-        {
-            surfMap[(*surf)->id() ] = (*surf) ;
-        }
+    //create map of hits
+    std::map< long, EVENT::TrackerHit* > hitMap ;
 
     /// lcio stuff
     std::string lcioFileName = argv[2] ;
@@ -190,11 +185,6 @@ int main(int argc, char** argv)
                 continue;
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
-	    // checking lcio track
-	    std::cout << " checking lcio track " << std::endl ;
-	    double lcio_omega = initialTrack->getOmega() ;
-	    double lcio_mom = ( fabs(1./lcio_omega ) / 1000.0 ) ;
-	    std::cout << " lcio omega par. " << lcio_omega << " P of initial track = " << lcio_mom << " Phi0 " << initialTrack->getPhi() <<  std::endl ;
 
             aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(lcio::TrackState::AtIP)));
 
@@ -219,29 +209,37 @@ int main(int argc, char** argv)
 	    //********************************************************************************************
 
 
-	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
-	      {
-		long hitid = (*thit)->getCellID0() ;
-		idDecoder.setValue(hitid) ;
-		
-		const aidaTT::ISurface* surf = surfMap[ hitid ] ;
-		
-		if(surf == NULL)
-		  {
-		    std::cerr << " material_effects : no surface found for id : " << idDecoder.valueString() << std::endl ;
-		    continue;
-		  }
-		
-		
-		double hitpos[3] = {0., 0., 0.};
-		for(unsigned int i = 0; i < 3; ++i)
-		  hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
-		
-		std::cout << " hit radius " << sqrt(hitpos[0]*hitpos[0] + hitpos[1]*hitpos[1])  << std::endl ;
+	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit) {
+	      long hitid = (*thit)->getCellID0() ;
+	      idDecoder.setValue(hitid) ;
+	      
+	      hitMap[hitid] = (*thit);
+
+	      std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
+
+	    }		
+	    
+
+	    std::vector<std::pair<double, const ISurface*> > CrossedSurfs = fitTrajectory.getIntersectionsWithSurfaces(surfaces);
+	    
+	    for(std::vector<std::pair<double, const aidaTT::ISurface*> >::iterator test = CrossedSurfs.begin(), fin = CrossedSurfs.end(); test < fin; ++test){
+	      
+	      std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
+
+	      std::cout << " id of the surface " << (*test).second->id() << std::endl;
+	      
+	      if (hitMap[(*test).second->id()] !=NULL){
+
+		EVENT::TrackerHit* testHit = hitMap[(*test).second->id()];
+		std::cout << " I am reading hit " << testHit << " from map " << std::endl ;
+
+		const aidaTT::Vector3D hitpos(testHit->getPosition()[0] * dd4hep::mm, testHit->getPosition()[1] * dd4hep::mm, testHit->getPosition()[2] * dd4hep::mm );
 		
 		std::vector<double> precision;
+
+		long ID = (*test).second->id();
 		
-		TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
+		TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(testHit);
 		if(planarhit != NULL)
 		  {
 		    //we need 1./variance for the precision:
@@ -252,121 +250,17 @@ int main(int argc, char** argv)
 		    precision.push_back(1. / (dv * dv)) ;
 		  }
 		
-		fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
-		
-		//std::cout << " adding hit surface to the trajectory with ID " << surf << " and description "   << *surf << std::endl;
-		
-		aidaTT::Vector3D InteractionPoint(0.,0.,0.);
-		std::cout << " distance of surface form IP " << surf->distance(InteractionPoint) << std::endl;
-		
-		outTrk->addHit(*thit) ;
-		
-		//std::map< int, const aidaTT::ISurface* > measSurfs ;
-		//measSurfs.insert( std::pair<int,const aidaTT::ISurface*>((*thit),*surf) ) ;
-		std::cout << " I am adding surface " << surf->id() << " to the vector of measurement surfaces " << std::endl ;
-		measSurfs.push_back(surf) ;
+		fitTrajectory.addMeasurement(hitpos, precision, *(*test).second, &ID, true);
+
+		outTrk->addHit(testHit) ;
+
 	      }
-	    std::cout << " no of meaurement surfaces = " << measSurfs.size() << std::endl; 
-
-
-
-	    //******************************************************************************
-	    // adding the scattering surfaces to the trajectory
-	    //******************************************************************************
-	    /*	    
-	    // loop in measurement surfaces
-	    for (int ss = 0 ; ss < measSurfs.size() - 1 ; ss++){
+	      else
+		fitTrajectory.addScatterer(*(*test).second);
 	      
 
-	      std::cout << " size of measurement surfaces " <<  measSurfs.size() << std::endl ;
-
-	      const aidaTT::ISurface* scat1 = measSurfs[ss] ;
-	      const aidaTT::ISurface* scat2 = measSurfs[ss+1] ;
-
-	      std::cout << " surface 1  " << scat1->id() << " surface 2  " << scat2->id() << std::endl ; 
-	      
-	      // arclength of the thin scatterers that describe the material between 2 adjacent measurements
-	      double sScat1 = 0 ;
-	      double sScat2 = 0 ;
-	      double arcLen1 = 0 ; 
-	      double arcLen2 = 0 ; 
-	      
-	      arcLen1 = fabs(scat1->distance(IntPoint));
-	      arcLen2 = fabs(scat2->distance(IntPoint));
-	      
-	      sScat1 = ((arcLen1+arcLen2) / 2.) - ((arcLen2-arcLen1) / 3.46) ;
-	      sScat2 = ((arcLen1+arcLen2) / 2.) + ((arcLen2-arcLen1) / 3.46) ;
-
-	      std::cout << " arc length of examined surface " << arcLen1 << " arc length of next surface " << arcLen2 << " first scatterer at " << sScat1 << " second sscatterer at " << sScat2 << std::endl ;
-	      
-	      aidaTT::Vector3D* xing_point = new aidaTT::Vector3D();
-	      aidaTT::Vector2D* local_xing_point = new aidaTT::Vector2D();
-	      double s = 0.;
-	      
-	      bool yesItCrosses = fitTrajectory._calculateIntersectionWithSurface( scat1, s, local_xing_point, xing_point ) ;
-	      
-	      if (yesItCrosses && s > 0 ) {
-		
-		// there is no precision, we don't account for the hit here, just for the material
-		std::vector<double> npidm;
-		npidm.push_back( 0 ) ;
-		
-		trackParameters seed_tp = fitTrajectory.getInitialTrackParameters() ;
-		
-		fitTrajectory.addScatterer(*xing_point, npidm, *scat1, seed_tp, sScat1, &ID);
-		fitTrajectory.addScatterer(*xing_point, npidm, *scat1, seed_tp, sScat2, &ID);
-	      }
-	      
-	    } // end of loop in measurement surfaces
-	    */
-	    
-	    
-	    int SurfCounter = 0 ;
-	    
-	    // loop in elements of surface map
-	    map<long, const aidaTT::ISurface*>::iterator it;
-	    
-	    for (it = surfMap.begin(); it != surfMap.end(); it++){
-	      
-	      // flag that shows wether the current surface has been added to the trajectory as a measurement surface
-	      int flagNotUse = 0 ;
-	      
-	      const aidaTT::ISurface* test_surf ;
-	      test_surf = it->second;
-	      
-	      long ID = it->first;
-	      
-	      //DDSurfaces::SurfaceType testType = test_surf->type();
-	      
-	      aidaTT::Vector3D* xing_point = new aidaTT::Vector3D();
-	      aidaTT::Vector2D* local_xing_point = new aidaTT::Vector2D();
-	      double s = 0.;
-	      
-	      bool yesItCrosses = fitTrajectory._calculateIntersectionWithSurface( test_surf, s, local_xing_point, xing_point ) ;
-	      
-	      if (yesItCrosses && s > 0 ) {
-		
-	      SurfCounter++;	
-	      
-	      // there is no precision, we don't account for the hit here, just for the material
-	      std::vector<double> npidm;
-	      npidm.push_back( 0 ) ;
-	      
-	      trackParameters seed_tp = fitTrajectory.getInitialTrackParameters() ;
-	      
-	      fitTrajectory.addScatterer(*xing_point, npidm, *test_surf, seed_tp, &ID);
-	      //std::cout << " adding scattering surface to the trajectory with ID " << test_surf << " and description "   << *test_surf << std::endl;
-	      
-	      aidaTT::Vector3D InteractionPoint2(0.,0.,0.);
-	      std::cout << " distance of surface form IP " << test_surf->distance(InteractionPoint2) << std::endl;
-	      
-	      //}
-	      }
 	    }
-	    
-	      std::cout << " trajectory intersects " << SurfCounter << " scattering surfaces " << std::endl;
-	    
-	    
+
 	    
 	    fitTrajectory.prepareForFitting();
 	    
@@ -425,6 +319,8 @@ int main(int argc, char** argv)
             outTrk->addTrackState(ts);
 
             wrt->writeEvent(evt) ;
+
+	    hitMap.clear();
 
         }
 
