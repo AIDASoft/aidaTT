@@ -143,7 +143,7 @@ namespace aidaTT
 
 	    TMatrixDSym Vk_sym(2);
 	    double Scalar_value = 0 ;
-	    Scalar_value = (1 - c1*c1 - c2*c2) / qms ;
+	    Scalar_value = ((1 - c1*c1 - c2*c2)*(1 - c1*c1 - c2*c2)) / qms ;
 	    Vk_sym(0, 0) = Scalar_value * (1 - c1*c1);
 	    Vk_sym(0, 1) = -1.*Scalar_value * c1*c2;
 	    Vk_sym(1, 0) = -1.*Scalar_value * c1*c2;
@@ -151,7 +151,7 @@ namespace aidaTT
 	    
 
 	    point.addScatterer( TVectorD(2, resid), Vk_sym);
-
+	    std::cout << " projection c1 = " << c1 << " projection c2 = " << c2 << std::endl ;
 
 	  }
 

@@ -456,7 +456,10 @@ namespace aidaTT
     if( ! intersects ) 
       return 0 ;
 
-    aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
+    static const double kPi    = M_PI ;
+    static const double kTwoPi = 2.0 * kPi;
+
+   aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
     
     moveHelixTo( test_tp, position ) ; // move helix to the scatterer
     
@@ -464,8 +467,13 @@ namespace aidaTT
     
     double omega  = hel(OMEGA);
     double tnl    = hel(TANL); 
-    double phi0   = hel(PHI0);
+    //double phi0   = hel(PHI0);
+
+    double phi0 = hel(PHI0) - M_PI / 2. ;
     
+    while(phi0 < 0.)      phi0 += kTwoPi;
+    while(phi0 > kTwoPi)  phi0 -= kTwoPi;
+
     
     const DDSurfaces::IMaterial& material_inn = surface->innerMaterial();
     const DDSurfaces::IMaterial& material_out = surface->outerMaterial();
@@ -490,6 +498,8 @@ namespace aidaTT
     c1 = up * surface->u(position);
     c2 = up * surface->v(position);
     
+    std::cout << " Projections : c1 " << c1 << " c2 " << c2 << std::endl ;
+
     // need to get the normal at crossing point 
     const DDSurfaces::Vector3D& n = surface->normal( position ) ;
     
@@ -511,7 +521,7 @@ namespace aidaTT
     
     double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
 
-    std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms2 = " << Qms*Qms << std::endl;
+    std::cout << " omega par " << omega << " Tanl " << tnl << " Phi0 " << phi0 << " mom " << mom << " beta " << beta << " thickness " << r_tot << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms2 = " << Qms*Qms << std::endl;
 
     return Qms ;
   }

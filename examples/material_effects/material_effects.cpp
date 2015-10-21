@@ -186,6 +186,10 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
+	    std::cout << " LCIO Phi at IP " << initialTrack->getPhi() << std::endl;
+	    const EVENT::TrackState *TrackStateAtFirstHit = (initialTrack->getTrackState(lcio::TrackState::AtFirstHit));
+ 	    std::cout << " LCIO Phi at first hit " << TrackStateAtFirstHit->getPhi() << std::endl;
+
             aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(lcio::TrackState::AtIP)));
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
