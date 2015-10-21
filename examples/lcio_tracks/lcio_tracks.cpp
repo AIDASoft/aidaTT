@@ -196,16 +196,17 @@ int main(int argc, char** argv)
 
       //*****************************************************************************************************
       // Simple test of MoveTo function
-      std::cout << " parameters of lcioo track at IP " << iTP << std::endl ;
-      //aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
-      //std::cout << " parameters of lcioo track at the first hit " << iTP_AtFirstHit << std::endl ;
+      //std::cout << " parameters of lcioo track at IP " << iTP << std::endl ;
+      aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
+      std::cout << " parameters of lcioo track at the first hit " << iTP_AtFirstHit << std::endl ;
+      aidaTT::Vector3D firstHit = iTP_AtFirstHit.referencePoint();
+      moveHelixTo( iTP, firstHit, true  ) ;
+     std::cout << " parameters of lcioo track moved to the first hit" << iTP << std::endl ;
 
-
-
-      moveHelixTo( iTP, aidaTT::Vector3D(1.,1.,1.), true  ) ;
-      std::cout << " parameters of lcioo track at random point " << iTP << std::endl ;
-      moveHelixTo( iTP, aidaTT::Vector3D(), true  ) ;
-      std::cout << " parameters of lcioo track moved to a random point and then back to IP" << iTP << std::endl ;
+     //moveHelixTo( iTP, aidaTT::Vector3D(1.,1.,1.), true  ) ;
+     //std::cout << " parameters of lcioo track at random point " << iTP << std::endl ;
+     //moveHelixTo( iTP, aidaTT::Vector3D(), true  ) ;
+     //std::cout << " parameters of lcioo track moved to a random point and then back to IP" << iTP << std::endl ;
       //****************************************************************************************************
 
 #define compute_start_helix 1

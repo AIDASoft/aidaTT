@@ -245,9 +245,12 @@ int main(int argc, char** argv)
 		    //we need 1./variance for the precision:
 		    double du = planarhit->getdU() * dd4hep::mm  ;
 		    double dv = planarhit->getdV() * dd4hep::mm  ;
-		    
+
 		    precision.push_back(1. / (du * du)) ;
 		    precision.push_back(1. / (dv * dv)) ;
+
+		    std::cout << " precision U " << 1. / (du * du) << " V " <<  1. / (dv * dv) << std::endl;
+		    
 		  }
 		
 		fitTrajectory.addMeasurement(hitpos, precision, *(*test).second, &ID, true);

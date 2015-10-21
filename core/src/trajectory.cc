@@ -508,6 +508,8 @@ namespace aidaTT
     
     double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
 
+    std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms2 = " << Qms*Qms << std::endl;
+
     return Qms ;
   }
 
@@ -652,7 +654,7 @@ namespace aidaTT
     if( isScatterer ){ // also  add a scattering to the trajectory element
       
       double qms = computeQMS( &surface ) ;
-      
+
       new_prec.push_back(  qms*qms  ) ;
     }
     
@@ -681,8 +683,10 @@ namespace aidaTT
     
     std::vector<double> precision(1) ;
     precision[0] =  qms*qms  ;
-    
-    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), 0 , true ));
+   
+    std::cout << " addScatterer : what I am passing as qms2 value to prec. vector " << qms*qms << std::endl;
+       
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), 0 , true, false ));
   }
 
 

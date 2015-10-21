@@ -54,6 +54,8 @@ namespace aidaTT
 	if((*element)->hasMeasurement())
 	  {
 
+	    std::cout << " Do I have a measurement ? " << std::endl ;
+
 	    /// three elements are needed to add a measurement to a gblpoint:
 	    /// 1) the projection matrix from the local track frame to the measurement system
 	    /// 2) the residuals in the measurement directions
@@ -146,7 +148,7 @@ namespace aidaTT
 	      pL2M_T(0, 1) = projLocal2Meas.at(2);
 	      pL2M_T(1, 1) = projLocal2Meas.at(3);
 	    */
-	    std::cout << " what's the precision " << qms << std::endl ;
+
 	    /*
 	      TMatrixD Var(2,2);
 	      Var(0, 0) = 1.*precision[0];
@@ -223,8 +225,8 @@ namespace aidaTT
 
 
 
-    _trajectory->printTrajectory(100) ;
-    _trajectory->printPoints(100) ;
+    //_trajectory->printTrajectory(100) ;
+    //_trajectory->printPoints(100) ;
 
 
     if(returnValue == 0)
