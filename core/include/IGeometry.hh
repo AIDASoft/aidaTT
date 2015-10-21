@@ -26,6 +26,7 @@ namespace aidaTT
   using DDSurfaces::ICylinder ;
   using DDSurfaces::IMaterial ;
   using DDSurfaces::Vector2D ;
+  using DDSurfaces::Vector3D ;
   using namespace DDSurfaces ;
     // typedef DDSurfaces::ISurface ISurface;
     // typedef DDSurfaces::ICylinder ICylinder;
