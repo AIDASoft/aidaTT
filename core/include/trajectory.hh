@@ -70,7 +70,7 @@ namespace aidaTT
      *  either using specified parameters (if given) or reference parameters.
      *  Returns 0. if no interesection is found.
      */
-    double computeQMS( const ISurface* surface, const trackParameters* tp= 0) ;
+    double computeQMS( const ISurface* surface, double &c1, double &c2, const trackParameters* tp= 0) ;
     
     /// add a scatterer for the track going through the surface
     void addScatterer( const ISurface& surface ) ;

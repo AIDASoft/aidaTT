@@ -448,7 +448,7 @@ namespace aidaTT
   }
 
 
-  double trajectory::computeQMS( const ISurface* surface, const trackParameters* tp){
+  double trajectory::computeQMS( const ISurface* surface, double& c1, double& c2, const trackParameters* tp){
     
     double s ; Vector2D uv ; Vector3D position ;
     double intersects = _calculateIntersectionWithSurface( surface, s , &uv, &position );
@@ -486,6 +486,9 @@ namespace aidaTT
     //compute path as projection of (straight) track to surface normal:
     DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
     DDSurfaces::Vector3D up = p.unit() ;
+
+    c1 = up * surface->u(position);
+    c2 = up * surface->v(position);
     
     // need to get the normal at crossing point 
     const DDSurfaces::Vector3D& n = surface->normal( position ) ;
@@ -653,9 +656,12 @@ namespace aidaTT
 
     if( isScatterer ){ // also  add a scattering to the trajectory element
       
-      double qms = computeQMS( &surface ) ;
+      double c1 = 0 ; double c2 = 0 ; 
+      double qms = computeQMS( &surface, c1, c2 ) ;
 
       new_prec.push_back(  qms*qms  ) ;
+      new_prec.push_back(  c1  ) ;
+      new_prec.push_back(  c2  ) ;
     }
     
     _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id , isScatterer ));
@@ -679,10 +685,13 @@ namespace aidaTT
     measDir->push_back(surface.u(position));
     measDir->push_back(surface.v(position));
 
-    double qms = computeQMS( &surface ) ;
+    double c1 = 0 ; double c2 = 0 ; 
+    double qms = computeQMS( &surface, c1, c2 ) ;
     
-    std::vector<double> precision(1) ;
+    std::vector<double> precision(3) ;
     precision[0] =  qms*qms  ;
+    precision[1] = c1 ;
+    precision[2] = c2 ;
    
     std::cout << " addScatterer : what I am passing as qms2 value to prec. vector " << qms*qms << std::endl;
        
