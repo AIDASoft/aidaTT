@@ -132,7 +132,7 @@ int main(int argc, char** argv)
 
     LCEvent* evt = 0 ;
 
-    std::string trackCollectionName = "SiTracks";
+    std::string trackCollectionName = "ClupatraTracks";
 
     UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
 
@@ -243,23 +243,30 @@ int main(int argc, char** argv)
 
 		long ID = (*test).second->id();
 		
+		double du;
+		double dv;
+
 		TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(testHit);
-		if(planarhit != NULL)
-		  {
-		    //we need 1./variance for the precision:
-		    double du = planarhit->getdU() * dd4hep::mm  ;
-		    double dv = planarhit->getdV() * dd4hep::mm  ;
-
-		    precision.push_back(1. / (du * du)) ;
-		    precision.push_back(1. / (dv * dv)) ;
-
-		    std::cout << " precision U " << 1. / (du * du) << " V " <<  1. / (dv * dv) << std::endl;
-		    
-		  }
+		if(planarhit != NULL){
+		  //we need 1./variance for the precision:
+		  du = planarhit->getdU() * dd4hep::mm  ;
+		  dv = planarhit->getdV() * dd4hep::mm  ;
+		}
 		
-		fitTrajectory.addMeasurement(hitpos, precision, *(*test).second, &ID, true);
 
+		else {
+		  const FloatVec& TPChitCovMat = testHit->getCovMatrix();
+		  du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+		  dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+		}
+
+		precision.push_back(1. / (du * du)) ;
+		precision.push_back(1. / (dv * dv)) ;
+		
+		//std::cout << " precision U " << 1. / (du * du) << " V " <<  1. / (dv * dv) << std::endl;
+		fitTrajectory.addMeasurement(hitpos, precision, *(*test).second, &ID, true);		
 		outTrk->addHit(testHit) ;
+
 
 	      }
 	      else
