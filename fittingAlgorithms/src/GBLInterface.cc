@@ -54,7 +54,7 @@ namespace aidaTT
 	if((*element)->hasMeasurement())
 	  {
 
-	    std::cout << " Do I have a measurement ? " << std::endl ;
+	    // std::cout << " Do I have a measurement ? " << std::endl ;
 
 	    /// three elements are needed to add a measurement to a gblpoint:
 	    /// 1) the projection matrix from the local track frame to the measurement system
@@ -161,7 +161,7 @@ namespace aidaTT
 	    */
 
 	    point.addScatterer( TVectorD(2, resid), Vk_sym);
-	    std::cout << " projection c1 = " << c1 << " projection c2 = " << c2 << std::endl ;
+	    //	    std::cout << " projection c1 = " << c1 << " projection c2 = " << c2 << std::endl ;
 
 	  }
 

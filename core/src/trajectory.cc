@@ -8,10 +8,11 @@
 #include "intersections.hh"
 #include "utilities.hh"
 #include "fiveByFiveMatrix.hh"
+#include "aidaTT-units.hh"
 
-#ifdef AIDATT_USE_DD4HEP
-#include "DD4hep/DD4hepUnits.h"
-#endif // AIDATT_USE_DD4HEP
+// #ifdef AIDATT_USE_DD4HEP
+// #include "DD4hep/DD4hepUnits.h"
+// #endif // AIDATT_USE_DD4HEP
 
 namespace aidaTT
 {
@@ -68,6 +69,15 @@ namespace aidaTT
   }
 
 
+  struct SortWithS{
+
+    bool operator()(const std::pair<double, const ISurface*>& i0,
+		  const std::pair<double, const ISurface*>& i1  ){
+      return i0.first < i1.first ;
+    }
+
+  };
+
 
   const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces(const std::list<const aidaTT::ISurface*>& surfaces)
   {
@@ -83,10 +93,13 @@ namespace aidaTT
 	
 	bool intersects = _calculateIntersectionWithSurface(*surf, s );
 	
-	if(intersects)
+	// only keep intersections at positve s
+	if( intersects && s >= 0. )
 	  _intersectionsList.push_back(std::make_pair(s, (*surf)));
       }
     
+    std::sort( _intersectionsList.begin() , _intersectionsList.end() , SortWithS() ) ;
+
     return _intersectionsList;
   }
   
@@ -497,7 +510,7 @@ namespace aidaTT
     c1 = up * surface->u(position);
     c2 = up * surface->v(position);
     
-    std::cout << " Projections : c1 " << c1 << " c2 " << c2 << std::endl ;
+    //    std::cout << " Projections : c1 " << c1 << " c2 " << c2 << std::endl ;
 
     // need to get the normal at crossing point 
     const DDSurfaces::Vector3D& n = surface->normal( position ) ;
@@ -512,7 +525,9 @@ namespace aidaTT
     
     double X_X0 = path * X0_eff ;
     
-    double Pt = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
+    double Pt = ( fabs(1./omega ) * _bfieldZ * convertBr2P_cm ) ;  // That's Pt
+
+
     double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
     
     static const double mass = 0.13957018; // pion mass [GeV]
@@ -720,7 +735,7 @@ namespace aidaTT
     precision[1] = c1 ;
     precision[2] = c2 ;
    
-    std::cout << " addScatterer : what I am passing as qms2 value to prec. vector " << qms*qms << std::endl;
+    // std::cout << " addScatterer : what I am passing as qms2 value to prec. vector " << qms*qms << std::endl;
        
     _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), 0 , true, false ));
   }
