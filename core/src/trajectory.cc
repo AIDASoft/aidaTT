@@ -72,7 +72,7 @@ namespace aidaTT
   struct SortWithS{
 
     bool operator()(const std::pair<double, const ISurface*>& i0,
-		  const std::pair<double, const ISurface*>& i1  ){
+		    const std::pair<double, const ISurface*>& i1  ){
       return i0.first < i1.first ;
     }
 
@@ -87,14 +87,18 @@ namespace aidaTT
     /// 3. choose the one with the smaller s (!), if needed
     /// 4. build the vector with pairs of s and surface
 
+    const double radius  = std::fabs( calculateRadius(_referenceParameters) ) ;
+
+    double maxS = M_PI * radius ;
+
     for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
       {
 	double s = 0.;  
 	
 	bool intersects = _calculateIntersectionWithSurface(*surf, s );
 	
-	// only keep intersections at positve s
-	if( intersects && s >= 0. )
+	// only keep intersections at positve s in the first half arc
+	if( intersects && s >= 0. && s < maxS )
 	  _intersectionsList.push_back(std::make_pair(s, (*surf)));
       }
     
@@ -472,7 +476,7 @@ namespace aidaTT
     static const double kPi    = M_PI ;
     static const double kTwoPi = 2.0 * kPi;
 
-   aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
+    aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
     
     moveHelixTo( test_tp, position ) ; // move helix to the scatterer
     
@@ -482,9 +486,9 @@ namespace aidaTT
     double tnl    = hel(TANL); 
     double phi0   = hel(PHI0);
     /*
-    double phi0 = hel(PHI0) - M_PI / 2. ;   
-    while(phi0 < 0.)      phi0 += kTwoPi;
-    while(phi0 > kTwoPi)  phi0 -= kTwoPi;
+      double phi0 = hel(PHI0) - M_PI / 2. ;   
+      while(phi0 < 0.)      phi0 += kTwoPi;
+      while(phi0 > kTwoPi)  phi0 -= kTwoPi;
     */
     
     const DDSurfaces::IMaterial& material_inn = surface->innerMaterial();
@@ -536,21 +540,21 @@ namespace aidaTT
     double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.038*(TMath::Log(X_X0)));
     aidaTT::Vector3D OriginPoint(0,0,0);
 
-    std::cout << " ** in  aidaTT::ComputeQMS: "
-	                  << "\n distance: " << surface->distance(OriginPoint)
-			  << "\n inner material: " << material_inn.name()  
-			  << "\n outer material: " << material_out.name()  
-	                  << "\n thickness: " << r_i + r_o  
-			  << "\n momentum: " << mom
-	                  << "\n beta: " << beta
-			  << "\n x0inv: " << X0_eff
-	                  << "\n X/X0 " <<X_X0
-			  << "\n path: " << path
-			  << "\n sgms2: " << Qms*Qms
-			  << "\n cosTrk: " << cosTrk
-			  << "\n phi0: " << phi0
-			  << "\n tnl: " << tnl
-			  << std::endl ;
+    // std::cout << " ** in  aidaTT::ComputeQMS: "
+    // 	                  << "\n distance: " << surface->distance(OriginPoint)
+    // 			  << "\n inner material: " << material_inn.name()  
+    // 			  << "\n outer material: " << material_out.name()  
+    // 	                  << "\n thickness: " << r_i + r_o  
+    // 			  << "\n momentum: " << mom
+    // 	                  << "\n beta: " << beta
+    // 			  << "\n x0inv: " << X0_eff
+    // 	                  << "\n X/X0 " <<X_X0
+    // 			  << "\n path: " << path
+    // 			  << "\n sgms2: " << Qms*Qms
+    // 			  << "\n cosTrk: " << cosTrk
+    // 			  << "\n phi0: " << phi0
+    // 			  << "\n tnl: " << tnl
+    // 			  << std::endl ;
 
 
     return Qms ;
