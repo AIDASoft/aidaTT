@@ -124,9 +124,11 @@ namespace aidaTT
 
 		      
 	    //~ 2) the residuals in the measurement direction
-	    const std::vector<double>& residuals = (*element)->measurementResiduals();
+	    //const std::vector<double>& residuals = (*element)->measurementResiduals();
 	    //~ convert the vector to an array:
-	    const double* resid = residuals.data();
+
+	    // YV: Here we hard-code that the scatterer residuals are 0. One might want to change that if he has prior knowledge about the kink
+	    const double resid[2] = {0.,0.};
 
 	    //~ 3) precision - MPS
 
@@ -143,12 +145,20 @@ namespace aidaTT
 
 	    TMatrixDSym Vk_sym(2);
 	    double Scalar_value = 0 ;
-	    Scalar_value = ((1 - c1*c1 - c2*c2)*(1 - c1*c1 - c2*c2)) / qms ;
+	    
+	    Scalar_value = ((1 - c1*c1 - c2*c2)) / qms ;
 	    Vk_sym(0, 0) = Scalar_value * (1 - c1*c1);
 	    Vk_sym(0, 1) = -1.*Scalar_value * c1*c2;
 	    Vk_sym(1, 0) = -1.*Scalar_value * c1*c2;
 	    Vk_sym(1, 1) = Scalar_value * (1 - c2*c2);
 	    
+	    /*
+	    Scalar_value = qms / ((1 - c1*c1 - c2*c2)*(1 - c1*c1 - c2*c2)) ;
+	    Vk_sym(0, 0) = Scalar_value * (1 - c2*c2);
+	    Vk_sym(1, 0) = c1*c2;
+	    Vk_sym(0, 1) = c1*c2;
+	    Vk_sym(1, 1) = Scalar_value * (1 - c1*c1);
+	    */
 
 	    point.addScatterer( TVectorD(2, resid), Vk_sym);
 	    std::cout << " projection c1 = " << c1 << " projection c2 = " << c2 << std::endl ;

@@ -467,13 +467,12 @@ namespace aidaTT
     
     double omega  = hel(OMEGA);
     double tnl    = hel(TANL); 
-    //double phi0   = hel(PHI0);
-
-    double phi0 = hel(PHI0) - M_PI / 2. ;
-    
+    double phi0   = hel(PHI0);
+    /*
+    double phi0 = hel(PHI0) - M_PI / 2. ;   
     while(phi0 < 0.)      phi0 += kTwoPi;
     while(phi0 > kTwoPi)  phi0 -= kTwoPi;
-
+    */
     
     const DDSurfaces::IMaterial& material_inn = surface->innerMaterial();
     const DDSurfaces::IMaterial& material_out = surface->outerMaterial();
@@ -492,7 +491,7 @@ namespace aidaTT
     
     //calculation of the path of the particle inside the material
     //compute path as projection of (straight) track to surface normal:
-    DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
+    DDSurfaces::Vector3D p(std::cos( phi0 ), std::sin( phi0 ) , tnl ) ;
     DDSurfaces::Vector3D up = p.unit() ;
 
     c1 = up * surface->u(position);
@@ -664,6 +663,7 @@ namespace aidaTT
 
     std::vector<double> new_prec = precision ;
 
+
     if( isScatterer ){ // also  add a scattering to the trajectory element
       
       double c1 = 0 ; double c2 = 0 ; 
@@ -672,6 +672,7 @@ namespace aidaTT
       new_prec.push_back(  qms*qms  ) ;
       new_prec.push_back(  c1  ) ;
       new_prec.push_back(  c2  ) ;
+
     }
     
     _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id , isScatterer ));
