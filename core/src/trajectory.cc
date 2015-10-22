@@ -518,9 +518,25 @@ namespace aidaTT
     static const double mass = 0.13957018; // pion mass [GeV]
     double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
     
-    double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
+    double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.038*(TMath::Log(X_X0)));
+    aidaTT::Vector3D OriginPoint(0,0,0);
 
-    std::cout << " omega par " << omega << " Tanl " << tnl << " Phi0 " << phi0 << " mom " << mom << " beta " << beta << " thickness " << r_tot << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms2 = " << Qms*Qms << std::endl;
+    std::cout << " ** in  aidaTT::ComputeQMS: "
+	                  << "\n distance: " << surface->distance(OriginPoint)
+			  << "\n inner material: " << material_inn.name()  
+			  << "\n outer material: " << material_out.name()  
+	                  << "\n thickness: " << r_i + r_o  
+			  << "\n momentum: " << mom
+	                  << "\n beta: " << beta
+			  << "\n x0inv: " << X0_eff
+	                  << "\n X/X0 " <<X_X0
+			  << "\n path: " << path
+			  << "\n sgms2: " << Qms*Qms
+			  << "\n cosTrk: " << cosTrk
+			  << "\n phi0: " << phi0
+			  << "\n tnl: " << tnl
+			  << std::endl ;
+
 
     return Qms ;
   }
