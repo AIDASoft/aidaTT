@@ -561,6 +561,154 @@ namespace aidaTT
   }
 
 
+
+
+
+
+
+
+
+//_________________________________________________________________________
+// -----------------
+//  GetEnergyLoss: code based and adapted from KalTes::TVMeasLayer.cc - modified for usage of 
+//                 a single surface, using inner and outer material and corresponding 
+//                 thicknesses
+// -----------------
+/*
+  double trajectory::GetEnergyLoss(  const ISurface* surface, const trackParameters* tp) {
+    
+    //Double_t cpa    = hel.GetKappa();
+    //Double_t tnl    = hel.GetTanLambda(); 
+    
+    double s ; Vector2D uv ; Vector3D position ;
+    double intersects = _calculateIntersectionWithSurface( surface, s , &uv, &position );
+    
+    if( ! intersects ) 
+      return 0 ;
+    
+    aidaTT::trackParameters test_tp = ( tp ? *tp : _referenceParameters ) ;
+    
+    moveHelixTo( test_tp, position ) ; // move helix to the scatterer
+    
+    Vector5 hel = test_tp.parameters();
+    
+    double omega  = hel(OMEGA);
+    double tnl    = hel(TANL); 
+
+
+    Double_t tnl2   = tnl * tnl;
+    Double_t tnl21  = 1. + tnl2;
+    Double_t cslinv = TMath::Sqrt(tnl21);
+    Double_t mom2   = tnl21 / (cpa * cpa);
+    // For straight track, cpa is 0.
+    if(!hel.IsInB()) { mom2 = hel.GetMomentum(); mom2 *= mom2; }
+
+    static const Double_t kMpi = 0.13957018;      // pion mass [GeV]
+
+  TKalTrack *ktp  = static_cast<TKalTrack *>(TVKalSystem::GetCurInstancePtr());
+  Double_t   mass = ktp ? ktp->GetMass() : kMpi;
+
+
+  //----- add energy loss from both sides of the surface 
+
+  //--- compute projection cosine for momentum unit vector and surface normal
+  //    this assumes that the track can be considered as being straight
+  //    across the thickness of the surface
+  //    also assumes that the reference point is near by 
+  //    -fixme: check these conditions !
+  Double_t phi0   = hel.GetPhi0();
+  DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
+  DDSurfaces::Vector3D up = p.unit() ;
+  const DDSurfaces::Vector3D& n = _surf->normal() ;
+  Double_t cosTrk = std::fabs( up * n )  ;
+  
+
+  bool outerMat = true ;
+  bool innerMat = ! outerMat ;
+
+  const TMaterial &mat_o = GetMaterial( outerMat ) ;
+  Double_t dnsty         = mat_o.GetDensity();		 // density
+  Double_t dedx          = computeDEdx( mat_o, mass , mom2 ) ;
+  
+  Double_t projectedPath = _surf->outerThickness() ;
+
+  //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
+  projectedPath /= cosTrk ; 
+
+  //----  path from last step:
+  Double_t path = hel.IsInB()
+    ? TMath::Abs(hel.GetRho()*df)*cslinv
+    : TMath::Abs(df)*cslinv;
+  path /= 10. ; 
+
+  // take the smaller of the complete step and the one projected to the surface
+  // not sure if this is really needed (or even correct) as the surface thicknesses
+  // should be small compared to the distance from the previous mesurement ...
+  //-------------
+  // path = ( projectedPath < path  ?  projectedPath  : path ) ; 
+  
+  Double_t edep = dedx * dnsty * projectedPath ;
+
+  streamlog_out( DEBUG1) << "\n ** in  DDVMeasLayer::GetEnergyLoss: " 
+			 << "\n outer material: " << mat_o.GetName()  
+			 << "\n dedx: " << dedx 
+			 << "\n path: " << path
+			 << "\n projectedPath: " << projectedPath 
+			 << "\n edep: " << edep
+			 << "\n isoutgoing: " << isoutgoing
+			 << "\n up : " << up
+			 << "\n normal: " << n
+			 << "\n cosTrk: " << cosTrk
+			 << std::endl ;
+
+  const TMaterial &mat_i    = GetMaterial( innerMat ) ;
+  dnsty  = mat_i.GetDensity();
+  dedx   = computeDEdx( mat_i, mass , mom2 ) ;
+  
+  projectedPath = _surf->innerThickness() ;
+  
+  //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
+  projectedPath /= cosTrk ; 
+
+  // take the smaller of the complete step and the one projected to the surface
+  //  path = ( projectedPath < path  ?  projectedPath  : path ) ; 
+  
+  edep += dedx * dnsty * projectedPath ;
+
+  streamlog_out( DEBUG1) << "\n ** in  DDVMeasLayer::GetEnergyLoss: " 
+			 << "\n inner material: " << mat_i.GetName()  
+			 << "\n dedx: " << dedx 
+			 << "\n path: " << path
+			 << "\n projectedPath: " << projectedPath 
+			 << "\n edep: " << edep
+			 << "\n isoutgoing: " << isoutgoing
+			 << "\n surface: " << *_surf
+			 << "\n up : " << up
+			 << "\n normal: " << n
+			 << "\n cosTrk: " << cosTrk
+			 << std::endl ;
+
+
+  if(!hel.IsInB()) return edep;
+
+  Double_t cpaa = TMath::Sqrt(tnl21 / (mom2 + edep
+				       * (edep + 2. * TMath::Sqrt(mom2 + mass * mass))));
+  Double_t dcpa = TMath::Abs(cpa) - cpaa;
+
+  static const Bool_t kForward  = kTRUE;
+  static const Bool_t kBackward = kFALSE;
+  Bool_t isfwd = ((cpa > 0 && df < 0) || (cpa <= 0 && df > 0)) ? kForward : kBackward;
+  return isfwd ? (cpa > 0 ? dcpa : -dcpa) : (cpa > 0 ? -dcpa : dcpa);
+}
+*/
+
+
+
+
+
+
+
+
   void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id)
   //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
   {
