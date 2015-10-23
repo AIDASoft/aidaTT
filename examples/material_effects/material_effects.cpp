@@ -214,17 +214,32 @@ int main(int argc, char** argv)
 
 
 	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit) {
-	      long hitid = (*thit)->getCellID0() ;
-	      idDecoder.setValue(hitid) ;
+	      //long hitid = (*thit)->getCellID0() ;
+	      //idDecoder.setValue(hitid) ;
 	      /*
 		if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD || idDecoder[lcio::ILDCellID0::subdet] == lcio::ILDDetID::TPC){
 		hitMap[hitid] = (*thit);
 		}                 
 	      */
-	      hitMap[hitid] = (*thit);
 
-	      std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
+	      if( !BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
+		long hitid = (*thit)->getCellID0() ;
+		std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
+		hitMap[hitid] = (*thit);
+	      }
 
+	      if( BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ //it is a composite spacepoint
+		//Split it up to 2 1-D hits
+		const LCObjectVec rawObjects = (*thit)->getRawHits();			  
+		for( unsigned k=0; k< rawObjects.size(); k++ ){
+		  TrackerHitPlane* rawHit = dynamic_cast< TrackerHitPlane* >( rawObjects[k] );
+		  if(rawHit != NULL){
+		    long hitid = rawHit->getCellID0() ;
+		    std::cout << "  I am mapping hit " << rawHit << " to surface " << hitid << std::endl ; 
+		    hitMap[hitid] = rawHit;
+		  }
+		}
+	      }
 	    }		
 	    
 
@@ -247,53 +262,36 @@ int main(int argc, char** argv)
 		std::vector<double> precision;
 		const aidaTT::Vector3D hitpos(testHit->getPosition()[0] * dd4hep::mm, testHit->getPosition()[1] * dd4hep::mm, testHit->getPosition()[2] * dd4hep::mm );		
 		
-		if( !BitSet32( testHit->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
-		
-		  long ID = (*test).second->id();
+		long ID = (*test).second->id();
 		  
 	  
-		  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(testHit);
-		  if(planarhit != NULL){
-		    //we need 1./variance for the precision:
-		    du = planarhit->getdU() * dd4hep::mm  ;
-		    dv = planarhit->getdV() * dd4hep::mm  ;
-		  }
+		TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(testHit);
+		if(planarhit != NULL){
+		  //we need 1./variance for the precision:
+		  du = planarhit->getdU() * dd4hep::mm  ;
+		  dv = planarhit->getdV() * dd4hep::mm  ;
+		  std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
+		}
 		  
 		  
-		  else {
-		    const FloatVec& TPChitCovMat = testHit->getCovMatrix();
-		    du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
-		    dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
-		  }
-		  
+		else {
+		  const FloatVec& TPChitCovMat = testHit->getCovMatrix();
+		  du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
+		  dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+		}
+
+		if (dv!=0){		  
 		  precision.push_back(1. / (du * du)) ;
 		  precision.push_back(1. / (dv * dv)) ;
-		  //outTrk->addHit(testHit) ;
 		}
-		
-		if( BitSet32( testHit->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ //it is a composite spacepoint
-		  
-		  //Split it up to 2 1-D hits
-		  const LCObjectVec rawObjects = testHit->getRawHits();	
-		  
-		  for( unsigned k=0; k< rawObjects.size(); k++ ){
-		    
-		    TrackerHitPlane* rawHit = dynamic_cast< TrackerHitPlane* >( rawObjects[k] );
-		    if(rawHit != NULL){
-		      //we need 1./variance for the precision:
-		      du = rawHit->getdU() * dd4hep::mm  ;
-		      std::cout << "1D resolution " << du << std::endl;
-		      precision.push_back(1. / (du * du)) ;
-		      //outTrk->addHit(rawHit) ;
-		    }
-		  }
-		}
-		outTrk->addHit(testHit) ;  
+		else 
+		  precision.push_back(1. / (du * du)) ;
+
+		outTrk->addHit(testHit) ;
+
 		fitTrajectory.addMeasurement(hitpos, precision, *(*test).second, &ID, true);		
-
-
-
 	      }
+	      
 	      else
 		fitTrajectory.addScatterer(*(*test).second);
 	      
