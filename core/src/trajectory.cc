@@ -87,6 +87,8 @@ namespace aidaTT
     /// 3. choose the one with the smaller s (!), if needed
     /// 4. build the vector with pairs of s and surface
 
+    std::cout << "***** trajectory::getIntersectionsWithSurfaces() tp : " << _referenceParameters << std::endl ;
+
     const double radius  = std::fabs( calculateRadius(_referenceParameters) ) ;
 
     double maxS = M_PI * radius ;
@@ -830,19 +832,20 @@ namespace aidaTT
     
     /// calculate measurement info
     Vector2D measuredUV(surface.globalToLocal(position));
-
-    // combining both delivers the actual residuals: measurement MINUS reference
-    const double udiff = measuredUV.u() - referenceUV.u();
-    const double vdiff = measuredUV.v() - referenceUV.v();
-
-    std::vector<double> residuals(2);
-    residuals[0] = udiff;
-    residuals[1] = vdiff;
-
+    std::vector<double> residuals;
     std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
-    measDir->push_back(surface.u(position));
-    measDir->push_back(surface.v(position));
 
+
+    const double udiff = measuredUV.u() - referenceUV.u();
+    residuals.push_back( udiff ) ;
+    measDir->push_back(surface.u(position));
+    
+    //    if( ! surface.type().isMeasurement1D()  ){
+
+      const double vdiff = measuredUV.v() - referenceUV.v();
+      residuals.push_back( vdiff ) ;
+      measDir->push_back(surface.v(position));
+      // }
 
     std::vector<double> new_prec = precision ;
 

@@ -1,11 +1,14 @@
 #ifdef USE_GBL
 #include "GBLInterface.hh"
 #include "utilities.hh"
+//#include "MilleBinary.h"
 
 namespace aidaTT
 {
   GBLInterface::GBLInterface() : _trajectory(NULL), _correctionVector(NULL), _covarianceMatrix(NULL)
-  {}
+  {
+    _milleBinary = new gbl::MilleBinary() ;
+  }
 
 
 
@@ -13,6 +16,8 @@ namespace aidaTT
   {
     if(_trajectory != NULL)
       delete _trajectory;
+    
+    delete _milleBinary ;
 
     _clear() ;
   }
@@ -69,14 +74,6 @@ namespace aidaTT
 	    //~ 1) projection matrix -- the basis change matrix
 	    const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
 
-	    /// convert the data from the vector into the matrix:
-	    /// convention is that the first row comes first in the data
-	    TMatrixD pL2M(2, 2);
-	    pL2M(0, 0) = projLocal2Meas.at(0);
-	    pL2M(0, 1) = projLocal2Meas.at(1);
-	    pL2M(1, 0) = projLocal2Meas.at(2);
-	    pL2M(1, 1) = projLocal2Meas.at(3);
-
 
 	    //~ 2) the residuals in the measurement direction
 	    const std::vector<double>& residuals = (*element)->measurementResiduals();
@@ -88,13 +85,38 @@ namespace aidaTT
 	    const std::vector<double>& precision = (*element)->precisions();
 	    //const TMatrixDSym& precision = (*element)->precisions();
 
-
 	    //~ convert the vector to an array:
 	    const double* prec = precision.data();
 
+	    
+//~~	    if( ! (*element)->surface().type().isMeasurement1D()  ){
+//~~
+//~~	      /// convert the data from the vector into the matrix:
+//~~	      /// convention is that the first row comes first in the data
+//~~	      TMatrixD pL2M(2, 2);
+//~~	      pL2M(0, 0) = projLocal2Meas.at(0);
+//~~	      pL2M(0, 1) = projLocal2Meas.at(1);
+//~~	      pL2M(1, 0) = projLocal2Meas.at(2);
+//~~	      pL2M(1, 1) = projLocal2Meas.at(3);
+//~~	      
+//~~	      // fixed size of arguments: 2D in measurements!
+//~~	      point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
+//~~
+//~~	    }else{
+//~~
+	    /// convert the data from the vector into the matrix:
+	    /// convention is that the first row comes first in the data
+	    TMatrixD pL2M(2, 2);
+	    pL2M(0, 0) = projLocal2Meas.at(0);
+	    pL2M(0, 1) = projLocal2Meas.at(1);
+	    pL2M(1, 0) = projLocal2Meas.at(2);
+	    pL2M(1, 1) = projLocal2Meas.at(3);
+	    
 	    // fixed size of arguments: 2D in measurements!
 	    point.addMeasurement(pL2M, TVectorD(2, resid), TVectorD(2, prec));
-	    //point.addMeasurement(pL2M, TVectorD(2, resid), precision);
+	    
+//~~	    }
+
 	  }
 	
 	
@@ -112,7 +134,7 @@ namespace aidaTT
 	    //~ point.gbl::addScatterer ( TVectorD notNeededHere, TMatrixDSym aPrecision   );
 
 	    //~ 1) projection matrix -- the basis change matrix
-	    const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
+	    //	    const std::vector<double>& projLocal2Meas = (*element)->localToMeasurementProjection();
 
 
 	    //std::cout << " size of projection vector " << projLocal2Meas.size() << std::endl ;
@@ -166,15 +188,17 @@ namespace aidaTT
 
     /// TODO :: check validity before continuing!
 
-    //~ this is not elegant -- delete previous data before starting again
-    if(_trajectory != NULL)
-      delete _trajectory;
+    // //~ this is not elegant -- delete previous data before starting again
+    // if(_trajectory != NULL)
+    //   delete _trajectory;
 
     _trajectory = new gbl::GblTrajectory(theListOfPoints, true); /// TODO: pass info about magnetic field
 
     unsigned int returnValue = _trajectory->fit(_chisquare, _ndf, _lostweight);
 
 
+
+     _trajectory->milleOut ( *_milleBinary ) ;
 
     //_trajectory->printTrajectory(100) ;
     //_trajectory->printPoints(100) ;
@@ -220,6 +244,14 @@ namespace aidaTT
  
 
     Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
+
+
+    if( std::fabs( fittedParameters(2) ) > 4. ) {
+
+      std::cout << "*******ERROR  GBLInterface::_fillResults - label " << label << " phi : " 
+		<< fittedParameters(2)  << std::endl ;
+    }
+
 
 
     TMatrixD cl2L3_copy(5,5);
@@ -276,6 +308,11 @@ namespace aidaTT
     _theResults.clear() ;
 
     _fittedTraj = 0 ;
+
+    if(_trajectory != NULL){
+      delete _trajectory;
+      _trajectory = 0 ;
+    }
   }
 
   

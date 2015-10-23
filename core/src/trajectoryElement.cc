@@ -28,9 +28,12 @@ namespace aidaTT
 	_scatterer( isScatterer ), _thick(false), _id(id), _measurement(hasMeasurement)
     {
         _calculateLocalToMeasurementProjectionMatrix();
-        if(_precisions.size() == 1)
-	_precisions.push_back(0.);
-	}
+
+	//fg: does this prevent using 1D measurements ???
+	if(_precisions.size() == 1)
+	  _precisions.push_back(0.);
+
+    }
   
 
     ///~ constructor B: only the arc length is given and some identification

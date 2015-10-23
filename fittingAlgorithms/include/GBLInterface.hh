@@ -97,6 +97,7 @@ namespace aidaTT
     
     mutable ResMap _theResults;
 
+    gbl::MilleBinary* _milleBinary ;
 
   };
 
