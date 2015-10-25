@@ -87,7 +87,9 @@ namespace aidaTT
     /// 3. choose the one with the smaller s (!), if needed
     /// 4. build the vector with pairs of s and surface
 
-    std::cout << "***** trajectory::getIntersectionsWithSurfaces() tp : " << _referenceParameters << std::endl ;
+
+    std::cout << "***** trajectory::getIntersectionsWithSurfaces() tP : " 
+	      << _referenceParameters << std::endl ;
 
     const double radius  = std::fabs( calculateRadius(_referenceParameters) ) ;
 
@@ -95,6 +97,7 @@ namespace aidaTT
 
     for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
       {
+	
 	double s = 0.;  
 	
 	bool intersects = _calculateIntersectionWithSurface(*surf, s );
@@ -291,22 +294,53 @@ namespace aidaTT
       }
     else // both are valid , choose the smaller absolute solution
       {
-	if(std::fabs(S0)  < std::fabs(S1))
-	  {
-	    s = S0;
-	    if(localUV != NULL)
-	      _calculateLocalCoordinates(surf, sol0, localUV);
-
-	    if(xx) xx->fill(sol0) ;
-	  }
-	else
-	  {
-	    s = S1;
-	    if(localUV != NULL)
-	      _calculateLocalCoordinates(surf, sol1, localUV);
-
-	    if(xx) xx->fill(sol1) ;
-	  }
+	
+	//fg: if the solutions are 'equal' we give preference to the
+	//    one w/ positive s ( otherwise we loose intersections with
+	//    cylindrical helper surfaces as sometimes the neg. solution
+	//   would be returned and then discarded in aidaTT/GBL) 
+	//- need to check w/ KalTest ...
+	
+	if( std::fabs( std::fabs(S1) -  std::fabs(S0) )  < 1e-4 ){ // 1 micron 
+	  
+	  
+	  if( S0 > S1 ) // S0 is positive
+  	    {
+	      s = S0;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol0, localUV);
+	      
+	      if(xx) xx->fill(sol0) ;
+	    }
+	  else
+	    {
+	      s = S1;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol1, localUV);
+	      
+	      if(xx) xx->fill(sol1) ;
+	    }
+	  
+	} else {
+	
+	
+	  if(std::fabs(S0)  < std::fabs(S1))
+	    {
+	      s = S0;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol0, localUV);
+	      
+	      if(xx) xx->fill(sol0) ;
+	    }
+	  else
+	    {
+	      s = S1;
+	      if(localUV != NULL)
+		_calculateLocalCoordinates(surf, sol1, localUV);
+	      
+	      if(xx) xx->fill(sol1) ;
+	    }
+	}
       }
 
     return true;
@@ -320,6 +354,11 @@ namespace aidaTT
 
   bool trajectory::_intersectWithinZPlaneBounds(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx)
   {
+
+    // if( (surf->id()&0x1f) == 20 ) {
+    //   std::cout << " surf id = " << surf->id() << " surf: " << surf << std::endl ;
+    //   std::cout << " intersectWithinZPlaneBounds - sys id = " << (surf->id()&0x1f) << std::endl ;
+    // }
     // the straight line: normals plus distance; distance must be positive !
     const double nx = surf->normal().x();
     const double ny = surf->normal().y();
