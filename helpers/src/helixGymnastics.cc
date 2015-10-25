@@ -70,6 +70,9 @@ namespace aidaTT
         double phi = calculatePhifromXY(x, y, tP);
         double dphi = phi - phi0;
 
+	if( dphi < -M_PI ) dphi += 2.*M_PI ;
+	if( dphi >  M_PI ) dphi -= 2.*M_PI ;
+
         if(dphi != 0.)
             {
 
