@@ -59,10 +59,12 @@ namespace aidaTT
       return _referenceParameters;
     };
 
-    void setInitialTrackParameters(const trackParameters& tp) 
-    {
-      _referenceParameters = tp ;
-    };
+    // void setInitialTrackParameters(const trackParameters& tp) 
+    // {
+    //   // clear the intersections as we have new start parameters:
+    //    _surfIntersections.clear() ;
+    //   _referenceParameters = tp ;
+    // };
 
     /// methods available before fitting
     const std::vector<trajectoryElement*>& trajectoryElements() const;
