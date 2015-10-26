@@ -59,6 +59,11 @@ namespace aidaTT
       return _referenceParameters;
     };
 
+    void setInitialTrackParameters(const trackParameters& tp) 
+    {
+      _referenceParameters = tp ;
+    };
+
     /// methods available before fitting
     const std::vector<trajectoryElement*>& trajectoryElements() const;
 

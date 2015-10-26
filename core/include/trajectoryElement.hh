@@ -144,6 +144,9 @@ namespace aidaTT
     ///~ set the jacobian from the previous element -- ownership of the memory is transferred
     void setJacobian(fiveByFiveMatrix* jacob)
     {
+      if( _jacobianFromPrevious != 0 ) 
+	delete _jacobianFromPrevious ;
+
       _jacobianFromPrevious = jacob;
     }
   private:
