@@ -78,7 +78,12 @@ namespace aidaTT
      *  Returns 0. if no interesection is found.
      */
     double computeQMS( const ISurface* surface, double &c1, double &c2, const trackParameters* tp= 0) ;
-    
+ 
+
+    double computeDEdx( const DDSurfaces::IMaterial &mat, double mass, double mom2 );
+    double GetEnergyLoss( const ISurface* surface, const trackParameters* tp );
+
+   
     /// add a scatterer for the track going through the surface
     void addScatterer( const ISurface& surface ) ;
 

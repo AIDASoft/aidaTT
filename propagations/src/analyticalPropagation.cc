@@ -5,7 +5,7 @@
 
 namespace aidaTT
 {
-    bool analyticalPropagation::getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tStart, const Vector3D& tEnd, const Vector3D& bfield)
+  bool analyticalPropagation::getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tStart, const Vector3D& tEnd, const Vector3D& bfield, double NrjLoss)
     {
         // Get analytical helix propagator (in constant magnetic field)
         /**
@@ -103,12 +103,13 @@ namespace aidaTT
 		//   " tEndu1 " << tEndu1 <<
 		//   " tEnddx " << tEnddx <<
 		//   " an2u1 " << an2u1 << std::endl; 
+		std::cout << " energy loss correction " << NrjLoss << std::endl ;
 
 		// debugging ends here
 
                 // jacobian
                 // 1/P
-                jac(0, 0) = 1.;
+                jac(0, 0) = 1. + NrjLoss ;
                 // Lambda
                 jac(1, 0) = -qp * anv * tEnddx;
                 jac(1, 1) = cost * v1v2 + sint * hv1v2 + omcost * hnv1 * hnv2 + anv * (-sint * tEndv1 + omcost * an2v1 - gamma * tmsint * hnv1);

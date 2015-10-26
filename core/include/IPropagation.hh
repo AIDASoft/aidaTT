@@ -34,7 +34,7 @@ namespace aidaTT
     class IPropagation
     {
         public:
-            virtual bool getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tstart, const Vector3D& tend, const Vector3D& bfield) = 0;
+      virtual bool getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tstart, const Vector3D& tend, const Vector3D& bfield, double NrjLoss) = 0;
             virtual ~IPropagation(){}
 
     };
