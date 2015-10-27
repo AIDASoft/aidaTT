@@ -186,10 +186,6 @@ int main(int argc, char** argv)
 
             Track* initialTrack = (Track*)trackCollection->getElementAt(0);
 
-	    std::cout << " LCIO Phi at IP " << initialTrack->getPhi() << std::endl;
-	    const EVENT::TrackState *TrackStateAtFirstHit = (initialTrack->getTrackState(lcio::TrackState::AtFirstHit));
- 	    std::cout << " LCIO Phi at first hit " << TrackStateAtFirstHit->getPhi() << std::endl;
-
             aidaTT::trackParameters iTP(aidaTT::readLCIO(initialTrack->getTrackState(lcio::TrackState::AtIP)));
 
             std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
@@ -263,7 +259,7 @@ int main(int argc, char** argv)
 
 	      if( !BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
 		long hitid = (*thit)->getCellID0() ;
-		std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
+		//std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
 		hitMap[hitid] = (*thit);
 	      }
 
@@ -274,7 +270,7 @@ int main(int argc, char** argv)
 		  TrackerHitPlane* rawHit = dynamic_cast< TrackerHitPlane* >( rawObjects[k] );
 		  if(rawHit != NULL){
 		    long hitid = rawHit->getCellID0() ;
-		    std::cout << "  I am mapping hit " << rawHit << " to surface " << hitid << std::endl ; 
+		    //std::cout << "  I am mapping hit " << rawHit << " to surface " << hitid << std::endl ; 
 		    hitMap[hitid] = rawHit;
 		  }
 		}
@@ -286,14 +282,14 @@ int main(int argc, char** argv)
 	    
 	    for(std::vector<std::pair<double, const aidaTT::ISurface*> >::iterator test = CrossedSurfs.begin(), fin = CrossedSurfs.end(); test < fin; ++test){
 	      
-	      std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
+	      //std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
 
-	      std::cout << " id of the surface " << (*test).second->id() << std::endl;
+	      //std::cout << " id of the surface " << (*test).second->id() << std::endl;
 	      
 	      if (hitMap[(*test).second->id()] !=NULL){
 
 		EVENT::TrackerHit* testHit = hitMap[(*test).second->id()];
-		std::cout << " I am reading hit " << testHit << " from map " << std::endl ;
+		//std::cout << " I am reading hit " << testHit << " from map " << std::endl ;
 	
 		double du;
 		double dv;
@@ -309,7 +305,7 @@ int main(int argc, char** argv)
 		  //we need 1./variance for the precision:
 		  du = planarhit->getdU() * dd4hep::mm  ;
 		  dv = planarhit->getdV() * dd4hep::mm  ;
-		  std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
+		  //std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
 		}
 		  
 		  
@@ -347,7 +343,7 @@ int main(int argc, char** argv)
 	    
 	    const std::vector<trajectoryElement*>& elements = fitTrajectory.trajectoryElements();
 	    
-	    std::cout << " number of elements associated to the trajectory " << elements.size() << std::endl;
+	    //std::cout << " number of elements associated to the trajectory " << elements.size() << std::endl;
 	    
 	    success = fitTrajectory.fit();
 	    
@@ -405,8 +401,6 @@ int main(int argc, char** argv)
         }
 
     ofile->Write("t1");
-
-    std::cout << " counter = " << counter << std::endl ;
 
     return 0;
 }

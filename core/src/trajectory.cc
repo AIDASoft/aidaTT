@@ -663,14 +663,18 @@ namespace aidaTT
     Double_t tnl2   = tnl * tnl;
     Double_t tnl21  = 1. + tnl2;
     Double_t cslinv = TMath::Sqrt(tnl21);
-    Double_t mom2   = tnl21 / (omega * omega);
+
+    double Pt = ( fabs(1./omega ) * _bfieldZ * convertBr2P_cm ) ;  // That's Pt
+    double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
+    double mom2 = mom*mom;
 
     static const Double_t kMpi = 0.13957018;      // pion mass [GeV]
 
     Double_t   mass = kMpi;
-    double mom = TMath::Sqrt(mom2);
     double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
+
     double Energy = TMath::Sqrt(mom2 + kMpi*kMpi);
+    std::cout << " Particle's energy = " << Energy << " & momentum " << mom <<  std::endl ;
 
     //----- add energy loss from both sides of the surface
     
@@ -710,20 +714,20 @@ namespace aidaTT
     //-------------
     // path = ( projectedPath < path  ?  projectedPath  : path ) ;
     */
+
+    std::cout << " I am checking surface in arclength " << s << std::endl ;
+
     double edep = dedx * dnsty * projectedPath ;
-    /*
+    
       std::cout << "\n ** in  trajectory::GetEnergyLoss: "
-			   << "\n outer material: " << mat_o.GetName()  
 			   << "\n dedx: " << dedx
-			   << "\n path: " << path
 			   << "\n projectedPath: " << projectedPath
 			   << "\n edep: " << edep
-			   << "\n isoutgoing: " << isoutgoing
 			   << "\n up : " << up
 			   << "\n normal: " << n
 			   << "\n cosTrk: " << cosTrk
 			   << std::endl ;
-    */
+    
  
     dnsty  = innerMat.density();
     dedx   = computeDEdx( innerMat, mass , mom2 ) ;
@@ -737,20 +741,16 @@ namespace aidaTT
     //  path = ( projectedPath < path  ?  projectedPath  : path ) ;
     
     edep += dedx * dnsty * projectedPath ;
-    /*
+    
     std::cout << "\n ** in  trajectory::GetEnergyLoss: "
-			   << "\n inner material: " << mat_i.GetName()  
 			   << "\n dedx: " << dedx
-			   << "\n path: " << path
 			   << "\n projectedPath: " << projectedPath
 			   << "\n edep: " << edep
-			   << "\n isoutgoing: " << isoutgoing
-			   << "\n surface: " << *_surf
 			   << "\n up : " << up
 			   << "\n normal: " << n
 			   << "\n cosTrk: " << cosTrk
 			   << std::endl ;
-    */
+    
 
     double NrjLoss = (2.0*edep) / ((beta*beta)*Energy);
 
@@ -1026,7 +1026,6 @@ namespace aidaTT
 	//calculate the energy loss
 	const aidaTT::ISurface& surf = (*element)->surface();
 	double NrjLoss = GetEnergyLoss(  &surf, &_referenceParameters );
-	std::cout << " simple verification: surface " << surf.id() << " energy loss " << NrjLoss <<std::endl ; 
 
 	// std::cout << std::endl ;
 	// std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
