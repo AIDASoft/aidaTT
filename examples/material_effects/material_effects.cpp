@@ -250,6 +250,11 @@ int main(int argc, char** argv)
 
 	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit) {
 
+	      //long hitid_dt = (*thit)->getCellID0() ;
+	      //idDecoder.setValue(hitid_dt) ;
+	      //if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD && idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::TPC)
+	      //continue;
+
 	      if( !BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
 		long hitid = (*thit)->getCellID0() ;
 		//std::cout << "  I am mapping hit " << (*thit) << " to surface " << hitid << std::endl ; 
@@ -298,7 +303,6 @@ int main(int argc, char** argv)
 		  //we need 1./variance for the precision:
 		  du = planarhit->getdU() * dd4hep::mm  ;
 		  dv = planarhit->getdV() * dd4hep::mm  ;
-		  //std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
 		}
 		  
 		  
@@ -307,6 +311,8 @@ int main(int argc, char** argv)
 		  du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
 		  dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
 		}
+
+		std::cout << " u resolution " << du << " v resolution " << dv << std::endl;
 
 		if (dv!=0){		  
 		  precision.push_back(1. / (du * du)) ;

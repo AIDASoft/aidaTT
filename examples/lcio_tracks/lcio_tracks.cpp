@@ -286,6 +286,9 @@ int main(int argc, char** argv)
 	{
 	  long hitid = (*thit)->getCellID0() ;
 	  idDecoder.setValue(hitid) ;
+
+	  if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD && idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::TPC)
+	    continue;
 	  
 	  //std::cout << " hit id = " << hitid << std::endl ;
 	  
@@ -303,17 +306,17 @@ int main(int argc, char** argv)
 	    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
 	  
 	  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
-		
-	  std::vector<double> precision(2) ;
-		
+	  
+	  std::vector<double> precision ;
+	  
 	  TrackerHitPlane* planarhit = dynamic_cast<TrackerHitPlane*>(*thit);
-		
+	  
 	  FloatVec TPChitCovMat = (*thit)->getCovMatrix();
-		
+	  
 	  double du, dv ;
-
+	  
 	  if (planarhit != NULL) {
-
+	    
 	    du = planarhit->getdU() * dd4hep::mm  ;
 	    dv = planarhit->getdV() * dd4hep::mm  ;
 	    
@@ -323,25 +326,27 @@ int main(int argc, char** argv)
 	    dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
 	  }
 	  
+	  std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
+
 	  //we need 1./variance for the precision:
 	  //what are the values for resolutiuon?
 	  
-	  precision[0] =  1. /  (du*du) ;
-	  precision[1] =  1. /  (dv*dv) ;
+	  precision.push_back( 1. /  (du*du)) ;
+	  precision.push_back( 1. /  (dv*dv)) ;
 	  
-	  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit));
-		
+	  fitTrajectory.addMeasurement(hitpos, precision, *surf, (*thit), true);
+	  
 	  outTrk->addHit(*thit) ;
-		
+	  
 	}
-
-
+      
+      
       for (int n=0; n < 1 ; n++){
-	      
+	
 	fitTrajectory.prepareForFitting();
-	      
+	
 	success = fitTrajectory.fit();
-	      
+	
 	result = fitTrajectory.getFitResults();
 
 
