@@ -110,6 +110,7 @@ namespace aidaTT
                 // jacobian
                 // 1/P
                 jac(0, 0) = 1. + NrjLoss ;
+		//jac(0, 0) = 1. ;
                 // Lambda
                 jac(1, 0) = -qp * anv * tEnddx;
                 jac(1, 1) = cost * v1v2 + sint * hv1v2 + omcost * hnv1 * hnv2 + anv * (-sint * tEndv1 + omcost * an2v1 - gamma * tmsint * hnv1);

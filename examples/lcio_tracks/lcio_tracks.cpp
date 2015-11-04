@@ -135,7 +135,7 @@ int main(int argc, char** argv)
   LCEvent* evt = 0 ;
 
   //std::string trackCollectionName = "ClupatraTracks";
-  std::string trackCollectionName = "SiTracks";
+  std::string trackCollectionName = "MarlinTrkTracks";
 
 
   UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
@@ -195,6 +195,7 @@ int main(int argc, char** argv)
 
 
       //*****************************************************************************************************
+      /*
       // Simple test of MoveTo function
       //std::cout << " parameters of lcioo track at IP " << iTP << std::endl ;
       aidaTT::trackParameters iTP_AtFirstHit(  aidaTT::readLCIO( initialTrack->getTrackState( lcio::TrackState::AtFirstHit) )   );
@@ -207,9 +208,10 @@ int main(int argc, char** argv)
      //std::cout << " parameters of lcioo track at random point " << iTP << std::endl ;
      //moveHelixTo( iTP, aidaTT::Vector3D(), true  ) ;
      //std::cout << " parameters of lcioo track moved to a random point and then back to IP" << iTP << std::endl ;
+     */
       //****************************************************************************************************
 
-#define compute_start_helix 1
+#define compute_start_helix 0
 #if compute_start_helix //----------------------------------------------------------------------------------------------------
       aidaTT::trackParameters startHelix ;
 
@@ -271,35 +273,35 @@ int main(int argc, char** argv)
       std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
 
 	    
-	    // Add the Interaction Point as the first element of the trajectory
-	    int ID = 1;
-	    aidaTT::Vector3D IntPoint(0,0,0);
+      // Add the Interaction Point as the first element of the trajectory
+      int ID = 1;
+      aidaTT::Vector3D IntPoint(0,0,0);
 
       fitTrajectory.addElement(IntPoint, &ID);
 	    
 
       //aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
 	    
-	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
-	      {
-		long hitid = (*thit)->getCellID0() ;
-		idDecoder.setValue(hitid) ;
-		
+      for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
+	{
+	  long hitid = (*thit)->getCellID0() ;
+	  idDecoder.setValue(hitid) ;
+	  
 	  //std::cout << " hit id = " << hitid << std::endl ;
-		
+	  
 	  const aidaTT::ISurface* surf = surfMap[ hitid ] ;
-		
+	  
 	  if(surf == NULL)
 	    {
 	      std::cerr << " lcio_tracks : no surface found for id : " << idDecoder.valueString() << std::endl ;
 	      continue;
 	    }
-		
-		
+	  
+	  
 	  double hitpos[3] = {0., 0., 0.};
 	  for(unsigned int i = 0; i < 3; ++i)
 	    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
-		
+	  
 	  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
 		
 	  std::vector<double> precision(2) ;

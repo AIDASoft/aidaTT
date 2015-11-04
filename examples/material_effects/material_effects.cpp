@@ -249,13 +249,6 @@ int main(int argc, char** argv)
 
 
 	    for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit) {
-	      //long hitid = (*thit)->getCellID0() ;
-	      //idDecoder.setValue(hitid) ;
-	      /*
-		if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD || idDecoder[lcio::ILDCellID0::subdet] == lcio::ILDDetID::TPC){
-		hitMap[hitid] = (*thit);
-		}                 
-	      */
 
 	      if( !BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
 		long hitid = (*thit)->getCellID0() ;
@@ -282,7 +275,7 @@ int main(int argc, char** argv)
 	    
 	    for(std::vector<std::pair<double, const aidaTT::ISurface*> >::iterator test = CrossedSurfs.begin(), fin = CrossedSurfs.end(); test < fin; ++test){
 	      
-	      //std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
+	      std::cout << " *** at arc length: " << (*test).first << " found surface " << *(*test).second << std::endl;
 
 	      //std::cout << " id of the surface " << (*test).second->id() << std::endl;
 	      

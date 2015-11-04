@@ -636,6 +636,8 @@ namespace aidaTT
     Double_t tmax = 2.*kMe*bg2 / (1. + meM*(2.*TMath::Sqrt(gm2) + meM));
     Double_t dedx = kK * Z/A * gm2/bg2 * (0.5*log(2.*kMe*bg2*tmax / (I*I))
 					  - bg2/gm2 - del);
+
+    //std::cout << " Excitation potential " << I << " beta*gamma sqrd " << bg2 << " A " << A << " Z " << Z << " Wmax " << tmax << " gamma " << TMath::Sqrt(gm2) << std::endl;
     
     return dedx ;
     
@@ -660,9 +662,9 @@ namespace aidaTT
     double tnl    = hel(TANL); 
     double phi0   = hel(PHI0);
     
-    Double_t tnl2   = tnl * tnl;
-    Double_t tnl21  = 1. + tnl2;
-    Double_t cslinv = TMath::Sqrt(tnl21);
+    //Double_t tnl2   = tnl * tnl;
+    //Double_t tnl21  = 1. + tnl2;
+    //Double_t cslinv = TMath::Sqrt(tnl21);
 
     double Pt = ( fabs(1./omega ) * _bfieldZ * convertBr2P_cm ) ;  // That's Pt
     double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
@@ -715,20 +717,18 @@ namespace aidaTT
     // path = ( projectedPath < path  ?  projectedPath  : path ) ;
     */
 
-    std::cout << " I am checking surface in arclength " << s << std::endl ;
-
     double edep = dedx * dnsty * projectedPath ;
+    /*
+    std::cout << "\n ** in  trajectory::GetEnergyLoss: "
+	      << "\n dedx: " << dedx
+	      << "\n projectedPath: " << projectedPath
+	      << "\n edep: " << edep
+	      << "\n up : " << up
+	      << "\n normal: " << n
+	      << "\n cosTrk: " << cosTrk
+	      << std::endl ;
+    */
     
-      std::cout << "\n ** in  trajectory::GetEnergyLoss: "
-			   << "\n dedx: " << dedx
-			   << "\n projectedPath: " << projectedPath
-			   << "\n edep: " << edep
-			   << "\n up : " << up
-			   << "\n normal: " << n
-			   << "\n cosTrk: " << cosTrk
-			   << std::endl ;
-    
- 
     dnsty  = innerMat.density();
     dedx   = computeDEdx( innerMat, mass , mom2 ) ;
     
@@ -740,8 +740,10 @@ namespace aidaTT
     // take the smaller of the complete step and the one projected to the surface
     //  path = ( projectedPath < path  ?  projectedPath  : path ) ;
     
+    std::cout << " inner surface thickness " << surface->innerThickness() << " density " << innerMat.density() << " path " <<  projectedPath << " outer surface thickness " << surface->outerThickness() << " density " << outerMat.density() << " path " <<  projectedPath << std::endl ;
+
     edep += dedx * dnsty * projectedPath ;
-    
+    /* 
     std::cout << "\n ** in  trajectory::GetEnergyLoss: "
 			   << "\n dedx: " << dedx
 			   << "\n projectedPath: " << projectedPath
@@ -750,7 +752,7 @@ namespace aidaTT
 			   << "\n normal: " << n
 			   << "\n cosTrk: " << cosTrk
 			   << std::endl ;
-    
+    */
 
     double NrjLoss = (2.0*edep) / ((beta*beta)*Energy);
 
@@ -1023,9 +1025,13 @@ namespace aidaTT
 	///~ calculate 3D arclength -> divide 2D arc length by cos lambda
 	double dw = (currS - prevS) / cosLambda;
 
-	//calculate the energy loss
-	const aidaTT::ISurface& surf = (*element)->surface();
-	double NrjLoss = GetEnergyLoss(  &surf, &_referenceParameters );
+	// Calculate the energy loss only if the trajectory element is a scatterer, meaning it has material
+	double NrjLoss = 0.;
+	if ((*element)->isScatterer()){
+	  //calculate the energy loss
+	  const aidaTT::ISurface& surf = (*element)->surface();
+	  NrjLoss = GetEnergyLoss(  &surf, &_referenceParameters );
+	}
 
 	// std::cout << std::endl ;
 	// std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
