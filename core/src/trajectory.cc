@@ -676,7 +676,7 @@ namespace aidaTT
     double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
 
     double Energy = TMath::Sqrt(mom2 + kMpi*kMpi);
-    std::cout << " Particle's energy = " << Energy << " & momentum " << mom <<  std::endl ;
+    //    std::cout << " Particle's energy = " << Energy << " & momentum " << mom <<  std::endl ;
 
     //----- add energy loss from both sides of the surface
     
@@ -740,7 +740,7 @@ namespace aidaTT
     // take the smaller of the complete step and the one projected to the surface
     //  path = ( projectedPath < path  ?  projectedPath  : path ) ;
     
-    std::cout << " inner surface thickness " << surface->innerThickness() << " density " << innerMat.density() << " path " <<  projectedPath << " outer surface thickness " << surface->outerThickness() << " density " << outerMat.density() << " path " <<  projectedPath << std::endl ;
+    //    std::cout << " inner surface thickness " << surface->innerThickness() << " density " << innerMat.density() << " path " <<  projectedPath << " outer surface thickness " << surface->outerThickness() << " density " << outerMat.density() << " path " <<  projectedPath << std::endl ;
 
     edep += dedx * dnsty * projectedPath ;
     /* 
@@ -756,7 +756,7 @@ namespace aidaTT
 
     double NrjLoss = (2.0*edep) / ((beta*beta)*Energy);
 
-    std::cout << " Calculation of energy loss: surface " << surface->id() << " energy loss " << NrjLoss <<std::endl ; 
+    //    std::cout << " Calculation of energy loss: surface " << surface->id() << " energy loss " << NrjLoss << " mom " << mom << std::endl ; 
 
     return NrjLoss;
 
@@ -938,7 +938,7 @@ namespace aidaTT
   void trajectory::addScatterer( const ISurface& surface ){
     
     double s ; Vector2D uv ; Vector3D position ;
-    double intersects = _calculateIntersectionWithSurface( &surface, s , &uv, &position );
+    bool intersects = _calculateIntersectionWithSurface( &surface, s , &uv, &position );
     
     if( !intersects ){
       std::cout << " ERROR: trajectory::addScatterer: track does not intersect with surface : " <<  surface << std::endl ;      
