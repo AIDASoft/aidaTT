@@ -16,45 +16,42 @@
 namespace aidaTT
 {
 
-    enum
+  enum
     {
-        perigeeKAPPA = 0,
-        perigeeTHETA,
-        perigeePHI,
-        perigeeEPSILON,
-        perigeeZP
+      perigeeKAPPA = 0,
+      perigeeTHETA,
+      perigeePHI,
+      perigeeEPSILON,
+      perigeeZP
     };
 
 
-    /// helper function to calculate the needed/wanted values from the current parametrization
-    inline double calculateX0(const trackParameters& tp)
-    {
-        return (sin(-tp.parameters()(PHI0)) * tp.parameters()(D0)) + tp.referencePoint().x();
-    }
-    inline double calculateY0(const trackParameters& tp)
-    {
-        return (cos(tp.parameters()(PHI0)) * tp.parameters()(D0)) + tp.referencePoint().y();
-    }
 
-    /// compute the point on the trajectory for a given value of s
-    Vector3D pointOnTrajectory(const trackParameters& tp,  double s) ;
+  /// compute the point on the trajectory for a given value of s
+  Vector3D pointOnTrajectory(const trackParameters& tp,  double s) ;
 
-    double calculateQoverP(const trackParameters& , double BField);
+  double calculateQoverP(const trackParameters& , double BField);
 
 
-/// a number of track parametrization conversion matrices
-/// externally/interface to outside is "L3" parametrization
-/// internally used is curvilinear track parametrization
-/// intermediate to them is a different kind of "perigee" parametrization
+  /// a number of track parametrization conversion matrices
+  /// externally/interface to outside is "L3" parametrization
+  /// internally used is curvilinear track parametrization
+  /// intermediate to them is a different kind of "perigee" parametrization
 
-    fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector3D&);
-    //fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
+  fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters&, const Vector3D&);
+  //fiveByFiveMatrix perigeeToCurvilinearJacobian(const trackParameters&, const Vector5&, const Vector3D&);
 
-    fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters&);
-    fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters&);
+  fiveByFiveMatrix perigeeToL3Jacobian(const trackParameters&);
+  fiveByFiveMatrix L3ToPerigeeJacobian(const trackParameters&);
 
-    fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters&, const Vector3D&);
-    //fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters&, const Vector3D&);
+  fiveByFiveMatrix curvilinearToL3Jacobian(const trackParameters&, const Vector3D&);
+  //fiveByFiveMatrix L3ToCurvilinearJacobian(const trackParameters&, const Vector3D&);
+
+
+  std::pair<Vector3D, Vector3D>* calculateLocalCurvilinearSystem(double, const trackParameters&);
+  
+  std::vector<double>* calculateLocalToMeasurementProjectionMatrix(const Vector3D&, const Vector3D&, const std::vector<Vector3D>&);
+  
 }
 
 #endif // UTITILITIES_HH

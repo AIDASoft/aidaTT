@@ -4,6 +4,8 @@
 /**
  * Define access functions for LCIO track parameters (trackParameterizationLCIO.hh), as described in 
  * Kraemer, Track parameters in LCIO [http://www-flc.desy.de/lcnotes/notes/LC-DET-2006-004.pdf]
+ *  @version $Id
+ *  @author Ch. Rosemann, F. Gaede, DESY
  */
 
 namespace aidaTT {

@@ -8,10 +8,8 @@
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
-#include "helixGymnastics.hh"
+#include "helixUtils.hh"
 #include "utilities.hh"
-#include "helixHelpers.hh"
-
 #include "IPropagation.hh"
 #include "IGeometry.hh"
 #include "IBField.hh"
