@@ -12,85 +12,76 @@
 
 namespace aidaTT
 {
-  /// trackParameters:: the main class for track parameter definition and interaction
-  /***
-   *  @version $Id
-   *  @author Ch. Rosemann, DESY
+  /** Main class that holds the track parameters, where a track is fully characterized by 
+   *  23 floating point numbers.
+   *  Five values parametrize a helix with, the reference point adds three values and the 
+   *  covariance matrix has 15 independent entries.
+   *  The actual definition of the parameters is done in trackParametrization.hh.
    *
-   * A track is fully characterized by 23 floating point numbers.
-   * Five values parametrize a helix, their covariance matrix has 15 entries; w.r.t. a reference point (three values).
-   *
-   * The choice for interfacing aidaTT to the outer world is the L3 parametrization, a particular perigee representation:
-   *  [ Omega, tan(lambda), phi_0, d_0, z_0, ], e.g. explained in Alcaraz, L3 Internal Note 1666 (1995)
-   * A similar choice, but in a different order is given in a publicly accessible note:
+   *  For now we use the LCIO track parameters (trackParameterizationLCIO.hh), as described in 
    *  Kraemer, Track parameters in LCIO [http://www-flc.desy.de/lcnotes/notes/LC-DET-2006-004.pdf]
    *
-   ***/
-
-  /* TODO:
-   *  implement copy construction & assignment
-   */
-
-  class trackParametrization;
+   *  @version $Id
+   *  @author Ch. Rosemann, F. Gaede, DESY
+   **/
 
   class trackParameters
   {
   public:
     /// default constructor, sets everything to zero
     trackParameters();
-
-    // define copy ctor and assignment
+    /// copy ctor 
     trackParameters(const trackParameters&);
+    /// assignment
     trackParameters& operator=(const trackParameters&);
-
-    ///~ getter functions
-    const Vector5& parameters() const
-    {
+    
+    /// access helix parameters
+    inline const Vector5& parameters() const {
       return _helixparams;
     }
-
-    /// access parameters to set values
-    Vector5& parameters()
-    {
+    
+    /// write access to helix parameters
+    inline Vector5& parameters() {
       return _helixparams;
     }
+    
+    /// direct read access to the individual helix parameter elements by index - 
+    /// use enum from trackParametrization.hh
+    inline double operator()(unsigned index) const{
+      return _helixparams(index);
+    }
+    /// direct write access to the individual helix parameter elements by index - 
+    /// use enum from trackParametrization.hh
+    inline double& operator()(unsigned index){
+      return _helixparams(index);
+    }
 
-    ///~ direct read access to the individual elements by index
-    double operator()(unsigned int) const;
-
-    ///~ get the reference point in global, cartesian coordinates (x,y,z)
-    const Vector3D& referencePoint() const
-    {
+    /// the reference point in global, cartesian coordinates (x,y,z)
+    inline const Vector3D& referencePoint() const {
+      return _refpoint;
+    }
+    /// write access to the reference point in global, cartesian coordinates (x,y,z)
+    inline Vector3D& referencePoint() {
       return _refpoint;
     }
 
-    /// access the reference point in global, cartesian coordinates (x,y,z)
-    Vector3D& referencePoint()
-    {
-      return _refpoint;
-    }
-
-    /// read access covariance matrix
-    const fullCovariance& covarianceMatrix() const
-    {
+    /// read access to covariance matrix
+    inline const fullCovariance& covarianceMatrix() const {
       return _covmatrix;
     };
 
-    /// write access covariance matrix
-    fullCovariance& covarianceMatrix()
-    {
+    /// write access to covariance matrix
+    inline fullCovariance& covarianceMatrix() {
       return _covmatrix;
     };
 
-    ///~ setter functions
-    ///~ set everything at once
+
+    /// set everything at once
     void setTrackParameters(const Vector5&, const fullCovariance&, const Vector3D&);
 
     ///~ only set the helix parameters
     void setTrackParameters(const Vector5&);
 
-    ///~ direct write access to the individual track parameters by index
-    double& operator()(unsigned int);
 
     /// set the reference point, defaults to the nominal center
     void setReferencePoint(const Vector3D&);
@@ -106,10 +97,18 @@ namespace aidaTT
 
 
 
-  inline std::ostream & operator << (std::ostream & os, const trackParameters& tp)
-  {
-    os << " [parameters: " << tp.parameters() << "]" << std::endl << " { covariance: " << tp.covarianceMatrix() << " } , ( reference point: " << tp.referencePoint() << " )";
+  /// dump the track parameters to a stream
+  inline std::ostream & operator << (std::ostream & os, const trackParameters& tp) {
+    os << " [parameters: " << tp.parameters() << "]" << std::endl 
+       << " { covariance: " << tp.covarianceMatrix() << " }, "
+       << " ( reference point: " << tp.referencePoint() << " )";
     return os ;
   }
 }
+
+
+// this defines the actual param,eterization that is used:
+#include "trackParameterization.hh"
+
+
 #endif // TRACKPARAMETERS_H

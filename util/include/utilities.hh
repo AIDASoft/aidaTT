@@ -16,16 +16,6 @@
 namespace aidaTT
 {
 
-    /** Enum for accessing the track parameters in L3/LCIO perigee convention */
-    enum
-    {
-        OMEGA = 0,
-        TANL,
-        PHI0,
-        D0,
-        Z0
-    } ;
-
     enum
     {
         perigeeKAPPA = 0,
@@ -35,37 +25,6 @@ namespace aidaTT
         perigeeZP
     };
 
-
-    /// backward compatible accessors
-    inline double calculateOmega(const trackParameters& tp)
-    {
-        return tp.parameters()(OMEGA);
-    }
-    inline double calculateTanLambda(const trackParameters& tp)
-    {
-        return tp.parameters()(TANL);
-    }
-    inline double calculatePhi0(const trackParameters& tp)
-    {
-        return tp.parameters()(PHI0);
-    }
-    inline double calculateD0(const trackParameters& tp)
-    {
-        return tp.parameters()(D0);
-    }
-    inline double calculateZ0(const trackParameters& tp)
-    {
-        return tp.parameters()(Z0);
-    }
-
-    inline double calculateCurvature(const trackParameters& tp)
-    {
-        return tp.parameters()(OMEGA);
-    }
-    inline double calculateLambda(const trackParameters& tp)
-    {
-        return atan(tp.parameters()(TANL));
-    }
 
     /// helper function to calculate the needed/wanted values from the current parametrization
     inline double calculateX0(const trackParameters& tp)
