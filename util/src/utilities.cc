@@ -1,5 +1,5 @@
 #include "utilities.hh"
-#include "helixGymnastics.hh"
+#include "helixUtils.hh"
 
 #include "aidaTT-Units.hh"
 
@@ -278,4 +278,85 @@ namespace aidaTT
             return p2cl * l32p;
         }
         */
+
+ std::pair<Vector3D, Vector3D>* calculateLocalCurvilinearSystem(double s, const trackParameters& tP)
+  {
+    const double omega = calculateCurvature(tP);
+    const double phi0 = calculatePhi0(tP);
+    const double lambda = calculateLambda(tP);
+
+    const double u0 = - sin(phi0 - omega * s);
+    const double u1 =   cos(phi0 - omega * s);
+    const double u2 = 0.;
+
+    const double v0 = - cos(phi0 - omega * s) * sin(lambda);
+    const double v1 = - sin(phi0 - omega * s) * sin(lambda);
+    const double v2 = cos(lambda);
+
+    return new std::pair<Vector3D, Vector3D> (Vector3D(u0, u1, u2), Vector3D(v0, v1, v2));
+  }
+
+
+
+  std::vector<double>* calculateLocalToMeasurementProjectionMatrix(const Vector3D& clU,  const Vector3D& clV, const std::vector<Vector3D>& measDirs)
+  {
+    // calculate the projection matrix from the local curvilinear system to the measurement system
+    // done in two steps: first compute the easier measurement to local projection, then invert the result
+    // note: ALL measurements are taken as two dimensional
+    //  dim(M) = 1, then an arbitrary direction is taken, which will allow inversion of the matrix
+    //             , also the direction does not contribute, since the associated precision is zero
+    // NOTE: higher dimensions (up to five) are possible, but have to be implemented
+
+    /// the return matrix, set as four element double vector
+    std::vector<double>* retVec = new std::vector<double>(4);
+    double a, b, c, d;
+
+    // two cases to cover:
+    // 1D measurements -- create arbitrary orthogonal vector as fake measurement direction
+    //      ! not taken into account, since precision is zero
+    // 2D measurements -- straighforward
+
+    if(measDirs.size() == 1)
+      {
+	// construct second orthogonal vector from meas. direction
+	Vector3D mdir = measDirs[0].unit();
+
+	Vector3D ortho(mdir.z(), mdir.z(), -mdir.x() - mdir.y());
+	// check if the vector is not close to zero
+	if(ortho.r() < 1e-6)
+	  ortho.fill(- mdir.y() - mdir.z(), mdir.x(), mdir.x());
+
+	a = measDirs[0] * clU;
+	b = measDirs[0] * clV;
+	c = ortho * clU;
+	d = ortho * clV;
+      }
+    else if(measDirs.size() == 2)
+      {
+	a = measDirs[0] * clU;
+	b = measDirs[0] * clV;
+	c = measDirs[1] * clU;
+	d = measDirs[1] * clV;
+      }
+    else
+      throw std::invalid_argument("Measurement dimensions > 2 are not yet implemented.");
+
+    // now invert the matrix!
+    double determinant = a * d - b * c;
+
+    if(determinant != 0.)
+      {
+	(*retVec)[0] =   d  / determinant;
+	(*retVec)[1] = (-b) / determinant;
+	(*retVec)[2] = (-c) / determinant;
+	(*retVec)[3] =   a  / determinant;
+      }
+    else
+      {
+	throw std::invalid_argument("Projection matrix can't be inverted, bailing out.");
+      }
+
+    return retVec;
+  }
+
 }

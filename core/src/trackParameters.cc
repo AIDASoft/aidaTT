@@ -4,77 +4,57 @@
 
 namespace aidaTT
 {
-    trackParameters::trackParameters() : _covmatrix() , _helixparams(), _refpoint()
-    {
-    }
+  trackParameters::trackParameters() : _covmatrix() , _helixparams(), _refpoint()
+  {
+  }
 
 
 
-    trackParameters::trackParameters(const trackParameters& tp) :  _covmatrix(tp._covmatrix) , _helixparams(tp._helixparams), _refpoint(tp._refpoint)
-    {
-    }
+  trackParameters::trackParameters(const trackParameters& tp) :  _covmatrix(tp._covmatrix) , _helixparams(tp._helixparams), _refpoint(tp._refpoint)
+  {
+  }
 
 
 
-    trackParameters& trackParameters::operator=(const trackParameters& tp)
-    {
-        if(this == &tp)
-            return *this;
+  trackParameters& trackParameters::operator=(const trackParameters& tp)
+  {
+    if(this == &tp)
+      return *this;
 
-        this->_covmatrix = tp._covmatrix;
-        this->_helixparams = tp._helixparams;
-        this->_refpoint = tp._refpoint;
+    this->_covmatrix = tp._covmatrix;
+    this->_helixparams = tp._helixparams;
+    this->_refpoint = tp._refpoint;
 
-        return *this;
-    }
-
-
-
-    double trackParameters::operator()(unsigned int index) const
-    {
-        // if(index > 4)
-        //     throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for reading.");
-        // else
-      return _helixparams(index);
-    }
+    return *this;
+  }
 
 
 
-    double& trackParameters::operator()(unsigned int index)
-    {
-        // if(index > 4)
-        //     throw std::invalid_argument("[trackParameters::operator()] Wrong index when accessing track parameters for writing.");
-        // else
-      return _helixparams(index);
-    }
+  void trackParameters::setTrackParameters(const Vector5& parameters, const fullCovariance& covMatrix, const Vector3D& refPoint)
+  {
+    setTrackParameters(parameters);
+    setReferencePoint(refPoint);
+    setCovarianceMatrix(covMatrix);
+  }
 
 
 
-    void trackParameters::setTrackParameters(const Vector5& parameters, const fullCovariance& covMatrix, const Vector3D& refPoint)
-    {
-        setTrackParameters(parameters);
-        setReferencePoint(refPoint);
-        setCovarianceMatrix(covMatrix);
-    }
+  void trackParameters::setTrackParameters(const Vector5& params)
+  {
+    _helixparams = params;
+  }
 
 
 
-    void trackParameters::setTrackParameters(const Vector5& params)
-    {
-        _helixparams = params;
-    }
+  void trackParameters::setReferencePoint(const Vector3D& rp)
+  {
+    _refpoint = rp;
+  }
 
 
 
-    void trackParameters::setReferencePoint(const Vector3D& rp)
-    {
-        _refpoint = rp;
-    }
-
-
-
-    void trackParameters::setCovarianceMatrix(const fullCovariance& cov)
-    {
-        _covmatrix = cov;
-    }
+  void trackParameters::setCovarianceMatrix(const fullCovariance& cov)
+  {
+    _covmatrix = cov;
+  }
 }

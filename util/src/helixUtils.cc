@@ -1,15 +1,146 @@
-#include "helixHelpers.hh"
+#include "helixUtils.hh"
+#include "utilities.hh"
 
-#include "aidaTT-Units.hh"
 
 namespace aidaTT
 {
 
+  double calculateRadius(const Vector5& tP)
+  {
+    const double curvature = calculateCurvature(tP);
+
+    if(curvature != 0.)
+      return fabs(1. / curvature);
+    return 0.;
+  }
 
 
-    void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , trackParameters& tp , bool backward)
-    {
 
+  double calculateXCenter(const Vector5& hp, const Vector3D& rp) {
+
+    const double omega = calculateOmega(hp);
+    if(omega == 0.)
+      return 0.;
+
+    //fg: need signed radius here (1/omega)
+    const double radius = 1. / omega;
+    const double dzero = calculateD0(hp);
+    const double phi0 = calculatePhi0(hp);
+
+    return rp.x()  + (radius - dzero) * sin(phi0);
+  }
+
+
+
+  double calculateYCenter(const Vector5& hp, const Vector3D& rp) {
+
+    const double omega = calculateOmega(hp);
+    if(omega == 0.)
+      return 0.;
+    
+    const double radius = 1. / omega;
+    const double dzero = calculateD0(hp);
+    const double phi0 = calculatePhi0(hp);
+    
+    return rp.y() - (radius - dzero) * cos(phi0);
+  }
+  
+  
+
+  double  calculatePhifromXY(double x, double y, const Vector5& hp, const Vector3D& rp) {
+
+    // x0 and y0: p.c.a. coordinates - not w.r.t reference point
+    const double x0   = calculateX0(hp,rp);
+    const double y0   = calculateY0(hp,rp);
+    const double phi0 = calculatePhi0(hp);
+    const double curvature = calculateCurvature(hp);
+
+    return atan2(sin(phi0) - curvature * (x - x0), cos(phi0) + curvature * (y - y0));
+  }
+
+
+
+  double  calculateSfromXY(double x, double y, const Vector5& hp, const Vector3D& rp) {
+
+    // x0 and y0: p.c.a. coordinates w.r.t reference point
+    const double x0   = calculateX0(hp,rp) ;
+    const double y0   = calculateY0(hp,rp) ;
+    const double phi0 = calculatePhi0(hp);
+
+    double phi = calculatePhifromXY(x, y, hp, rp );
+    double dphi = phi - phi0;
+
+    if( dphi < -M_PI ) dphi += 2.*M_PI ;
+    if( dphi >  M_PI ) dphi -= 2.*M_PI ;
+
+    if(dphi != 0.)
+      {
+
+	double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi) ;
+	return s ;
+      }
+    else
+      return 0.;
+
+  }
+
+
+
+  double  calculateXfromS(double s, const Vector5& hp, const Vector3D& rp){
+
+    const double x0   = calculateX0(hp,rp);
+    const double phi0 = calculatePhi0(hp);
+    const double curvature = calculateCurvature(hp);
+    if(curvature != 0.)
+      return (x0 + 2. / curvature * sin(curvature * s / 2.) * cos(phi0 - curvature * s / 2.));
+    else
+      return (x0 + s * cos(phi0));
+  }
+
+
+
+  double  calculateYfromS(double s, const Vector5& hp, const Vector3D& rp){
+
+    const double y0   = calculateY0(hp,rp);
+    const double phi0 = calculatePhi0(hp);
+    const double curvature = calculateCurvature(hp);
+    if(curvature != 0.)
+      return (y0 + 2. / curvature * sin(curvature * s / 2.) * sin(phi0 - curvature * s / 2.));
+    else
+      return (y0 + s * cos(phi0));
+  }
+
+
+
+  double  calculateZfromS(double s,  const Vector5& hp, const Vector3D& rp){
+
+    const double tanLambda = calculateTanLambda(hp);
+    const double z0        = calculateZ0(hp);
+    return (z0 + rp.z() + s * tanLambda);
+  }
+
+
+
+  Vector3D calculateTangent(double s, const Vector5& hp ){
+    
+    const double omega  = calculateCurvature(hp);
+    const double phi0   = calculatePhi0(hp);
+    const double lambda = calculateLambda(hp);
+
+    double t0 = cos(phi0 - omega * s) * cos(lambda);
+    double t1 = sin(phi0 - omega * s) * cos(lambda);
+    double t2 = sin(lambda);
+
+    return Vector3D(t0, t1, t2);
+  }
+
+
+
+
+  void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , 
+			   trackParameters& tp , bool backward)
+  {
+    
       //-------------------------------------------------------------------------------------------------
       // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
       //------------------------------------------------------------------------------------------------
@@ -210,16 +341,12 @@ namespace aidaTT
     
     return fid ;
     
-    
-    
-    
-    }
+  }
+
+
+} // namespace
 
 
 
 
-
-
-
-
-}
+ 

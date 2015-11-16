@@ -1,5 +1,6 @@
 #include "trajectoryElement.hh"
-#include "helixGymnastics.hh"
+#include "helixUtils.hh"
+#include "utilities.hh"
 
 namespace aidaTT
 {

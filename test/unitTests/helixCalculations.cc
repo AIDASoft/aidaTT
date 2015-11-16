@@ -1,5 +1,5 @@
 #include "helixCalculations.hh"
-#include "helixGymnastics.hh"
+#include "helixUtils.hh"
 
 #include <vector>
 
