@@ -2,6 +2,7 @@
 #define helixUtils_HH
 
 #include "trackParameters.hh"
+#include "IGeometry.hh"
 
 /** Define helper function for accessing helix properties. 
  *  Typically all functions are defined once to take a trackParameters object
@@ -15,6 +16,8 @@
 
 namespace aidaTT
 {
+
+
 
   /// unsigned radius in xy-plane from helix parameters
   double calculateRadius(const Vector5& hp) ;
@@ -128,6 +131,31 @@ namespace aidaTT
   double moveHelixTo(trackParameters& tp,  const Vector3D& ref, bool updateCovMat=false) ;
 
 
+  
+  //================= intersection with surfaces ======================================
+
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   */
+  bool intersectWithZCylinder( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			       double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
+  
+  
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   */
+  bool intersectWithZPlane( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			    double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
+  
+  
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   */
+  bool intersectWithZDisk( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			   double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
   
 
   
