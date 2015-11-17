@@ -1,6 +1,9 @@
 #include "helixUtils.hh"
 #include "utilities.hh"
+#include "IGeometry.hh"
+#include "intersections.hh"
 
+#include <sstream>
 
 namespace aidaTT
 {
@@ -342,6 +345,245 @@ namespace aidaTT
     return fid ;
     
   }
+
+
+  //================ intersection calculations ===================================================
+
+  bool intersectWithZCylinder( const ISurface* surf, 
+			       const Vector5& hp, const Vector3D& rp, 
+			       double& s, Vector3D& xx, int mode, bool checkBounds )  {
+    
+
+    //// see: L3 internal note 1666 "Helicoidal tracks", J.Alcaraz
+    const ICylinder* cyl = dynamic_cast<const ICylinder*>( surf ) ;
+
+    if( ! ( surf->type().isParallelToZ() && cyl !=0 ) ){
+      
+      std::stringstream sst ; 
+      sst << " **** _intersectWithZCylinder: surface is not cylinder parallel to z : " << surf  ;
+      throw std::runtime_error( sst.str() ) ;
+    }
+
+    const double omega = calculateOmega( hp );
+    const double phi0  = calculatePhi0(  hp );
+    const double d0    = calculateD0(    hp );
+
+    const double sinph = sin( phi0 ) ;
+    const double cosph = cos( phi0 ) ;
+
+    const double x0    = rp.x() - d0 * sinph ;
+    const double y0    = rp.y() + d0 * cosph ;
+      
+    const double     rho  = cyl->radius() ;
+    const Vector3D&  cylc = cyl->center() ;
+    const double xrho = cylc.x()  ;
+    const double yrho = cylc.y()  ;
+
+    //--------
+
+    const double dx = xrho - x0 ;
+    const double dy = yrho - y0 ;
+
+    double sox = sinph - omega * dx  ;
+    double coy = cosph + omega * dy ;
+      
+    double gamma = ( 2*dx * sinph - 2 * dy * cosph - omega * rho * rho  - omega * ( dx*dx + dy*dy ) ) ;
+    gamma /= ( 2 * rho * sqrt( sox * sox + coy * coy) ) ;
+
+    if( std::fabs( gamma ) > 1. )  // no solution  ( could have faster check at beginning  ...  ) 
+      return false ;
+
+    const double phirho = atan2( sox , coy ) ;
+
+    const double asing = asin( gamma ) ;
+
+    const double phic0 = asing + phirho ;
+
+    double phic1 = ( asing  > 0. ?  M_PI - asing :  - M_PI - asing  ) ;
+    phic1 += phirho ;
+
+    const double X0 = xrho + rho * cos( phic0 )  ;
+    const double Y0 = yrho + rho * sin( phic0 )  ;
+
+    const double X1 = xrho + rho * cos( phic1 )  ;
+    const double Y1 = yrho + rho * sin( phic1 )  ;
+      
+    const double s0 = calculateSfromXY( X0 , Y0, hp, rp );
+    const double s1 = calculateSfromXY( X1 , Y1, hp, rp );
+
+    const double Z0 = calculateZfromS( s0, hp, rp );
+    const double Z1 = calculateZfromS( s1, hp, rp );
+
+    Vector3D sol0( X0, Y0, Z0 );
+    Vector3D sol1( X1, Y1, Z1 );
+    
+
+    // find the right solution depending on mode and the sign of the path lengths:
+    
+    if( s0 < 0. && s1 < 0. ) {
+      
+      if( mode < 1 ){ // mode=(-1,0)  return closest negative solution
+    	if( s1 < s0 ) {  xx = sol0 ;	s = s0 ; }
+    	else          {  xx = sol1 ;	s = s1 ; }
+      }
+      else  // no positive solution
+    	return false ;
+    } 
+    else if ( s0 < 0. && s1 >= 0. ){
+      
+      if(      mode <  0 ){ xx = sol0 ;   s = s0 ; }
+      else if( mode >  0 ){ xx = sol1 ;   s = s1 ; }
+      else {
+    	if(std::fabs(s0)  < std::fabs(s1))
+    	  {   xx = sol0 ;   s = s0 ; }
+    	else{ xx = sol1 ;   s = s1 ; }
+      }
+      
+    } else if ( s0 >= 0. && s1 < 0. ){
+      
+      if(      mode >  0 ){ xx = sol0 ;   s = s0 ; }
+      else if( mode <  0 ){ xx = sol1 ;   s = s1 ; }
+      else {
+    	if(std::fabs(s0)  < std::fabs(s1))
+    	  {   xx = sol0 ;   s = s0 ; }
+    	else{ xx = sol1 ;   s = s1 ; }
+      }
+      
+    } else { // ( s0 >= 0. && s1 >= 0. )
+      
+      if( mode > -1 ){ // mode=(0,1)  return closest positive solution
+    	if( s0 < s1 ) {  xx = sol0 ;	s = s0 ; }
+    	else          {  xx = sol1 ;	s = s1 ; }
+      }
+      else  // no negative solution
+    	return false ;
+    }
+    
+    return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
+  }
+
+
+  bool intersectWithZPlane( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			    double& s, Vector3D& xx, int mode, bool checkBounds ){
+
+    // the straight line: normals plus distance; distance must be positive !
+    const double nx = surf->normal().x();
+    const double ny = surf->normal().y();
+
+    // calculate distance from origin
+    const double dist = fabs(surf->distance(Vector3D()));
+
+    // define straight line from this
+    straightLine line(nx, ny, dist);
+    // create circle
+    const double radius  = calculateRadius(  hp );
+    const double xcenter = calculateXCenter( hp, rp );
+    const double ycenter = calculateYCenter( hp, rp );
+    circle circ(xcenter, ycenter, radius);
+
+    intersections candidates = intersectCircleStraightLine(circ, line);
+
+    if(candidates.number() < 1)
+      return false;
+    
+    else if(candidates.number() == 1) {
+
+      s = calculateSfromXY( candidates[0].first, candidates[0].second , hp, rp);
+      const double Z = calculateZfromS(s, hp, rp );
+      xx.fill(candidates[0].first, candidates[0].second, Z);
+
+      if( mode * s > 0 || mode == 0)
+	return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
+      else
+	return false ;
+
+    }
+
+    ///  else -- the standard case: two solutions index 0 and 1
+    /// calculate all values first, then evaluate
+    const double X0 = candidates[0].first;
+    const double Y0 = candidates[0].second;
+    const double s0 = calculateSfromXY(X0, Y0,  hp, rp);
+    const double Z0 = calculateZfromS(s0, hp, rp);
+
+    const double X1 = candidates[1].first;
+    const double Y1 = candidates[1].second;
+    const double s1 = calculateSfromXY(X1, Y1,  hp, rp);
+    const double Z1 = calculateZfromS(s1,  hp, rp);
+
+    Vector3D sol0(X0, Y0, Z0);
+    Vector3D sol1(X1, Y1, Z1);
+
+   // find the right solution depending on mode and the sign of the path lengths:
+    
+    if( s0 < 0. && s1 < 0. ) {
+      
+      if( mode < 1 ){ // mode=(-1,0)  return closest negative solution
+	if( s1 < s0 ) {  xx = sol0 ;	s = s0 ; }
+	else          {  xx = sol1 ;	s = s1 ; }
+      }
+      else  // no positive solution
+	return false ;
+    } 
+    else if ( s0 < 0. && s1 >= 0. ){
+      
+      if(      mode <  0 ){ xx = sol0 ;   s = s0 ; }
+      else if( mode >  0 ){ xx = sol1 ;   s = s1 ; }
+      else {
+	if(std::fabs(s0)  < std::fabs(s1))
+	  {   xx = sol0 ;   s = s0 ; }
+	else{ xx = sol1 ;   s = s1 ; }
+      }
+      
+    } else if ( s0 >= 0. && s1 < 0. ){
+      
+      if(      mode >  0 ){ xx = sol0 ;   s = s0 ; }
+      else if( mode <  0 ){ xx = sol1 ;   s = s1 ; }
+      else {
+	if(std::fabs(s0)  < std::fabs(s1))
+	  {   xx = sol0 ;   s = s0 ; }
+	else{ xx = sol1 ;   s = s1 ; }
+      }
+      
+    } else { // ( s0 >= 0. && s1 >= 0. )
+      
+      if( mode > -1 ){ // mode=(0,1)  return closest positive solution
+	if( s0 < s1 ) {  xx = sol0 ;	s = s0 ; }
+	else          {  xx = sol1 ;	s = s1 ; }
+      }
+      else  // no negative solution
+	return false ;
+    }
+    
+    return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
+
+}
+
+
+  bool intersectWithZDisk( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			   double& s, Vector3D& xx, int mode, bool checkBounds ) {
+    
+    // the z position of the plane
+    double planePositionZ = surf->origin().z();
+    double helixPositionZ = rp.z() + calculateZ0( hp ) ;
+    
+    s = ( planePositionZ - helixPositionZ ) / calculateTanLambda( hp );
+    
+    double x = calculateXfromS(s, hp, rp );
+    double y = calculateYfromS(s, hp, rp );
+    
+    xx.fill(x, y, planePositionZ);
+
+    if( mode * s > 0 || mode == 0 )
+      return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
+    else
+      return false ;
+
+  }
+  
+
+
+
 
 
 } // namespace

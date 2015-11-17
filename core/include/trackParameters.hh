@@ -30,8 +30,16 @@ namespace aidaTT
   public:
     /// default constructor, sets everything to zero
     trackParameters();
+
+    /// initialize from helix
+    trackParameters(const Vector5& hp, const Vector3D& rp ) :  _covmatrix() , _helixparams( hp ), 
+							       _refpoint(rp){
+    }
+
+
     /// copy ctor 
     trackParameters(const trackParameters&);
+
     /// assignment
     trackParameters& operator=(const trackParameters&);
     
