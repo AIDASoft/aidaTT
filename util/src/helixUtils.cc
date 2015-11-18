@@ -581,6 +581,30 @@ namespace aidaTT
 
   }
   
+  bool intersectWithSurface( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			       double& s, Vector3D& xx, int mode, bool checkBounds) {
+
+
+    if( surf->type().isZCylinder() ){
+
+      return intersectWithZCylinder( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+
+    } else if( surf->type().isZPlane() ){  
+
+      return intersectWithZPlane( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+
+    } else if( surf->type().isZDisk() ){  
+
+      return intersectWithZDisk( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+
+    } else {
+
+      std::cout << " WARNING intersectWithSurface: intersection with surface " 
+		<< surf << " not yet implemented ! " << std::endl ;
+    }
+
+    return false ;
+  }
 
 
 

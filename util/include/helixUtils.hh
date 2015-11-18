@@ -137,6 +137,17 @@ namespace aidaTT
   /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
    *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
    *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   *  Calls one of the following methods: intersectWithZCylinder(), intersectWithZPlane(),
+   *  intersectWithZDisk() depending on the type of the surface.
+   *  @fixme: need intersection with arbitrary surface.
+   */
+  bool intersectWithSurface( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			       double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
+
+
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
    */
   bool intersectWithZCylinder( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
 			       double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
