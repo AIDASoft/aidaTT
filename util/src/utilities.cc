@@ -15,29 +15,6 @@ namespace aidaTT
             return 0.;
     }
 
-    Vector3D pointOnTrajectory(const trackParameters& tp,  double s) {
-
-      Vector3D p ;
-      const Vector3D& rp = tp.referencePoint() ;
-
-      double omega = tp.parameters()( OMEGA ) ;  
-      double phi0  = tp.parameters()( PHI0  ) ;
-      double tanl  = tp.parameters()( TANL  ) ;
-      double d0    = tp.parameters()( D0    ) ;
-      double z0    = tp.parameters()( Z0    ) ;
-
-      double sinphi = sin( phi0 ) ;
-      double cosphi = cos( phi0 ) ;
-
-      p.x() = rp.x() - d0 * sinphi + (1./omega) * ( sinphi - sin( phi0 - s * omega ) ) ;
-      
-      p.y() = rp.y() + d0 * cosphi - (1./omega) * ( cosphi - cos( phi0 - s * omega ) ) ;
-	  
-      p.z() = rp.z() + z0 + s * tanl ;
-	  
-      return  p ;
-    }
-
 
 
     /// Calculate transformation matrix from curvilinear track parameter corrections to perigee parametrization

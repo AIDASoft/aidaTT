@@ -7,15 +7,11 @@
 
 #include "intersections.hh"
 #include "utilities.hh"
-#include "fiveByFiveMatrix.hh"
 #include "aidaTT-Units.hh"
+#include "materialUtils.hh"
 
-// #ifdef AIDATT_USE_DD4HEP
-// #include "DD4hep/DD4hepUnits.h"
-// #endif // AIDATT_USE_DD4HEP
 
-namespace aidaTT
-{
+namespace aidaTT {
   
     
 
@@ -59,9 +55,54 @@ namespace aidaTT
   }
 
 
-  Vector3D trajectory::pointAt( double s) {
-    return pointOnTrajectory( _referenceParameters, s ) ;
+  const trajectoryElement* trajectory::trajectoryElementAt(double s ) {
+    
+    double prevS = -1.e99 ;
+    const trajectoryElement* prevElement = ( _initialTrajectoryElements.size() > 0 ? 
+					     _initialTrajectoryElements[0]  : 0 ) ;
+    
+    for(std::vector<trajectoryElement*>::iterator it = _initialTrajectoryElements.begin()+1, 
+	  last = _initialTrajectoryElements.end(); it < last; ++it ){
+      
+      const trajectoryElement* element = *it ;
+      
+      double newS = element->arcLength() ;
+      
+      if( prevS <= s &&  s < newS ){
+	break ;
+      }
+      prevElement = element ;
+      prevS = newS ;
+    }
+    
+    return prevElement ;
   }
+  
+  
+  Vector3D trajectory::pointAt( double s ) {
+    
+    const trajectoryElement* element =  trajectoryElementAt( s ) ;
+    
+    if( element != 0 ) 
+      return aidaTT::pointAt(  ( s - element->arcLength() ) , *element->getTrackParameters() ) ;
+    
+    return  aidaTT::pointAt( s, _referenceParameters ) ;
+  }
+  
+  
+  
+  /// comput the tangent to the trajectory at given s
+  Vector3D trajectory::tangentAt( double s ) {
+    
+    const trajectoryElement* element =  trajectoryElementAt( s ) ;
+    
+    if( element != 0 ) 
+      return aidaTT::calculateTangent( ( s - element->arcLength() ),  *element->getTrackParameters() ) ;
+    
+    return  aidaTT::calculateTangent( s, _referenceParameters ) ;
+  }
+
+
 
   const std::vector<trajectoryElement*>& trajectory::trajectoryElements() const
   {
@@ -79,7 +120,7 @@ namespace aidaTT
   };
 
 
-  const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces(const std::list<const aidaTT::ISurface*>& surfaces)
+  const std::vector<std::pair<double, const ISurface*> >& trajectory::getIntersectionsWithSurfaces(const std::vector<const aidaTT::ISurface*>& surfaces)
   {
     /// master method for intersection calculation, subdelegates. steps:
     /// 1. calculate all intersections
@@ -91,11 +132,9 @@ namespace aidaTT
     std::cout << "***** trajectory::getIntersectionsWithSurfaces() tP : " 
 	      << _referenceParameters << std::endl ;
 
-    const double radius  = std::fabs( calculateRadius(_referenceParameters) ) ;
+    double maxS = M_PI * std::fabs( calculateRadius(_referenceParameters) ) ;
 
-    double maxS = M_PI * radius ;
-
-    for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
+    for(std::vector<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
       {
 	
 	double s = 0.;  
@@ -782,206 +821,290 @@ namespace aidaTT
 
 
 
-  void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id)
-  //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
-  {
+  // void trajectory::addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id)
+  // //void trajectory::addScatterer(const Vector3D& position, TMatrixDSym& precision, const ISurface& surface,  const trackParameters& seed_tp, void* id)
+  // {
    
-    /// get reference information
-    // I am not sure what to do with these stuff
-    Vector2D referenceUV ;
-    double s =  0;
-    double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
+  //   /// get reference information
+  //   // I am not sure what to do with these stuff
+  //   Vector2D referenceUV ;
+  //   double s =  0;
+  //   double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
 
-    std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
-    measDir->push_back(surface.u(position));
-    measDir->push_back(surface.v(position));
+  //   std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
+  //   measDir->push_back(surface.u(position));
+  //   measDir->push_back(surface.v(position));
 
-    std::vector<double> residuals(2);
-    residuals[0] = 0;
-    residuals[1] = 0;
+  //   std::vector<double> residuals(2);
+  //   residuals[0] = 0;
+  //   residuals[1] = 0;
 
-    // I mean the stuff up here
+  //   // I mean the stuff up here
 
-    aidaTT::trackParameters test_tp = seed_tp ;
-    /*
-      Vector5 hel_IP = seed_tp.parameters();
-      double omega_IP  = hel_IP(0);
-      double tnl_IP    = hel_IP(1); 
-      double phi0_IP   = hel_IP(2);
+  //   aidaTT::trackParameters test_tp = seed_tp ;
+  //   /*
+  //     Vector5 hel_IP = seed_tp.parameters();
+  //     double omega_IP  = hel_IP(0);
+  //     double tnl_IP    = hel_IP(1); 
+  //     double phi0_IP   = hel_IP(2);
 
-      std::cout << " track parameters in IP omega: " << omega_IP << " tanl " << tnl_IP << " AND phi0 " << phi0_IP << std::endl ; 
-    */
-    moveHelixTo( test_tp, position ) ; // move helix to the scatterer
+  //     std::cout << " track parameters in IP omega: " << omega_IP << " tanl " << tnl_IP << " AND phi0 " << phi0_IP << std::endl ; 
+  //   */
+  //   moveHelixTo( test_tp, position ) ; // move helix to the scatterer
 
-    Vector5 hel = test_tp.parameters();
+  //   Vector5 hel = test_tp.parameters();
 
-    double omega  = hel(0);
-    double tnl    = hel(1); 
-    double phi0   = hel(2);
+  //   double omega  = hel(0);
+  //   double tnl    = hel(1); 
+  //   double phi0   = hel(2);
 
 
-    const DDSurfaces::IMaterial& material_inn = surface.innerMaterial();
-    const DDSurfaces::IMaterial& material_out = surface.outerMaterial();
+  //   const DDSurfaces::IMaterial& material_inn = surface.innerMaterial();
+  //   const DDSurfaces::IMaterial& material_out = surface.outerMaterial();
 
-    const double r_i = surface.innerThickness();
-    const double r_o = surface.outerThickness();
+  //   const double r_i = surface.innerThickness();
+  //   const double r_o = surface.outerThickness();
 
-    const double X0_o = material_out.radiationLength();
-    const double X0_i = material_inn.radiationLength();
+  //   const double X0_o = material_out.radiationLength();
+  //   const double X0_i = material_inn.radiationLength();
 
-    double r_tot = r_i + r_o ;
+  //   double r_tot = r_i + r_o ;
 
-    //calculation of effective radiation length of the surface
-    //double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
-    double X0_eff = ( r_i/X0_i + r_o/X0_o ) / ( r_i + r_o ) ; 
+  //   //calculation of effective radiation length of the surface
+  //   //double X0_eff = 1. / ( (r_i/r_tot)/ X0_i  +  (r_o/r_tot)/ X0_o ) ;
+  //   double X0_eff = ( r_i/X0_i + r_o/X0_o ) / ( r_i + r_o ) ; 
 
-    //calculation of the path of the particle inside the material
-    //compute path as projection of (straight) track to surface normal:
-    DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
-    DDSurfaces::Vector3D up = p.unit() ;
+  //   //calculation of the path of the particle inside the material
+  //   //compute path as projection of (straight) track to surface normal:
+  //   DDSurfaces::Vector3D p( - std::sin( phi0 ), std::cos( phi0 ) , tnl ) ;
+  //   DDSurfaces::Vector3D up = p.unit() ;
 
-    //const DDSurfaces::Vector3D& n = surface.normal() ;
-    // need to get the normal at crossing point ( should be the current helix' reference point)
-    const Vector3D& piv = seed_tp.referencePoint() ;
-    DDSurfaces::Vector3D xx( piv.x(),piv.y(),piv.z()) ;
-    const DDSurfaces::Vector3D& n = surface.normal( xx ) ;
+  //   //const DDSurfaces::Vector3D& n = surface.normal() ;
+  //   // need to get the normal at crossing point ( should be the current helix' reference point)
+  //   const Vector3D& piv = seed_tp.referencePoint() ;
+  //   DDSurfaces::Vector3D xx( piv.x(),piv.y(),piv.z()) ;
+  //   const DDSurfaces::Vector3D& n = surface.normal( xx ) ;
     
 
-    double cosTrk = std::fabs( up * n )  ;
+  //   double cosTrk = std::fabs( up * n )  ;
     
-    double path = r_i + r_o ;
+  //   double path = r_i + r_o ;
 
-    //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
-    path = path/cosTrk ; 
+  //   //note: projectedPath is already in dd4hep(TGeo) units, i.e. cm !
+  //   path = path/cosTrk ; 
 
-    double X_X0 = path * X0_eff ;
+  //   double X_X0 = path * X0_eff ;
 
-    double Pt = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
-    double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
+  //   double Pt = ( fabs(1./omega ) / 100.0 ) ;  // That's Pt
+  //   double mom = Pt*TMath::Sqrt(1 + tnl*tnl);
 
-    static const double mass = 0.13957018; // pion mass [GeV]
-    double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
+  //   static const double mass = 0.13957018; // pion mass [GeV]
+  //   double   beta = mom / TMath::Sqrt(mom * mom + mass * mass);
 
-    double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
+  //   double Qms = 0.0136/(mom*beta) * 1.0 * TMath::Sqrt(X_X0) * (1 + 0.0038*(TMath::Log(X_X0)));
 
-    // std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms = " << Qms << std::endl;
+  //   // std::cout << " omega par " << omega << " mom " << mom << " beta " << beta << "rinn, rout " << r_i << ", " << r_o << " X0inn, X0out " <<  X0_i << ", " << X0_o <<  " effective radiation length " << X0_eff <<  " x/X0 " << X_X0 << " path " << path << "Cosine of track angle with the surface " << cosTrk << " Qms = " << Qms << std::endl;
 
-    precision[0] = Qms*Qms ;  precision[1] = Qms*Qms ;
+  //   precision[0] = Qms*Qms ;  precision[1] = Qms*Qms ;
     
-    if(intersects)
-      {
-	_initialTrajectoryElements.push_back(new trajectoryElement( s , surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id, true ));
-      } 
-    else
-      {
-	delete measDir ;
+  //   if(intersects)
+  //     {
 	
-	std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
-		  << "        hit will be ignored ! " << std::endl ;
-      }
+  // 	//FIXME: need proper track parameters at this s ....
+  // 	trackParameters* trkParam = new  trackParameters( _referenceParameters ) ;
+	
+  // 	_initialTrajectoryElements.push_back(new trajectoryElement( s , trkParam, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, *trkParam ), id, true ));
+  //     } 
+  //   else
+  //     {
+  // 	delete measDir ;
+	
+  // 	std::cout << " ERROR: hit at " << position << "  does not intersect with surface : " <<  surface
+  // 		  << "        hit will be ignored ! " << std::endl ;
+  //     }
     
-  }
+  //  }
   
 
 
 
-  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, const ISurface& surface, void* id, bool isScatterer)
+  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, 
+				  const ISurface& surface, void* id, bool isScatterer)
   {
+    
+    const trackParameters* tP = trajectoryElements().back()->getTrackParameters() ;
+    const double prevS        = trajectoryElements().back()->arcLength() ;
 
-    /// get reference information
-    Vector2D referenceUV ;
-    double s =  0;
-    double intersects = _calculateIntersectionWithSurface(&surface, s, &referenceUV);
+    double s = 0;
+    Vector3D xx ;
+    bool intersects = aidaTT::intersectWithSurface( &surface, tP->parameters() , tP->referencePoint() ,
+						   s, xx, +1 , false ) ; 
+    //note: if we have a measurement we do _not_ check for the bounds of the surface
 
     if( !intersects ){
       
-      std::cout << " ERROR: trajectory::addMeasurement() hit at " << position << "  does not intersect with surface : " <<  surface
-		<< "        hit will be ignored ! " << std::endl ;
+      std::cout << "  ERROR: trajectory::addMeasurement() hit at " << position 
+		<< "  does not intersect with surface : " <<  surface
+		<< "  hit will be ignored ! " << std::endl ;
       
       return ;
     }
     
+    //    std::cout << " prevS : " << prevS << " - s to next intersection: " << s << std::endl ;
+
+    // add this trajectoryElement at the total path lengths from the IP
+    s = s + prevS ;
+
+    const Vector2D& referenceUV = surface.globalToLocal( xx ) ;
+
+    trackParameters* trkParam = new  trackParameters( *tP ) ;
+    
+    // move the track paramters to the intersection point
+    moveHelixTo( *trkParam, xx ) ;
+
+
+    const Vector3D& mom = momentumAtPCA( *trkParam ) ;
+
+    const Vector2D& measuredUV = surface.globalToLocal( position ) ;
+
+    // ********************************************
+    // apply the energy loss from this surface
+    double energy, beta ;
+    double deltaE = aidaTT::computeEnergyLoss( &surface, measuredUV , mom , energy, beta ) ; // mass
+    trkParam->parameters()( OMEGA ) /= ( 1. - deltaE/energy ) ;
+    // ********************************************
+
+
     /// calculate measurement info
-    Vector2D measuredUV(surface.globalToLocal(position));
+
     std::vector<double> residuals;
     std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
-
-
+    
     const double udiff = measuredUV.u() - referenceUV.u();
     residuals.push_back( udiff ) ;
-    measDir->push_back(surface.u(position));
+    measDir->push_back( surface.u(position) );
     
+
     //    if( ! surface.type().isMeasurement1D()  ){
-
-      const double vdiff = measuredUV.v() - referenceUV.v();
-      residuals.push_back( vdiff ) ;
-      measDir->push_back(surface.v(position));
-      // }
-
+    
+    const double vdiff = measuredUV.v() - referenceUV.v();
+    residuals.push_back( vdiff ) ;
+    measDir->push_back(surface.v(position));
+    // }
+    
     std::vector<double> new_prec = precision ;
-
-
+    
     if( isScatterer ){ // also  add a scattering to the trajectory element
       
-      double c1 = 0 ; double c2 = 0 ; 
-      double qms = computeQMS( &surface, c1, c2 ) ;
-
+      
+      double qms = aidaTT::computeQMS( &surface, referenceUV , mom  ) ; // mass
+      
+      // projection of track onto surface vectors
+      const Vector3D& up = mom.unit() ;
+      double c1 = up * surface.u( xx );
+      double c2 = up * surface.v( xx );
+      
       new_prec.push_back(  qms*qms  ) ;
       new_prec.push_back(  c1  ) ;
       new_prec.push_back(  c2  ) ;
-
     }
-    
-    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), id , isScatterer ));
+
+
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, trkParam, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(s, *trkParam), id , isScatterer ));
   }
 
   void trajectory::addScatterer( const ISurface& surface ){
     
-    double s ; Vector2D uv ; Vector3D position ;
-    bool intersects = _calculateIntersectionWithSurface( &surface, s , &uv, &position );
-    
+    // double s ; Vector2D uv ; Vector3D position ;
+    // bool intersects = _calculateIntersectionWithSurface( &surface, s , &uv, &position );
+    // if( !intersects ){
+    //   std::cout << " ERROR: trajectory::addScatterer: track does not intersect with surface : " <<  surface << std::endl ;      
+    //   return ;
+    // }
+
+    const trackParameters* tP = trajectoryElements().back()->getTrackParameters() ;
+    const double prevS = trajectoryElements().back()->arcLength() ;
+
+    double s =  0;
+    Vector3D xx ;
+    bool intersects = aidaTT::intersectWithSurface( &surface, tP->parameters() , tP->referencePoint() ,
+						   s, xx, +1 , true ) ; 
+    //note: if we have a scatterer we _do_ check for the bounds of the surface
+
     if( !intersects ){
-      std::cout << " ERROR: trajectory::addScatterer: track does not intersect with surface : " <<  surface << std::endl ;      
+      
+      std::cout << "  INFO: trajectory::addScatterer() track "
+		<< "  does not intersect with surface : " <<  surface
+		<< std::endl ;
       return ;
     }
+    
+    // add this trajectoryElement at the total path lengths from the IP
+    s = s + prevS ;
+
+    trackParameters* trkParam = new  trackParameters( *tP ) ;
+    
+    // move the track paramters to the intersection point
+    moveHelixTo( *trkParam, xx ) ;
+    
+    Vector2D referenceUV = surface.globalToLocal( xx ) ;
+
+    const Vector3D& mom = momentumAtPCA( *trkParam ) ;
+
+    // ********************************************
+    // apply the energy loss from this surface
+    double energy, beta ;
+    double deltaE = aidaTT::computeEnergyLoss( &surface, referenceUV , mom , energy, beta ) ; // mass
+    trkParam->parameters()( OMEGA ) /= ( 1. - deltaE/energy ) ;
+    // ********************************************
 
     std::vector<double> residuals(2);
     residuals[0] = 0 ;
     residuals[1] = 0 ;
 
     std::vector<Vector3D>* measDir = new std::vector<Vector3D>;
-    measDir->push_back(surface.u(position));
-    measDir->push_back(surface.v(position));
+    measDir->push_back( surface.u( xx ) );
+    measDir->push_back( surface.v( xx ) );
 
-    double c1 = 0 ; double c2 = 0 ; 
-    double qms = computeQMS( &surface, c1, c2 ) ;
+    // double c1 = 0 ; double c2 = 0 ; 
+    // double qms = computeQMS( &surface, c1, c2 ) ;
     
+    double qms = aidaTT::computeQMS( &surface, referenceUV , mom  ) ; // mass
+      
+    // projection of track onto surface vectors
+    const Vector3D& up = mom.unit() ;
+    double c1 = up * (*measDir)[0] ; //surface.u( xx );
+    double c2 = up * (*measDir)[1] ; //surface.v( xx );
+
     std::vector<double> precision(3) ;
     precision[0] =  qms*qms  ;
     precision[1] = c1 ;
     precision[2] = c2 ;
    
-    // std::cout << " addScatterer : what I am passing as qms2 value to prec. vector " << qms*qms << std::endl;
-       
-    _initialTrajectoryElements.push_back(new trajectoryElement(s, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, _referenceParameters), 0 , true, false ));
+
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, trkParam, surface, measDir, precision, residuals, calculateLocalCurvilinearSystem(s, *trkParam), 0 , true, false ));
   }
 
 
   void trajectory::addElement(const Vector3D& point, void* id)
   {
     double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
-    _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
+
+    //FIXME: need proper track parameters at this s ....
+    trackParameters* trkParam = new  trackParameters( _referenceParameters ) ;
+
+    _initialTrajectoryElements.push_back(new trajectoryElement(s, trkParam ,  id));
   }
 
 
 
-  void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
-  {
-    /// TODO :: this is not complete -- what is it needed for?
-    double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
-    // suppress warning -- STILL WRONG:: TODO
-    _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
-  }
+  // void trajectory::addElement(const Vector3D& point, const ISurface& surface, void* id)
+  // {
+  //   /// TODO :: this is not complete -- what is it needed for?
+  //   double s =  calculateSfromXY(point.x(), point.y(), _referenceParameters);
+  //   // suppress warning -- STILL WRONG:: TODO
+  //   _initialTrajectoryElements.push_back(new trajectoryElement(s, id));
+  // }
 
 
 
@@ -996,15 +1119,9 @@ namespace aidaTT
   void trajectory::prepareForFitting()
   {
     ///~ first sort the trajectory elements by arclength
-    sort(_initialTrajectoryElements.begin(), _initialTrajectoryElements.end(), compareTrajectoryElements);
+    sort(_initialTrajectoryElements.begin(), _initialTrajectoryElements.end(), 
+	 compareTrajectoryElements);
 
-    const double cosLambda = cos(calculateLambda(_referenceParameters));
-
-    ///~ TODO: this uses a static b field for now ...
-    const double qbyp      = calculateQoverP(_referenceParameters, _bfieldZ) ;
-    const Vector3D BField(0., 0., _bfieldZ);
-
-    ///~ calculate and add the jacobians
 
     double prevS = 0. ;
 
@@ -1019,6 +1136,13 @@ namespace aidaTT
     for(std::vector<trajectoryElement*>::iterator element = _initialTrajectoryElements.begin()+1, last = _initialTrajectoryElements.end(); element < last; ++element)
       {
 
+	const trackParameters& trkParam = *(*element)->getTrackParameters() ;
+
+	const double cosLambda = cos( calculateLambda( trkParam  ) );
+	const Vector3D& BField = IGeometry::instance().getBField( trkParam.referencePoint() ) ;
+
+	const double qbyp  = calculateQoverP( trkParam , BField.z() ) ;
+
 	///~ obtain the two arc lengths
 	//double prevS = (*(element - 1))->arcLength();
 	double currS = (*element)->arcLength();
@@ -1030,15 +1154,33 @@ namespace aidaTT
 	if ((*element)->isScatterer()){
 	  //calculate the energy loss
 	  const aidaTT::ISurface& surf = (*element)->surface();
-	  NrjLoss = GetEnergyLoss(  &surf, &_referenceParameters );
+	  NrjLoss = GetEnergyLoss(  &surf, &trkParam );
+
+	  // check new eloss:
+	  double e,b ;
+	  double deltaE = aidaTT::computeEnergyLoss( &surf, trkParam , e, b ) ;
+	  double NrjLossNew = (2.0*deltaE) / ((b*b)*e);
+
+	  //	  std::cout << " NrjLoss : " << NrjLoss << " - NrjLossNew: " << NrjLossNew << std::endl ;
 	}
 
 	// std::cout << std::endl ;
 	// std::cout << " current S " << currS << " previous S " << prevS << " currS - prevS " << dw << std::endl ;
+	// std::cout << " trkParam : " << trkParam << std::endl ;
 	// std::cout << std::endl ;
 
-	Vector3D tstart = calculateTangent(prevS, _referenceParameters);
-	Vector3D tend   = calculateTangent(currS, _referenceParameters);
+
+
+	// Vector3D tstartOld = calculateTangent(prevS, trkParam);
+	// Vector3D tendOld   = calculateTangent(currS, trkParam);
+
+	Vector3D tstart = tangentAt( prevS ) ;
+	Vector3D tend   = tangentAt( currS ) ;
+
+
+	// std::cout << " tstartOld: " << tstartOld << "tstart  " << tstart << std::endl ;
+	// std::cout << " tendOld: " << tendOld << "tend  " << tend << std::endl ;
+
 
 	fiveByFiveMatrix* jacob = new fiveByFiveMatrix;
 	_propagation->getJacobian(*jacob, dw, qbyp, tstart, tend, BField, NrjLoss);

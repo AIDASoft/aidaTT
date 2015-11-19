@@ -5,19 +5,31 @@
 
 #include "IGeometry.hh"
 #include "DD4hep/LCDD.h"
+#include <vector>
 
 namespace aidaTT
 {
   class DD4hepGeometry : public IGeometry
   {
   public:
-    DD4hepGeometry(const ::DD4hep::Geometry::DetElement&);
 
-    const std::list<const ISurface*>& getSurfaces();
+    DD4hepGeometry(const DD4hep::Geometry::LCDD& lcdd ) ;   
+    
+    /// get a list of all surfaces in the tracking geometry 
+    /// loosely sorted with radius
+    virtual const std::vector<const ISurface*>& getSurfaces() const ;
+    
+    /// access the B field in Tesla at given position
+    virtual Vector3D getBField( const Vector3D& xx) const ;
+    
+    /// d'tor
+    virtual ~DD4hepGeometry(){}
+    
 
   private:
-    const ::DD4hep::Geometry::DetElement& _detelem;
-    std::list<const ISurface* > _surfaceList;
+    const DD4hep::Geometry::LCDD& _lcdd ;
+
+    std::vector<const ISurface* > _surfaceList;
   };
 }
 #endif // DD4HEPGEOMETRY_HH

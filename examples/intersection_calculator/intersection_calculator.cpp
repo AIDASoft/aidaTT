@@ -1,15 +1,9 @@
-#ifdef AIDATT_USE_DD4HEP
-
 #include <iostream>
 
 // aidaTT
-#include "DD4hepGeometry.hh"
 #include "trackParameters.hh"
 #include "trajectory.hh"
 
-// DD4hep
-#include "DD4hep/LCDD.h"
-#include "DDRec/SurfaceHelper.h"
 
 int main(int argc, char** argv)
 {
@@ -21,16 +15,9 @@ int main(int argc, char** argv)
 
     std::string inFile =  argv[1] ;
 
-    /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
-    DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-    lcdd.fromCompact(inFile);
-
-    DD4hep::Geometry::DetElement world = lcdd.world() ;
-
-    aidaTT::DD4hepGeometry geom(world);
-
-    const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
-
+    const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance() ;
+    
+    const std::vector<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
     //~ a
     double vals[] = { 0.23, 0.01, 1.57, 0.00, 0. };
@@ -106,4 +93,3 @@ int main(int argc, char** argv)
     return 0;
 }
 
-#endif // AIDATT_USE_DD4HEP

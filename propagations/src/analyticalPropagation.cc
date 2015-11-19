@@ -103,7 +103,7 @@ namespace aidaTT
 		//   " tEndu1 " << tEndu1 <<
 		//   " tEnddx " << tEnddx <<
 		//   " an2u1 " << an2u1 << std::endl; 
-		std::cout << " energy loss correction " << NrjLoss << std::endl ;
+		//		std::cout << " energy loss correction " << NrjLoss << std::endl ;
 
 		// debugging ends here
 

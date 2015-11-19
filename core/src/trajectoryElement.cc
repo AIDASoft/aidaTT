@@ -22,11 +22,11 @@ namespace aidaTT
   
     /// standard constructor for measurements: arc length is given, the surface it belongs to;
     /// the measurement directions, resolution and residuals plus the local curvilinear system and some identification
-    trajectoryElement::trajectoryElement(double arclength, const ISurface& surface, std::vector<Vector3D>* measDir, const std::vector<double>& precisions,
+  trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, const ISurface& surface, std::vector<Vector3D>* measDir, const std::vector<double>& precisions,
                                          const std::vector<double>& residuals, std::pair<Vector3D, Vector3D>* lCLS, void* id, bool isScatterer, bool hasMeasurement )
       : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(&surface), 
 	_measDirections(measDir), _precisions(precisions), _residuals(residuals), _localCurvilinearSystem(lCLS), 
-	_scatterer( isScatterer ), _thick(false), _id(id), _measurement(hasMeasurement)
+	 _trkParam(trkParam), _scatterer( isScatterer ), _thick(false), _id(id), _measurement(hasMeasurement)
     {
         _calculateLocalToMeasurementProjectionMatrix();
 
@@ -38,7 +38,7 @@ namespace aidaTT
   
 
     ///~ constructor B: only the arc length is given and some identification
-  trajectoryElement::trajectoryElement(double arclength, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _localCurvilinearSystem(NULL), _localToMeasurementProjection(NULL), _measDirections(NULL), _measurement(false), _scatterer(false), _id(id)
+  trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _localCurvilinearSystem(NULL), _localToMeasurementProjection(NULL), _measDirections(NULL), _measurement(false),  _trkParam(trkParam), _scatterer(false), _id(id)
     {}
 
 
@@ -67,6 +67,8 @@ namespace aidaTT
 	//std::cout << " now i delete the projection from local to measurement system " << std::endl ;
             delete _localToMeasurementProjection;
       }
+      if( _trkParam ) delete  _trkParam ;
+
     }
 
 

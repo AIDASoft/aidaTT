@@ -58,7 +58,6 @@ ENDFOREACH()
 
 TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${DD4hep_COMPONENT_LIBRARIES} )
 
-
 #INSTALL( TARGETS ${PROJECT_NAME} DESTINATION lib )
 
 # add a target to generate API documentation with Doxygen

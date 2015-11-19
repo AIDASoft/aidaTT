@@ -92,22 +92,29 @@ namespace aidaTT
     ///~ manually add an element to the trajectory; e.g. a point of interest
     ///~ optional: add a surface; e.g. which only contains material
     void addElement(const Vector3D&, void* id);
-    void addElement(const Vector3D&, const ISurface&, void* id);
+    // void addElement(const Vector3D&, const ISurface&, void* id);
     // add a scatterer
-    void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
+    // void addScatterer(const Vector3D& position, std::vector<double>& precision, const ISurface& surface, const trackParameters& seed_tp, void* id);
 
     ///~ test whether/where a surface is intersected
     bool intersectWithSurface(const ISurface* surface, Vector3D& intersect);
 
-    const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::list<const ISurface*>&);
+    const std::vector<std::pair<double, const ISurface*> >& getIntersectionsWithSurfaces(const std::vector<const ISurface*>&);
 
     IFittingAlgorithm* getFittingAlgorithm() const;
     IPropagation* getPropagation() const;
     IBField* getBField() const;
 
-    /// helper method: compute the point on the trajectory for a given value of s
+    /// the point on the trajectory for a given arc length
     Vector3D pointAt( double s) ;
 
+    /// the tangent to the trajectory for a given arc length
+    Vector3D tangentAt( double s ) ;
+
+    /// the trajectoryElement that is valid at the given arc length, i.e.
+    /// the one that is defined at the largest arc length less or equal to s
+    const trajectoryElement* trajectoryElementAt(double s ) ; 
+    
 
     ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
     void prepareForFitting();
@@ -136,8 +143,8 @@ namespace aidaTT
     /// disable assignment
     trajectory operator=(const trajectory&);
 
-    // the  internal parts
-    trackParameters          _referenceParameters;
+    // the internal parts
+    trackParameters                  _referenceParameters;
     std::vector<trajectoryElement*>  _initialTrajectoryElements;
 
     std::vector<std::pair<double, const ISurface*> > _intersectionsList;

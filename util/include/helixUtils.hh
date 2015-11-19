@@ -17,8 +17,6 @@
 namespace aidaTT
 {
 
-
-
   /// unsigned radius in xy-plane from helix parameters
   double calculateRadius(const Vector5& hp) ;
 
@@ -114,7 +112,16 @@ namespace aidaTT
     return calculateZfromS( s,  tp.parameters() , tp.referencePoint() ) ;
   }
 
-    /// tangent to the track at path length s from helix parameters 
+  /// compute point at given arc length from helix parameters  and reference point 
+  Vector3D pointAt(double s, const Vector5& hp, const Vector3D& rp) ;
+
+
+  /// compute point at given arc length from from track parameters
+  inline Vector3D pointAt(double s,  const trackParameters& tp){
+    return pointAt( s,  tp.parameters() , tp.referencePoint() );
+  }
+
+  /// tangent to the track at path length s from helix parameters 
   Vector3D calculateTangent(double s, const Vector5& hp ) ;
 
   /// tangent to the track at path length s from track parameters
@@ -122,6 +129,8 @@ namespace aidaTT
     return calculateTangent( s,  tp.parameters() );
   }
   
+
+  //================= creation or modification of helixParameters  ==============================
 
   /// compute start parameters for a helix from three points, e.g. first, last and middle point )
   void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , 
@@ -133,6 +142,17 @@ namespace aidaTT
 
   
   //================= intersection with surfaces ======================================
+
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   *  Calls one of the following methods: intersectWithZCylinder(), intersectWithZPlane(),
+   *  intersectWithZDisk() depending on the type of the surface.
+   *  @fixme: need intersection with arbitrary surface.
+   */
+  bool intersectWithSurface( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			       double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
+
 
   /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
    *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
@@ -159,5 +179,16 @@ namespace aidaTT
   
 
   
+
+  //==========================================================================================
+
+  /// the momentum Vector at the PCA (in xy-plane) - the B field is taken at the reference point
+  Vector3D momentumAtPCA(const Vector5& hp , const Vector3D& rp ) ; 
+  
+  /// the momentum Vector at the PCA (in xy-plane) - the B field is taken at the reference point
+  inline Vector3D momentumAtPCA( const trackParameters& tp ) {
+    return momentumAtPCA( tp.parameters() ,  tp.referencePoint() ) ;
+  }
+
 }
-#endif // HELIXGYMNASTICS_HH
+#endif // helixUtils_HH

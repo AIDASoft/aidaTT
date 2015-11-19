@@ -1,4 +1,3 @@
-#ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
 
 #include "lcio.h"
@@ -16,15 +15,9 @@
 #include <IMPL/LCCollectionVec.h>
 #include "IMPL/TrackImpl.h"
 
-// DD4hep
-#include "DD4hepGeometry.hh"
-#include "DD4hep/LCDD.h"
-#include "DD4hep/DD4hepUnits.h"
-#include "DDRec/SurfaceManager.h"
-
-
 // aidaTT
 #include "AidaTT.hh"
+#include "AidaTT-Units.hh"
 #include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
@@ -50,26 +43,19 @@ int main(int argc, char** argv)
     return 1;
   }
   
-  /// dd4hep stuff
   std::string inFile =  argv[1] ;
     
-  /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
-  DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-  lcdd.fromCompact(inFile);
-    
-  DD4hep::Geometry::DetElement world = lcdd.world() ;
-    
-  aidaTT::DD4hepGeometry geom(world);
-    
-  const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
-    
-  // create map of surfaces
-  std::map< long64, const aidaTT::ISurface* > surfMap ;
-    
-  for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf) {
+  const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance() ;
 
+  const std::vector<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
+
+  // create map of surfaces
+  std::map< long, const aidaTT::ISurface* > surfMap ;
+  
+  for(std::vector<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf){
     surfMap[(*surf)->id() ] = (*surf) ;
   }
+
     
   /// lcio stuff
   std::string lcioFileName = argv[2] ;
@@ -132,13 +118,13 @@ int main(int argc, char** argv)
     const TrackState* ts = initialTrack->getTrackState( TrackState::AtLastHit ) ;
     //  const TrackState* ts = initialTrack->getTrackState( TrackState::AtCalorimeter ) ;
 
-	    iTP.setTrackParameters(aidaTT::Vector5(ts->getOmega()/dd4hep::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*dd4hep::mm, ts->getZ0()*dd4hep::mm ));
+	    iTP.setTrackParameters(aidaTT::Vector5(ts->getOmega()/aidaTT::mm, ts->getTanLambda(), ts->getPhi(), ts->getD0()*aidaTT::mm, ts->getZ0()*aidaTT::mm ));
       
 
 
-    iTP.setReferencePoint( aidaTT::Vector3D( ts->getReferencePoint()[0]*dd4hep::mm , 
-					     ts->getReferencePoint()[1]*dd4hep::mm, 
-					     ts->getReferencePoint()[2]*dd4hep::mm ) ) ;
+    iTP.setReferencePoint( aidaTT::Vector3D( ts->getReferencePoint()[0]*aidaTT::mm , 
+					     ts->getReferencePoint()[1]*aidaTT::mm, 
+					     ts->getReferencePoint()[2]*aidaTT::mm ) ) ;
 
 
 
@@ -189,9 +175,9 @@ int main(int argc, char** argv)
       
       if( foundIntersect ){
 	
-	s /= dd4hep::mm  ; 
+	s /= aidaTT::mm  ; 
 	
-	xx.fill( xxAidaTT[0]/dd4hep::mm , xxAidaTT[1]/dd4hep::mm,  xxAidaTT[2]/dd4hep::mm) ;   
+	xx.fill( xxAidaTT[0]/aidaTT::mm , xxAidaTT[1]/aidaTT::mm,  xxAidaTT[2]/aidaTT::mm) ;   
 	
 
 	aidaTT::Vector3D posV( (*thit)->getPosition()[0],  (*thit)->getPosition()[1], (*thit)->getPosition()[2] ) ;
@@ -227,4 +213,3 @@ int main(int argc, char** argv)
 
 
 #endif // USE_LCIO
-#endif // USE_DD4HEP
