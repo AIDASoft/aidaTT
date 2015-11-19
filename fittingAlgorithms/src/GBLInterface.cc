@@ -47,7 +47,7 @@ namespace aidaTT
       {
 	const fiveByFiveMatrix& jac = (*element)->jacobian();
 
-	std::cout << " input jacobian " << jac << std::endl ;
+	//	std::cout << " input jacobian " << jac << std::endl ;
 
 	///~ initialise point with jacobian from last to the current element
 	gbl::GblPoint point(TMatrixD(5, 5, jac.array()));

@@ -1,4 +1,3 @@
-#ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
 
 #include "lcio.h"
@@ -14,15 +13,9 @@
 #include "IMPL/TrackImpl.h"
 #include "IMPL/TrackStateImpl.h"
 
-// DD4hep
-#include "DD4hepGeometry.hh"
-#include "DD4hep/LCDD.h"
-#include "DD4hep/DD4hepUnits.h"
-#include "DDRec/SurfaceManager.h"
-#include "DDSurfaces/ISurface.h"
-
 // aidaTT
 #include "AidaTT.hh"
+#include "AidaTT-Units.hh"
 #include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
@@ -30,7 +23,7 @@
 #include "fitResults.hh"
 #include "Vector5.hh"
 #include "utilities.hh"
-#include "helixHelpers.hh"
+#include "helixUtils.hh"
 #include "LCIOPersistency.hh"
 #include "Vector3D.hh"
 #include "IGeometry.hh"
@@ -69,15 +62,17 @@ int main(int argc, char** argv)
     /// dd4hep stuff
     std::string inFile =  argv[1] ;
 
-    /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
-    DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-    lcdd.fromCompact(inFile);
+  const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance() ;
 
-    DD4hep::Geometry::DetElement world = lcdd.world() ;
+  const std::vector<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
-    aidaTT::DD4hepGeometry geom(world);
+  // create map of surfaces
+  std::map< long, const aidaTT::ISurface* > surfMap ;
+  
+  for(std::vector<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf){
+    surfMap[(*surf)->id() ] = (*surf) ;
+  }
 
-    const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
     //create map of hits
     std::map< long, EVENT::TrackerHit* > hitMap ;
@@ -406,4 +401,3 @@ int main(int argc, char** argv)
 
 
 #endif // USE_LCIO
-#endif // USE_DD4HEP

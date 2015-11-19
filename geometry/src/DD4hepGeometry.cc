@@ -5,6 +5,7 @@
 // DD4hep
 #include "DD4hep/LCDD.h"
 #include "DDRec/SurfaceHelper.h"
+#include "DD4hep/DD4hepUnits.h"
 
 namespace aidaTT
 {
@@ -76,7 +77,7 @@ namespace aidaTT
 
     _lcdd.field().magneticField( xx.const_array() , bfield.array()  ) ;
 
-    return bfield ;
+    return (1./dd4hep::tesla) * bfield ;
   }
 
   

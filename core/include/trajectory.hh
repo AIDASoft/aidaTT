@@ -105,9 +105,16 @@ namespace aidaTT
     IPropagation* getPropagation() const;
     IBField* getBField() const;
 
-    /// helper method: compute the point on the trajectory for a given value of s
+    /// the point on the trajectory for a given arc length
     Vector3D pointAt( double s) ;
 
+    /// the tangent to the trajectory for a given arc length
+    Vector3D tangentAt( double s ) ;
+
+    /// the trajectoryElement that is valid at the given arc length, i.e.
+    /// the one that is defined at the largest arc length less or equal to s
+    const trajectoryElement* trajectoryElementAt(double s ) ; 
+    
 
     ///~ prepare: add scattering material, sort elements, calculate and add the jacobians to all elements
     void prepareForFitting();

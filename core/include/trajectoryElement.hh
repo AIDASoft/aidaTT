@@ -78,7 +78,9 @@ namespace aidaTT
       return _arclength;
     };
 
-    const trackParameters* getTrackParameters(){ return _trkParam ; }
+    const trackParameters* getTrackParameters() const { 
+      return _trkParam ; 
+    }
 
     const fiveByFiveMatrix& jacobian() const
     {

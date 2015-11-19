@@ -2,12 +2,14 @@
 #include "utilities.hh"
 #include "IGeometry.hh"
 #include "intersections.hh"
+#include "AidaTT-Units.hh"
 
 #include <sstream>
 
 namespace aidaTT
 {
 
+  
   double calculateRadius(const Vector5& tP)
   {
     const double curvature = calculateCurvature(tP);
@@ -137,6 +139,28 @@ namespace aidaTT
     return Vector3D(t0, t1, t2);
   }
 
+
+  Vector3D pointAt(double s, const Vector5& hp, const Vector3D& rp) {
+    
+    Vector3D p ;
+
+    const double omega = calculateOmega( hp );
+    const double phi0  = calculatePhi0(  hp );
+    const double tanl  = calculateTanLambda( hp );
+    const double d0    = calculateD0(    hp );
+    const double z0    = calculateZ0(    hp );
+
+    double sinphi = sin( phi0 ) ;
+    double cosphi = cos( phi0 ) ;
+    
+    p.x() = rp.x() - d0 * sinphi + (1./omega) * ( sinphi - sin( phi0 - s * omega ) ) ;
+    
+    p.y() = rp.y() + d0 * cosphi - (1./omega) * ( cosphi - cos( phi0 - s * omega ) ) ;
+    
+    p.z() = rp.z() + z0 + s * tanl ;
+    
+    return  p ;
+  }
 
 
 
@@ -434,7 +458,7 @@ namespace aidaTT
       if(      mode <  0 ){ xx = sol0 ;   s = s0 ; }
       else if( mode >  0 ){ xx = sol1 ;   s = s1 ; }
       else {
-    	if(std::fabs(s0)  < std::fabs(s1))
+    	if( ( std::fabs(s0) +  1e-4 )  < std::fabs(s1) ) // give preference to positive solution if almost equal
     	  {   xx = sol0 ;   s = s0 ; }
     	else{ xx = sol1 ;   s = s1 ; }
       }
@@ -444,7 +468,7 @@ namespace aidaTT
       if(      mode >  0 ){ xx = sol0 ;   s = s0 ; }
       else if( mode <  0 ){ xx = sol1 ;   s = s1 ; }
       else {
-    	if(std::fabs(s0)  < std::fabs(s1))
+    	if(std::fabs(s0)  < ( std::fabs(s1) +  1e-4 ) ) // give preference to positive solution if almost equal
     	  {   xx = sol0 ;   s = s0 ; }
     	else{ xx = sol1 ;   s = s1 ; }
       }
@@ -608,6 +632,18 @@ namespace aidaTT
 
 
 
+  Vector3D momentumAtPCA(const Vector5& hp , const Vector3D& rp) {
+
+    double phi   = calculatePhi0( hp) ;
+    double omega = calculateOmega( hp );
+    double tanl  = calculateTanLambda( hp ) ;
+    
+    double bfieldZ  = IGeometry::instance().getBField( rp ).z() ;
+    
+    double pt = ( fabs(1./omega ) * bfieldZ * aidaTT::convertBr2P_cm  ); 
+    
+    return Vector3D( pt*std::cos( phi ), pt*std::sin( phi ) , pt*tanl ) ;
+  }
 
 
 } // namespace

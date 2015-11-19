@@ -1,6 +1,4 @@
-#ifdef AIDATT_USE_DD4HEP
 #ifdef USE_LCIO
-
 
 #include "lcio.h"
 #include "IO/LCReader.h"
@@ -16,14 +14,10 @@
 #include "IMPL/TrackImpl.h"
 #include "IMPL/TrackStateImpl.h"
 
-// DD4hep
-#include "DD4hepGeometry.hh"
-#include "DD4hep/LCDD.h"
-#include "DD4hep/DD4hepUnits.h"
-#include "DDRec/SurfaceHelper.h"
 
 // aidaTT
 #include "AidaTT.hh"
+#include "AidaTT-Units.hh"
 #include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
@@ -31,7 +25,7 @@
 #include "fitResults.hh"
 #include "Vector5.hh"
 #include "utilities.hh"
-#include "helixHelpers.hh"
+#include "helixUtils.hh"
 #include "LCIOPersistency.hh"
 #include "Vector3D.hh"
 #include "IGeometry.hh"
@@ -66,27 +60,19 @@ int main(int argc, char** argv)
       return 1;
     }
 
-  /// dd4hep stuff
   std::string inFile =  argv[1] ;
 
-  /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
-  DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-  lcdd.fromCompact(inFile);
+  const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance() ;
 
-  DD4hep::Geometry::DetElement world = lcdd.world() ;
+  const std::vector<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
-  aidaTT::DD4hepGeometry geom(world);
-
-  const std::list<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
-
-    // create map of surfaces
-    std::map< long, const aidaTT::ISurface* > surfMap ;
-
-  for(std::list<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf)
-    {
-      surfMap[(*surf)->id() ] = (*surf) ;
-    }
-
+  // create map of surfaces
+  std::map< long, const aidaTT::ISurface* > surfMap ;
+  
+  for(std::vector<const aidaTT::ISurface*>::const_iterator surf = surfaces.begin() ; surf != surfaces.end() ; ++surf){
+    surfMap[(*surf)->id() ] = (*surf) ;
+  }
+  
   /// lcio stuff
   std::string lcioFileName = argv[2] ;
 
@@ -224,9 +210,9 @@ int main(int argc, char** argv)
 	lcio::TrackerHit* h2 =  initialHits[ (nHits+1) / 2 ] ;
 	lcio::TrackerHit* h3 = ( backwards ?  initialHits[    0    ] : initialHits[ nHits-1 ] ) ;
 
-	aidaTT::Vector3D x1( h1->getPosition()[0] * dd4hep::mm, h1->getPosition()[1] * dd4hep::mm , h1->getPosition()[2] * dd4hep::mm ) ;
-	aidaTT::Vector3D x2( h2->getPosition()[0] * dd4hep::mm, h2->getPosition()[1] * dd4hep::mm , h2->getPosition()[2] * dd4hep::mm ) ;
-	aidaTT::Vector3D x3( h3->getPosition()[0] * dd4hep::mm, h3->getPosition()[1] * dd4hep::mm , h3->getPosition()[2] * dd4hep::mm ) ;
+	aidaTT::Vector3D x1( h1->getPosition()[0] * aidaTT::mm, h1->getPosition()[1] * aidaTT::mm , h1->getPosition()[2] * aidaTT::mm ) ;
+	aidaTT::Vector3D x2( h2->getPosition()[0] * aidaTT::mm, h2->getPosition()[1] * aidaTT::mm , h2->getPosition()[2] * aidaTT::mm ) ;
+	aidaTT::Vector3D x3( h3->getPosition()[0] * aidaTT::mm, h3->getPosition()[1] * aidaTT::mm , h3->getPosition()[2] * aidaTT::mm ) ;
              
 	calculateStartHelix( x1, x2,  x3 , startHelix , backwards ) ;
              
@@ -303,7 +289,7 @@ int main(int argc, char** argv)
 	  
 	  double hitpos[3] = {0., 0., 0.};
 	  for(unsigned int i = 0; i < 3; ++i)
-	    hitpos[i] = (*thit)->getPosition()[i] * dd4hep::mm;
+	    hitpos[i] = (*thit)->getPosition()[i] * aidaTT::mm;
 	  
 	  //std::cout << " hit position X " << hitpos[0] << " hit position Y " << hitpos[1] << " hit position Z " << hitpos[2] << std::endl ;
 	  
@@ -317,13 +303,13 @@ int main(int argc, char** argv)
 	  
 	  if (planarhit != NULL) {
 	    
-	    du = planarhit->getdU() * dd4hep::mm  ;
-	    dv = planarhit->getdV() * dd4hep::mm  ;
+	    du = planarhit->getdU() * aidaTT::mm  ;
+	    dv = planarhit->getdV() * aidaTT::mm  ;
 	    
 	  } else {
 	    
-	    du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * dd4hep::mm;
-	    dv = sqrt( TPChitCovMat[5] ) * dd4hep::mm;
+	    du = sqrt( TPChitCovMat[0] + TPChitCovMat[2]) * aidaTT::mm;
+	    dv = sqrt( TPChitCovMat[5] ) * aidaTT::mm;
 	  }
 	  
 	  std::cout << " u resolution " << du << " v resolution " << dv << std::endl; 
@@ -412,4 +398,3 @@ int main(int argc, char** argv)
 }
 
 #endif // USE_LCIO
-#endif // USE_DD4HEP
