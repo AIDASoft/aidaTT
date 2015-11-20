@@ -18,7 +18,6 @@
 // aidaTT
 #include "AidaTT.hh"
 #include "AidaTT-Units.hh"
-#include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
 #include "GBLInterface.hh"
@@ -73,9 +72,6 @@ int main(int argc, char** argv)
     
   UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
     
-  // create the different objects needed for fitting
-  // first a constant field parallel to z, 1T
-  aidaTT::ConstantSolenoidBField*  bfield = new aidaTT::ConstantSolenoidBField(3.5);
     
   // create the propagation object
   aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
@@ -135,7 +131,7 @@ int main(int argc, char** argv)
 
     //**********************************************
 
-    aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
+    aidaTT::trajectory fitTrajectory(iTP, fitter, propagation, &geom);
       
     std::vector<TrackerHit*> initialHits = initialTrack->getTrackerHits();
       
@@ -170,7 +166,8 @@ int main(int argc, char** argv)
 
       double s = 0. ;
       aidaTT::Vector3D xxAidaTT , xx ;
-      bool foundIntersect = fitTrajectory._calculateIntersectionWithSurface( surf , s , ( aidaTT::Vector2D*) 0 , &xxAidaTT );
+      bool foundIntersect = aidaTT::intersectWithSurface( surf , fitTrajectory.initialTrackParameters(),
+							  s , xxAidaTT , 0 , true );
       
       
       if( foundIntersect ){

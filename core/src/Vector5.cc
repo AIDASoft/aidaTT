@@ -102,8 +102,15 @@ namespace aidaTT
         return (*this);
     }
 
-
-
+    Vector5 Vector5::operator+(const Vector5& vec) const 
+    {
+      return Vector5(  gsl_vector_get(_vector, 0 ) + vec(0) ,    
+		       gsl_vector_get(_vector, 1 ) + vec(1) ,
+		       gsl_vector_get(_vector, 2 ) + vec(2) ,    
+		       gsl_vector_get(_vector, 3 ) + vec(3) ,
+		       gsl_vector_get(_vector, 4 ) + vec(4) ) ;
+    }
+  
     double Vector5::operator()(unsigned int index) const
     {
       // check range !

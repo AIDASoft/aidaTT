@@ -609,6 +609,8 @@ namespace aidaTT
 			       double& s, Vector3D& xx, int mode, bool checkBounds) {
 
 
+    static int count = 0 ;
+
     if( surf->type().isZCylinder() ){
 
       return intersectWithZCylinder( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
@@ -623,8 +625,9 @@ namespace aidaTT
 
     } else {
 
-      std::cout << " WARNING intersectWithSurface: intersection with surface " 
-		<< surf << " not yet implemented ! " << std::endl ;
+      if( count++ < 20 ) 
+	std::cout << " WARNING intersectWithSurface: intersection with surface this type of surface not yet implemented ! : " 
+		  << *surf <<  " (message will be suppressed after 20 times ) " << std::endl ;
     }
 
     return false ;

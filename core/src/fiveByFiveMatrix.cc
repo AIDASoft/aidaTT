@@ -93,7 +93,7 @@ namespace aidaTT
 
 
 
-    fiveByFiveMatrix fiveByFiveMatrix::operator*(const fiveByFiveMatrix& rm)
+    fiveByFiveMatrix fiveByFiveMatrix::operator*(const fiveByFiveMatrix& rm) const
     {
         fiveByFiveMatrix C;
         gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, this->_matrix, rm._matrix, 0.0, C._matrix);
@@ -103,7 +103,7 @@ namespace aidaTT
 
 
 
-    Vector5 fiveByFiveMatrix::operator*(const Vector5& rv)
+    Vector5 fiveByFiveMatrix::operator*(const Vector5& rv) const
     {
         Vector5 C;
         gsl_blas_dgemv(CblasNoTrans, 1., this->_matrix, rv._vector, 1., C._vector);

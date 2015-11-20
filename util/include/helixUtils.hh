@@ -153,6 +153,12 @@ namespace aidaTT
   bool intersectWithSurface( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
 			       double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
 
+  inline bool intersectWithSurface( const ISurface* surf, const trackParameters& tp,
+				    double& s, Vector3D& xx, int mode, bool checkBounds=true ){ 
+    
+    return intersectWithSurface( surf, tp.parameters() , tp.referencePoint(), s, xx, mode, checkBounds ) ;
+  }
+
 
   /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
    *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.

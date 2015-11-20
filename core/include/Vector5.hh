@@ -48,6 +48,9 @@ namespace aidaTT
             /** addition operator **/
             Vector5& operator+(const Vector5&);
 
+            Vector5 operator+(const Vector5&) const ;
+           
+
             /** direct read access to the individual elements by index**/
             double operator()(unsigned int index) const;
 
