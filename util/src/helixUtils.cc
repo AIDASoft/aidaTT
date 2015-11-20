@@ -2,7 +2,7 @@
 #include "utilities.hh"
 #include "IGeometry.hh"
 #include "intersections.hh"
-#include "AidaTT-Units.hh"
+#include "aidaTT-Units.hh"
 
 #include <sstream>
 
