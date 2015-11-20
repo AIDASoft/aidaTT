@@ -50,10 +50,10 @@ namespace aidaTT
             double& operator()(unsigned int row, unsigned int column);
 
             /** define matrix-matrix multipliation **/
-            virtual fiveByFiveMatrix operator*(const fiveByFiveMatrix&);
+            virtual fiveByFiveMatrix operator*(const fiveByFiveMatrix&) const ;
 
             /** define matrix-vector multiplication **/
-            virtual Vector5 operator*(const Vector5&);
+            virtual Vector5 operator*(const Vector5&) const ;
 
             /** make a unit matrix out of the given matrix **/
             inline void Unit()

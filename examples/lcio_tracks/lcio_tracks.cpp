@@ -18,7 +18,6 @@
 // aidaTT
 #include "AidaTT.hh"
 #include "AidaTT-Units.hh"
-#include "ConstantSolenoidBField.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
 #include "GBLInterface.hh"
@@ -125,10 +124,6 @@ int main(int argc, char** argv)
 
 
   UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
-
-  // create the different objects needed for fitting
-  // first a constant field parallel to z, 1T
-  aidaTT::ConstantSolenoidBField*  bfield = new aidaTT::ConstantSolenoidBField(3.5);
 
   // create the propagation object
   aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
@@ -250,23 +245,16 @@ int main(int argc, char** argv)
 
 
       TrackStateImpl* ts;
-
+      
       bool success;	      
-
-      aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
+      
+      aidaTT::trajectory fitTrajectory(iTP, fitter, propagation, &geom);
       const aidaTT::fitResults* result = 0 ; //fitTrajectory.getFitResults();
-
-      std::cout << " magnetic field " << fitTrajectory.Bz() << std::endl ;
-
-	    
-      // Add the Interaction Point as the first element of the trajectory
-      int ID = 1;
-      aidaTT::Vector3D IntPoint(0,0,0);
-
-      fitTrajectory.addElement(IntPoint, &ID);
-	    
-
-      //aidaTT::trajectory fitTrajectory(iTP, fitter, bfield, propagation, &geom);
+      
+      std::cout << " magnetic field at origin " 
+		<< fitTrajectory.geometry()->getBField( Vector3D() ) << std::endl ;
+      
+      
 	    
       for(std::vector<TrackerHit*>::iterator thit = initialHits.begin(), endIter = initialHits.end(); thit < endIter; ++thit)
 	{

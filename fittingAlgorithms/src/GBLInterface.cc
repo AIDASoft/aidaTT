@@ -215,7 +215,7 @@ namespace aidaTT
 
 
 
-  const fitResults* GBLInterface::_fillResults(const trajectory& TRAJ, int label) const
+  const fitResults* GBLInterface::_fillResults(const trajectory& aidaTrajectory, int label) const
   {
 
     ResMap::const_iterator it = _theResults.find( label ) ;
@@ -240,15 +240,15 @@ namespace aidaTT
 
 
     //fixme: which parameters to take here ( reference point is different !!!??? )
-    //const trackParameters& tP = *TRAJ.trajectoryElements()[ label ]->getTrackParameters() ;
-    const trackParameters& tP = TRAJ.getInitialTrackParameters() ;
+    const trackParameters& initialTP = *aidaTrajectory.trajectoryElements()[ label ]->getTrackParameters() ;
+    //    const trackParameters& initialTP  = aidaTrajectory.getInitialTrackParameters() ;
 
-    fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian( tP , Vector3D(0., 0., TRAJ.Bz())) ;
-    Vector5 L3corrections           =  cl2L3Jacobian * clCorrections;
+    const Vector3D bField = aidaTrajectory.geometry()->getBField( initialTP.referencePoint() ) ;
 
- 
+    const fiveByFiveMatrix& cl2L3Jacobian  = curvilinearToL3Jacobian( initialTP , bField ) ;
+    const Vector5& L3corrections           =  cl2L3Jacobian * clCorrections;
 
-    Vector5 fittedParameters = tP.parameters()  + L3corrections;
+    const Vector5& fittedParameters = initialTP.parameters()  + L3corrections;
 
 
     if( std::fabs( fittedParameters(2) ) > 4. ) {
@@ -267,30 +267,19 @@ namespace aidaTT
 	    cl2L3_copy(i, j) = cl2L3Jacobian(i, j);
 	  }
       }
-    /*
-      for(int i = 0 ; i < 5 ; i++)
-      {
-      for(int j = 0 ; j < 5 ; j++)
-      {
-      std::cout << " original jacobian " << cl2L3Jacobian(i, j) << " copied jacobian " << cl2L3_copy(i, j) << std::endl ;
-      }
-      }
-    */
+
     trackParameters tp;
-    tp.setTrackParameters(fittedParameters);
+    tp.setTrackParameters( fittedParameters );
+    tp.setReferencePoint( initialTP.referencePoint() );
 
     TMatrixD covarianceMatrix = trackcovariance.Similarity(cl2L3_copy);
 
-    fiveByFiveMatrix finalCov;
-    for(int i = 0 ; i < 5 ; i++)
-      {
-	for(int j = 0 ; j < 5 ; j++)
-	  {
-	    finalCov(i, j) = covarianceMatrix(i, j);
-	  }
-      }
-
-    tp.setCovarianceMatrix(finalCov);
+    //    fiveByFiveMatrix finalCov;
+    for(int i = 0 ; i < 5 ; i++) 
+      for(int j = 0 ; j < 5 ; j++)
+	tp.covarianceMatrix()(i,j) = covarianceMatrix(i, j);
+    
+    //    tp.setCovarianceMatrix(finalCov);
 
     fitResults* res = new fitResults( v, chs, n, wl, tp ) ;
   
