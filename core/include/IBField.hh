@@ -12,6 +12,7 @@ namespace aidaTT
      * provides the magnetic field in three components,
      * taken as global cartesian coordinates.
      *
+     *@obsolete: B field is now part of IGeometry
      */
 
 

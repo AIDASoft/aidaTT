@@ -4,7 +4,6 @@
 #include <vector>
 #include <list>
 #include <map>
-#include <TMath.h>
 
 #include "trackParameters.hh"
 #include "trajectoryElement.hh"
@@ -20,25 +19,18 @@
 
 namespace aidaTT
 {
-  /// The central class that provides functionality.
-  /** The main class to provide functionality for track parameter estimation.
-   *   This includes propagation and extrapolation to any specific point/surface.
+  /** The main class representing a track, providing propagation and track fitting.
    *
-   *   Created with the class aidaTT; uses a specific set of
-   *        - fitting algorithm
-   *        - propagation method
-   *        - geometry interface
-   *
-   *  @version $Rev$
-   *  @author Ch. Rosemann, DESY
-   **/
+   *  @version $Id:$
+   *  @author Ch. Rosemann, F. Gaede, DESY
+   */
 
   class IFittingAlgorithm;
 
   class trajectory
   {
   public:
-    /// create an empty trajectory
+    /// create an empty trajectory 
     trajectory();
 
     /// copy construct a trajectory -- NOT the internals
@@ -52,8 +44,7 @@ namespace aidaTT
 
     ~trajectory();
 
-    trackParameters getInitialTrackParameters() const
-    {
+    const trackParameters& getInitialTrackParameters() const {
       return _referenceParameters;
     };
 
@@ -150,38 +141,39 @@ namespace aidaTT
     std::vector<std::pair<double, const ISurface*> > _intersectionsList;
 
     IFittingAlgorithm* _fittingAlgorithm;
-    const IBField* const _bfield;
     IPropagation* _propagation;
-    const IGeometry* const _geometry;
 
+    const IGeometry* const _geometry;
+    const IBField* const _bfield;
     double _bfieldZ;
 
-    /// helper struct for caching the surface intersections
-    struct SurfIntersection{
-      const ISurface* Surf ;
-      double  S ;
-      Vector2D UV ;
-      Vector3D XX ;
-      SurfIntersection(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx ) : 
-	Surf( surf ) ,
-	S( s) ,
-	UV( *localUV )  ,
-	XX( *xx )   {}
-    } ;
-    /// map for caching surface intersections
-    typedef std::map<const ISurface*, SurfIntersection> SIMap ;
+
+    // /// helper struct for caching the surface intersections
+    // struct SurfIntersection{
+    //   const ISurface* Surf ;
+    //   double  S ;
+    //   Vector2D UV ;
+    //   Vector3D XX ;
+    //   SurfIntersection(const ISurface* surf, double& s, Vector2D* localUV, Vector3D* xx ) : 
+    // 	Surf( surf ) ,
+    // 	S( s) ,
+    // 	UV( *localUV )  ,
+    // 	XX( *xx )   {}
+    // } ;
+    // /// map for caching surface intersections
+    // typedef std::map<const ISurface*, SurfIntersection> SIMap ;
     
-    SIMap _surfIntersections ; 
+    // SIMap _surfIntersections ; 
 
-  public:
+  // public:
 
-    bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
-    void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*, Vector3D* = NULL);
+  //   bool _calculateIntersectionWithSurface(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+  //   void _calculateLocalCoordinates(const ISurface*, const Vector3D&, Vector2D*, Vector3D* = NULL);
       
-  protected:
-    bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
-    bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
-    bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+  // protected:
+  //   bool _intersectsWithinZCylinderBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+  //   bool _intersectWithinZPlaneBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
+  //   bool _intersectWithinZDiskBounds(const ISurface*, double&, Vector2D* = NULL, Vector3D* = NULL);
 
   };
 }

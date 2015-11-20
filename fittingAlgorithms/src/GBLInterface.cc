@@ -238,12 +238,17 @@ namespace aidaTT
 
     Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
 
-    fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian(TRAJ.getInitialTrackParameters(), Vector3D(0., 0., TRAJ.Bz())) ;
+
+    //fixme: which parameters to take here ( reference point is different !!!??? )
+    //const trackParameters& tP = *TRAJ.trajectoryElements()[ label ]->getTrackParameters() ;
+    const trackParameters& tP = TRAJ.getInitialTrackParameters() ;
+
+    fiveByFiveMatrix cl2L3Jacobian  = curvilinearToL3Jacobian( tP , Vector3D(0., 0., TRAJ.Bz())) ;
     Vector5 L3corrections           =  cl2L3Jacobian * clCorrections;
 
  
 
-    Vector5 fittedParameters = TRAJ.getInitialTrackParameters().parameters() + L3corrections;
+    Vector5 fittedParameters = tP.parameters()  + L3corrections;
 
 
     if( std::fabs( fittedParameters(2) ) > 4. ) {
@@ -286,10 +291,6 @@ namespace aidaTT
       }
 
     tp.setCovarianceMatrix(finalCov);
-
-    //FIXME: the reference point is still the origin - we need to call a properly impemented moveTo 
-    //       method to get it at the position of this label (hit)...
-    
 
     fitResults* res = new fitResults( v, chs, n, wl, tp ) ;
   
