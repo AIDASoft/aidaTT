@@ -17,7 +17,7 @@
 
 // aidaTT
 #include "AidaTT.hh"
-#include "AidaTT-Units.hh"
+#include "aidaTT-Units.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
 #include "GBLInterface.hh"
@@ -252,7 +252,7 @@ int main(int argc, char** argv)
       const aidaTT::fitResults* result = 0 ; //fitTrajectory.getFitResults();
       
       std::cout << " magnetic field at origin " 
-		<< fitTrajectory.geometry()->getBField( Vector3D() ) << std::endl ;
+		<< fitTrajectory.geometry()->getBField( aidaTT::Vector3D() ) << std::endl ;
       
       
 	    

@@ -17,7 +17,7 @@
 
 // aidaTT
 #include "AidaTT.hh"
-#include "AidaTT-Units.hh"
+#include "aidaTT-Units.hh"
 #include "analyticalPropagation.hh"
 #include "simplifiedPropagation.hh"
 #include "GBLInterface.hh"
