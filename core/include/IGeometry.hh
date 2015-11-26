@@ -57,8 +57,15 @@ namespace aidaTT {
     /// d'tor
     virtual ~IGeometry(){}
     
+    /// get the global instance of the geometry after intializing it based on the init string, e.g. a file name
+    static const IGeometry& instance(const std::string& initString ) ;
+
     /// get the global instance of the geometry
     static const IGeometry& instance() ;
+
+  protected:
+    
+    static IGeometry* _geom ;
   };
   
 

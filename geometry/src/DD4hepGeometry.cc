@@ -84,12 +84,33 @@ namespace aidaTT
 
 
   /// =============== get the global instance of the geometry ===========================
+  
+  IGeometry* IGeometry::_geom = 0 ;
+  
+  /// return an instance of DD4hepGeometry ( initialize with initString as file name in first call)
+  const IGeometry& IGeometry::instance(const std::string& initString ) {
+    
+    static bool first = true ;
+    
+    if( first ){
+      
+      DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
+      lcdd.fromCompact( initString );
+      
+      IGeometry::_geom = new DD4hepGeometry( lcdd ) ;
+      
+      first = false;
+    }
 
+    return *_geom ;
+  }
+  
+
+  /// return an instance of DD4hepGeometry assuming lcdd has been initialized elsewhere
   const IGeometry& IGeometry::instance() {
-    
-    static DD4hepGeometry _geom(  DD4hep::Geometry::LCDD::getInstance() ) ;
-    
-    return _geom ;
+    if( _geom == 0 ) 
+      _geom = new DD4hepGeometry(DD4hep::Geometry::LCDD::getInstance() ) ; 
+    return *_geom ;
   }
 }
 

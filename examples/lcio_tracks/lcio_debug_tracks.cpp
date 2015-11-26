@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   
   std::string inFile =  argv[1] ;
     
-  const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance() ;
+  const aidaTT::IGeometry& geom = aidaTT::IGeometry::instance(inFile) ;
 
   const std::vector<const aidaTT::ISurface*>& surfaces = geom.getSurfaces() ;
 
