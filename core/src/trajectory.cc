@@ -124,8 +124,9 @@ namespace aidaTT {
 	_intersectionsList.push_back(std::make_pair(s, (*surf)));
     }
     
+
     std::sort( _intersectionsList.begin() , _intersectionsList.end() , SortWithS() ) ;
-    
+
     return _intersectionsList;
   }
   

@@ -47,14 +47,16 @@ FIND_PACKAGE( GSL REQUIRED)
 FIND_PACKAGE( GBL )
 FIND_PACKAGE( DD4hep REQUIRED COMPONENTS DDRec )
 FIND_PACKAGE( LCIO )
+FIND_PACKAGE( streamlog )
 
-FOREACH( pkg  GSL GBL DD4hep LCIO)  
+FOREACH( pkg  GSL GBL DD4hep LCIO streamlog )  
     IF( ${pkg}_FOUND )
         INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
         ADD_DEFINITIONS( ${${pkg}_DEFINITIONS} )
     ENDIF()
 ENDFOREACH()
+
 
 TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${DD4hep_COMPONENT_LIBRARIES} )
 
@@ -94,6 +96,10 @@ IF( LCIO_FOUND )
         ADD_DEFINITIONS( "-DUSE_LCIO" )
 ELSE()
     MESSAGE( STATUS "LCIO not found, LCIO persistency will not be available." )
+ENDIF()
+
+IF( streamlog_FOUND )
+  ADD_DEFINITIONS( "-DAIDATT_USE_STREAMLOG" )
 ENDIF()
 
 # add the examples directory; only contains executables

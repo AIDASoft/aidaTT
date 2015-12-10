@@ -10,6 +10,11 @@
 #include "trajectoryElement.hh"
 #include "trackParameters.hh"
 
+
+#ifdef AIDATT_USE_STREAMLOG
+#include "streamlog/streamlog.h"
+#endif
+
 /** \mainpage aidaTT -- a tracking toolkit
  *
  *  \section intro_sec Introduction

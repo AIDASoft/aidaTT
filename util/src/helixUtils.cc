@@ -625,9 +625,9 @@ namespace aidaTT
 
     } else {
 
-      if( count++ < 20 ) 
+      if( count++ < 3 ) 
 	std::cout << " WARNING intersectWithSurface: intersection with surface this type of surface not yet implemented ! : " 
-		  << *surf <<  " (message will be suppressed after 20 times ) " << std::endl ;
+		  << *surf <<  " (message will be suppressed after 3 times ) " << std::endl ;
     }
 
     return false ;

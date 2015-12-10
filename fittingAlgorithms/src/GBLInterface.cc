@@ -184,7 +184,7 @@ namespace aidaTT
 	theListOfPoints.push_back(point);
       }
 
-    std::cout << " we have added " << theListOfPoints.size() << " points to the track " << std::endl ;
+    //    std::cout << " we have added " << theListOfPoints.size() << " points to the track " << std::endl ;
 
     /// TODO :: check validity before continuing!
 
@@ -234,9 +234,18 @@ namespace aidaTT
 
     //~ get the results at a given label in local cl track parameters
     //~ the track parameters are corrections to the curvilinear track parameters
-    _trajectory->getResults( label , tpCorr, trackcovariance);
+    int error =  _trajectory->getResults( label , tpCorr, trackcovariance)  ;
 
     Vector5 clCorrections(tpCorr[0], tpCorr[1], tpCorr[2], tpCorr[3], tpCorr[4]);
+
+    if( error ){
+      clCorrections(0) = 0. ;
+      clCorrections(1) = 0. ;
+      clCorrections(2) = 0. ;
+      clCorrections(3) = 0. ;
+      clCorrections(4) = 0. ;
+    }
+
 
 
     //fixme: which parameters to take here ( reference point is different !!!??? )

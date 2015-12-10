@@ -3,7 +3,7 @@
 
 namespace aidaTT
 {
-    bool simplifiedPropagation::getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tStart, const Vector3D& tEnd, const Vector3D& bfield)
+  bool simplifiedPropagation::getJacobian(fiveByFiveMatrix& jac, double dw, double qop, const Vector3D& tStart, const Vector3D& tEnd, const Vector3D& bfield, double)
     {
 
       std::cout << " what about this one????? " << std::endl;
