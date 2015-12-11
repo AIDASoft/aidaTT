@@ -5,6 +5,7 @@
 #include "aidaTT-Units.hh"
 
 #include <sstream>
+#include "streamlog/streamlog.h"
 
 namespace aidaTT
 {
@@ -162,58 +163,85 @@ namespace aidaTT
     return  p ;
   }
 
+  Vector3D momentumAt(double s, const Vector5& hp, const Vector3D& rp) {
+    
+    const double omega = calculateOmega( hp );
+    const double phi0  = calculatePhi0(  hp );
+    const double tanl  = calculateTanLambda( hp );
+
+    double bfieldZ  = IGeometry::instance().getBField( rp ).z() ;
+    
+    double pt = ( fabs(1./omega ) * bfieldZ * aidaTT::convertBr2P_cm  ); 
+    
+    return Vector3D( pt * cos( phi0 - s * omega ),
+		     pt * sin( phi0 - s * omega ),
+		     pt * tanl ) ;
+  }
+
+
+  Vector3D momentumAtPCA(const Vector5& hp , const Vector3D& rp) {
+
+    double phi   = calculatePhi0( hp) ;
+    double omega = calculateOmega( hp );
+    double tanl  = calculateTanLambda( hp ) ;
+    
+    double bfieldZ  = IGeometry::instance().getBField( rp ).z() ;
+    
+    double pt = ( fabs(1./omega ) * bfieldZ * aidaTT::convertBr2P_cm  ); 
+    
+    return Vector3D( pt*std::cos( phi ), pt*std::sin( phi ) , pt*tanl ) ;
+  }
+
 
 
   void calculateStartHelix(const Vector3D& x1, const Vector3D& x2,   const Vector3D& x3 , 
-			   trackParameters& tp , bool backward)
-  {
+			   trackParameters& tp , bool backward) {
     
-      //-------------------------------------------------------------------------------------------------
-      // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
-      //------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
+    //------------------------------------------------------------------------------------------------
+    
+    static const Vector3D ez(0., 0., 1.);
+    
+    Vector3D x12 = x2 - x1 ;
+    Vector3D x13 = x3 - x1 ;
+    Vector3D x23 = x3 - x2 ;
       
-      static const Vector3D ez(0., 0., 1.);
+    x12.z() = 0.;
+    x13.z() = 0.;
+    x23.z() = 0.;
       
-      Vector3D x12 = x2 - x1 ;
-      Vector3D x13 = x3 - x1 ;
-      Vector3D x23 = x3 - x2 ;
+    double x12mag = x12.r();
+    x12 = x12.unit();
+    double x13mag = x13.r();
+    x13 = x13.unit();
+    double x23mag = x23.r();
+    x23 = x23.unit();
       
-      x12.z() = 0.;
-      x13.z() = 0.;
-      x23.z() = 0.;
+    double sinHalfPhi23 = x12.cross(x13).z();
       
-      double x12mag = x12.r();
-      x12 = x12.unit();
-      double x13mag = x13.r();
-      x13 = x13.unit();
-      double x23mag = x23.r();
-      x23 = x23.unit();
+    double cosHalfPhi23 = 0.5 * (x13mag / x12mag + (1. - x23mag / x12mag) * (x12mag + x23mag) / x13mag);
+    double halfPhi23 = std::atan2(sinHalfPhi23, cosHalfPhi23);
       
-      double sinHalfPhi23 = x12.cross(x13).z();
+    double r  = -0.5 * x23mag / sinHalfPhi23;
       
-      double cosHalfPhi23 = 0.5 * (x13mag / x12mag + (1. - x23mag / x12mag) * (x12mag + x23mag) / x13mag);
-      double halfPhi23 = std::atan2(sinHalfPhi23, cosHalfPhi23);
+    Vector3D xc = 0.5 * (x2 + x3) + r * cosHalfPhi23 * x23.cross(ez);
       
-      double r  = -0.5 * x23mag / sinHalfPhi23;
+    if(backward) r = -r;
       
-      Vector3D xc = 0.5 * (x2 + x3) + r * cosHalfPhi23 * x23.cross(ez);
+    tp.parameters()(OMEGA)  =  1. / r ;
+    tp.parameters()(TANL)  = (x2.z() - x3.z()) / (r * 2 * halfPhi23) ;
+    tp.parameters()(PHI0)  =  std::atan2(r * (xc.y() - x1.y()),  r * (xc.x() - x1.x())) + M_PI / 2. ;
+    tp.parameters()(D0)  =  0. ;
+    tp.parameters()(Z0)  =  0. ;
       
-      if(backward) r = -r;
+    tp.referencePoint() = x1 ;
       
-      tp.parameters()(OMEGA)  =  1. / r ;
-      tp.parameters()(TANL)  = (x2.z() - x3.z()) / (r * 2 * halfPhi23) ;
-      tp.parameters()(PHI0)  =  std::atan2(r * (xc.y() - x1.y()),  r * (xc.x() - x1.x())) + M_PI / 2. ;
-      tp.parameters()(D0)  =  0. ;
-      tp.parameters()(Z0)  =  0. ;
-      
-      tp.referencePoint() = x1 ;
-      
-    }
+  }
   
   
   
-  double moveHelixTo(trackParameters& tp,  const Vector3D& refNew,  bool CovMat)
-  {
+  double moveHelixTo(trackParameters& tp,  const Vector3D& refNew,  bool CovMat) {
     
     //-------------------------------------------------------------------------------------------------
     // modified version of original code copied from KalTest::THelicalTrack (2003/10/03  K.Fujii  )
@@ -384,7 +412,7 @@ namespace aidaTT
     if( ! ( surf->type().isParallelToZ() && cyl !=0 ) ){
       
       std::stringstream sst ; 
-      sst << " **** _intersectWithZCylinder: surface is not cylinder parallel to z : " << surf  ;
+      sst << " **** _intersectWithZCylinder: surface is not cylinder parallel to z : " << *surf  ;
       throw std::runtime_error( sst.str() ) ;
     }
 
@@ -538,7 +566,7 @@ namespace aidaTT
     Vector3D sol0(X0, Y0, Z0);
     Vector3D sol1(X1, Y1, Z1);
 
-   // find the right solution depending on mode and the sign of the path lengths:
+    // find the right solution depending on mode and the sign of the path lengths:
     
     if( s0 < 0. && s1 < 0. ) {
       
@@ -581,7 +609,7 @@ namespace aidaTT
     
     return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
 
-}
+  }
 
 
   bool intersectWithZDisk( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
@@ -606,7 +634,7 @@ namespace aidaTT
   }
   
   bool intersectWithSurface( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
-			       double& s, Vector3D& xx, int mode, bool checkBounds) {
+			     double& s, Vector3D& xx, int mode, bool checkBounds) {
 
 
     static int count = 0 ;
@@ -623,6 +651,11 @@ namespace aidaTT
 
       return intersectWithZDisk( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
 
+    } else if( surf->type().isCone() ){  
+
+      //      return intersectWithZCone( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+      //      return intersectWithSurfaceNewton( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+
     } else {
 
       if( count++ < 3 ) 
@@ -633,19 +666,130 @@ namespace aidaTT
     return false ;
   }
 
+  bool intersectWithZCone( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			   double& s, Vector3D& xx, int mode, bool checkBounds) {
+
+    // compute the intersection with the middle cylinder first
+    bool intersects = intersectWithZCylinder( surf, hp, rp, s, xx, mode, false  ) ;
+
+    if( !intersects )
+      return false ;
+
+    streamlog_out( DEBUG4  ) << " --- intersectWithZCone - found intersection with cylinder : s : " << s
+			     << " at : " << xx << std::endl ;
+
+    return intersectWithSurfaceNewton(  surf, hp, rp, s, xx, mode, checkBounds  ) ;
+  }
+
+  bool intersectWithSurfaceNewton( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+				   double& s, Vector3D& xx, int mode, bool checkBounds) {
+    
+    //-----------------------------------------------------------------------------------------
+    // modified version of original code copied from KalTest::TVSurface (2003/10/03  K.Fujii  )
+    //-----------------------------------------------------------------------------------------
+
+    static const double  epsilon   = 1.e-3 * aidaTT::mm ;
+    static const int     maxCount  = 100;
+    static const double  alphaIncr = 10.;
+
+    static const double  alphaDecr = 1./alphaIncr ;
+    
+    xx = pointAt( s, hp, rp) ;
+    
+    Vector3D prevXX( xx );
+    
+    double   prevS    =  s ;
+    double   prevDist =  1.e10 ;
+    double   alpha    =  1.e-10 ;
+    int      count    =  0 ;
+    
+    double dist = 0 ;
+    
+    double radius  = calculateRadius( hp )  ;
+
+    streamlog_out( DEBUG4  ) << " --- intersectWithSurfaceNewton(): surface " << *surf << std::endl ; 
+
+   while (1) {
+      
+      if ( count > maxCount ) {
+
+	dist  = prevDist ;
+	s     = prevS ;
+	xx    = prevXX ;
+
+	streamlog_out( DEBUG9 ) << " --- intersectWithSurfaceNewton() : max count " 
+				<< maxCount << " reached before intersection found !! " 
+				<< " distance " << dist 
+				<< " s : " << s
+				<< " xx : " << xx
+				<< std::endl ;
+	return 0;
+      }
+
+      ++count ;
+
+      dist  = surf->distance( xx ) ;
+
+      streamlog_out( DEBUG ) << " --- intersectWithSurfaceNewton(): " 
+			     << " prev. distance " << prevDist 
+			     << " prev. s : " << prevS
+			     << " prev. xx : " << prevXX
+			     << " distance " << dist 
+			     << " s : " << s
+			     << "alpha: " << alpha 
+			     << " xx : " << xx
+
+			     << std::endl ;
+      
+
+      if ( std::fabs( dist ) < epsilon ) {
+	break ;  
+      // we are done !
+      }
+
+      // adapt the step length:
+      // if distance is getting larger, stay at previous point and 
+      // increase the step length
+      if ( std::fabs( dist ) < std::fabs( prevDist ) ) {
+
+	prevDist = dist ;
+	prevS    = s ;
+	prevXX   = xx;
+	alpha   *= alphaDecr;
+
+      } else {
+
+	dist = prevDist ;
+	s    = prevS ;
+	xx   = prevXX ;
+	alpha *= alphaIncr;
+      }
+
+      // TMatrixD dsdx   = CalcDSDx(xx);
+      // TMatrixD dxdphi = hel.CalcDxDphi(phi);
+      // TMatrixD dsdphi = dsdx * dxdphi;
+
+      const Vector3D& dDdxx =  surf->normal( xx ) ;
+      
+      const Vector3D& dxxds = /*1./radius */ calculateTangent( s, hp )   ;
 
 
-  Vector3D momentumAtPCA(const Vector5& hp , const Vector3D& rp) {
+       // streamlog_out( DEBUG ) << " normal : " << dDdxx << std::endl 
+       // 			     << " tangent: " << dxxds << std::endl  ;
 
-    double phi   = calculatePhi0( hp) ;
-    double omega = calculateOmega( hp );
-    double tanl  = calculateTanLambda( hp ) ;
+      double dDds = dDdxx * dxxds ;
+
+      double denom = (1. + alpha) * dDds ;
+
+      s -= dist / denom;
+
+      xx = pointAt( s, hp, rp) ;
+    }
     
-    double bfieldZ  = IGeometry::instance().getBField( rp ).z() ;
-    
-    double pt = ( fabs(1./omega ) * bfieldZ * aidaTT::convertBr2P_cm  ); 
-    
-    return Vector3D( pt*std::cos( phi ), pt*std::sin( phi ) , pt*tanl ) ;
+    if( mode * s > 0 || mode == 0 )
+      return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
+    else
+      return false ;
   }
 
 

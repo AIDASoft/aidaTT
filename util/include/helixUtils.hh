@@ -3,6 +3,7 @@
 
 #include "trackParameters.hh"
 #include "IGeometry.hh"
+#include "aidaTT-Units.hh"
 
 /** Define helper function for accessing helix properties. 
  *  Typically all functions are defined once to take a trackParameters object
@@ -185,8 +186,32 @@ namespace aidaTT
   
 
   
+  /** Calculates the intersection of a helix with the surface. Depending on mode, either the 
+   *  solution with negative (-1) or positive (+1)  or shortest (0) path length s is returned.
+   *  If chckBounds==true, only solutions inside the boundary of the surface are returned.
+   */
+  bool intersectWithZCone( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+			   double& s, Vector3D& xx, int mode, bool checkBounds=true )  ;
+
+  /** Calculates the intersection of a helix with an arbitrary surface using a newtonian 
+   *  method. Depending on mode, either the solution with negative (-1) or positive (+1)  
+   *  or shortest (0) path length s is returned.
+   */
+  bool intersectWithSurfaceNewton( const ISurface* surf, const Vector5& hp, const Vector3D& rp, 
+				   double& s, Vector3D& xx, int mode, bool checkBounds=true) ;
+    
 
   //==========================================================================================
+
+  /// the momentum Vector at the arc length s (in xy-plane)
+  /// - the B field is taken at the reference point
+  Vector3D momentumAt(double s, const Vector5& hp, const Vector3D& rp) ;
+
+  /// the momentum Vector at the arc length s (in xy-plane)
+  /// - the B field is taken at the reference point
+  inline Vector3D momentumAt(double s, const trackParameters& tp ) {
+    return momentumAt( s, tp.parameters() ,  tp.referencePoint() ) ;
+  }
 
   /// the momentum Vector at the PCA (in xy-plane) - the B field is taken at the reference point
   Vector3D momentumAtPCA(const Vector5& hp , const Vector3D& rp ) ; 

@@ -1,3 +1,6 @@
+#ifndef AIDATT_UNITS_HH
+#define AIDATT_UNITS_HH
+
 /* this is the declaration of units used in exchange to the outside world inside aidaTT
  *
  * the first main interaction point is the geometry, that is
@@ -49,8 +52,6 @@ namespace aidaTT
 }
 #else
 
-#ifndef AIDATT_UNITS_HH
-#define AIDATT_UNITS_HH
 namespace aidaTT
 {
     ///TODO

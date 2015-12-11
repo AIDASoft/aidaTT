@@ -5,6 +5,7 @@
 #include "aidaTT-Units.hh"
 #include <math.h>
 #include <cmath>
+#include "streamlog/streamlog.h"
 
 namespace aidaTT{
 
@@ -74,6 +75,18 @@ namespace aidaTT{
     double   beta = mom / std::sqrt(mom * mom + mass * mass);
     
     double Qms = 0.0136/(mom*beta) * 1.0 * std::sqrt(X_X0) * (1 + 0.038*(std::log(X_X0)));
+
+
+    streamlog_out( DEBUG9 ) << " **QMS: surface : " << *surf << std::endl ;
+
+    streamlog_out( DEBUG9 ) << " **QMS: crossingPoint : (" <<  crossingPoint.u() << ", " 
+			    << crossingPoint.v() << " ) " 
+			    << " position = " << position
+			    << " normal = " << n
+			    << " QMS = " << Qms
+			    << " path length = " << path
+			    << std::endl ;
+    
 
     return Qms ;
   }
