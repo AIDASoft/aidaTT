@@ -41,8 +41,8 @@ using namespace aidaTT ;
 
 
 // some global steering parameters
-//#define VERBOSITY streamlog::DEBUG8
-#define VERBOSITY streamlog::MESSAGE
+#define VERBOSITY streamlog::DEBUG8
+//#define VERBOSITY streamlog::MESSAGE
 
 std::string trackCollectionName("MarlinTrkTracks") ;
 
@@ -56,7 +56,7 @@ bool run_prefit = false ; //true ;
 
 bool useQMS = true ;
 
-int maxEvent = 100 ;
+int maxEvent = 1000 ;
 
 //=======================================================================
 

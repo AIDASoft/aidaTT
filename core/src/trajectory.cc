@@ -224,8 +224,12 @@ namespace aidaTT {
       double c2 = up * surface.v( xx );
       
       new_prec.push_back(  qms*qms  ) ;
-      new_prec.push_back(  c1  ) ;
-      new_prec.push_back(  c2  ) ;
+      // new_prec.push_back(  c1  ) ;
+      // new_prec.push_back(  c2  ) ;
+      //fg: c1,c2 are scalar products of offset directions with track direction
+      //    and are by construction 0. in curvilinear !
+      new_prec.push_back( 0. ) ;
+      new_prec.push_back( 0. ) ;
     }
 
 
@@ -291,10 +295,12 @@ namespace aidaTT {
     double c1 = up * (*measDir)[0] ; //surface.u( xx );
     double c2 = up * (*measDir)[1] ; //surface.v( xx );
 
+    //fg: c1,c2 are scalar products of offset directions with track direction
+    //    and are by construction 0. in curvilinear !
     std::vector<double> precision(3) ;
     precision[0] =  qms*qms  ;
-    precision[1] = c1 ;
-    precision[2] = c2 ;
+    precision[1] = 0. ;
+    precision[2] = 0. ;
    
 
     // note: need to get the curvilinear system at s==0. as this is where the local track state is defined

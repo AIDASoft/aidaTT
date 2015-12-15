@@ -2,6 +2,8 @@
 #include "GBLInterface.hh"
 #include "utilities.hh"
 //#include "MilleBinary.h"
+#include "streamlog/streamlog.h"
+
 
 namespace aidaTT
 {
@@ -157,13 +159,16 @@ namespace aidaTT
 
 	    std::vector<double> precision = (*element)->precisions();
 
-	    // fg: get the multiple scattering sigma from the precision vector - either first element or first element after measurement's precisions
-	    double qms = (  (*element)->hasMeasurement() ?  precision[  (*element)->measurementDimension() ] : precision[0]   )  ;
+	    unsigned precSize = precision.size() ;
+	    
+	    // for(unsigned i=0 ; i <precSize ; ++i){
+	    //   streamlog_out( DEBUG8 ) << " *** " << i << " : " << precision[i] << std::endl ;
+	    // }
 
 
-	    double c1 = (  (*element)->hasMeasurement() ?  precision[  (*element)->measurementDimension() + 1 ] : precision[1]   )  ;
-
-	    double c2 = (  (*element)->hasMeasurement() ?  precision[  (*element)->measurementDimension() + 2 ] : precision[2]   )  ;
+	    double qms = precision[  precSize-3 ] ;
+	    double c1 =  precision[  precSize-2	] ;
+	    double c2 =  precision[  precSize-1 ] ;
 
 	    TMatrixDSym Vk_sym(2);
 	    double Scalar_value = 0 ;
@@ -175,8 +180,17 @@ namespace aidaTT
 	    Vk_sym(1, 1) = Scalar_value * (1 - c2*c2);
 
 
+	    streamlog_out( DEBUG3 ) << " -+-+- adding scattering matrix : " << std::scientific
+				    << " Vk_sym(0, 0) " << Vk_sym(0, 0)
+				    << " Vk_sym(0, 1) " << Vk_sym(0, 1)
+				    << " Vk_sym(1, 0) " << Vk_sym(1, 0)
+				    << " Vk_sym(1, 1) " << Vk_sym(1, 1)
+				    << " - precision.size() : " << precSize
+				    << "  hasMeasurement() " << (*element)->hasMeasurement()
+				    << "  (*element)->measurementDimension() " <<  (*element)->measurementDimension()
+				    << std::endl ;
+
 	    point.addScatterer( TVectorD(2, resid), Vk_sym);
-	    //	    std::cout << " projection c1 = " << c1 << " projection c2 = " << c2 << std::endl ;
 
 	  }
 

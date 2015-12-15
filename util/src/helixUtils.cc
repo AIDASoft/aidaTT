@@ -189,6 +189,14 @@ namespace aidaTT
     
     double pt = ( fabs(1./omega ) * bfieldZ * aidaTT::convertBr2P_cm  ); 
     
+
+    if( pt < 1e-6 ){
+      streamlog_out( ERROR) << " momentumAtPCA() : pt too small : " << pt 
+			    << " hp : " << hp 
+			    << " rp : " << rp
+			    << std::endl ;
+    }
+
     return Vector3D( pt*std::cos( phi ), pt*std::sin( phi ) , pt*tanl ) ;
   }
 
@@ -653,8 +661,7 @@ namespace aidaTT
 
     } else if( surf->type().isCone() ){  
 
-      //      return intersectWithZCone( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
-      //      return intersectWithSurfaceNewton( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
+      return intersectWithZCone( surf, hp, rp, s, xx, mode, checkBounds  ) ; 
 
     } else {
 
@@ -717,7 +724,7 @@ namespace aidaTT
 	s     = prevS ;
 	xx    = prevXX ;
 
-	streamlog_out( DEBUG9 ) << " --- intersectWithSurfaceNewton() : max count " 
+	streamlog_out( DEBUG ) << " --- intersectWithSurfaceNewton() : max count " 
 				<< maxCount << " reached before intersection found !! " 
 				<< " distance " << dist 
 				<< " s : " << s

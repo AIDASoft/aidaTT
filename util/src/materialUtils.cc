@@ -49,7 +49,7 @@ namespace aidaTT{
     
     double r_tot = r_i + r_o ;
     
-    //calculation of effective radiation length of the surface
+    //calculation of effective radiation lengths per cm of the surface
     double X0_eff = ( r_i/X0_i + r_o/X0_o ) / r_tot ; 
     
     //calculation of the path of the particle inside the material
@@ -68,6 +68,8 @@ namespace aidaTT{
     
     path = path/cosTrk ; 
     
+    //    if( path > 0.1 ) path = 0.1 ; // limit the path length !!!! @@@@ ????
+
     double X_X0 = path * X0_eff ;
     
     double mom = momentum.r() ;
@@ -77,16 +79,29 @@ namespace aidaTT{
     double Qms = 0.0136/(mom*beta) * 1.0 * std::sqrt(X_X0) * (1 + 0.038*(std::log(X_X0)));
 
 
-    streamlog_out( DEBUG9 ) << " **QMS: surface : " << *surf << std::endl ;
-
-    streamlog_out( DEBUG9 ) << " **QMS: crossingPoint : (" <<  crossingPoint.u() << ", " 
+    streamlog_out( DEBUG ) << " **QMS: surface : " << *surf << std::endl   ;
+    
+    streamlog_out( DEBUG2 ) << " **QMS: crossingPoint : (" <<  crossingPoint.u() << ", " 
 			    << crossingPoint.v() << " ) " 
 			    << " position = " << position
 			    << " normal = " << n
 			    << " QMS = " << Qms
 			    << " path length = " << path
+			    << " X0_eff : " << X0_eff
 			    << std::endl ;
-    
+
+    if( Qms != Qms ){
+
+      streamlog_out( ERROR ) << " **QMS: crossingPoint : (" <<  crossingPoint.u() << ", " 
+			    << crossingPoint.v() << " ) " 
+			    << " position = " << position
+			    << " normal = " << n
+			    << " QMS = " << Qms
+			    << " path length = " << path
+			    << " X0_eff : " << X0_eff
+			    << std::endl ;
+
+    }
 
     return Qms ;
   }
@@ -164,6 +179,20 @@ namespace aidaTT{
     double deltaE = dedx_i * density_i * path_i ;
     deltaE += dedx_o * density_o * path_o ;
  
+
+    if( deltaE != deltaE ){
+
+      streamlog_out( ERROR ) << " **computeEnergyLoss : (" <<  crossingPoint.u() << ", " 
+			     << crossingPoint.v() << " ) " 
+			     << " normal = " << n
+			     << " deltaE : " << deltaE
+			     << " path length = " << path_o + path_i 
+			     << " momentum : " << momentum
+			     << std::endl ;
+
+    }
+    
+
     return deltaE ;
   }
 
