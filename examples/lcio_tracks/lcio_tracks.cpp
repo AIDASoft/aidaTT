@@ -41,7 +41,7 @@ using namespace aidaTT ;
 
 
 // some global steering parameters
-#define VERBOSITY streamlog::DEBUG8
+#define VERBOSITY streamlog::DEBUG4
 //#define VERBOSITY streamlog::MESSAGE
 
 std::string trackCollectionName("MarlinTrkTracks") ;
@@ -382,7 +382,7 @@ int main(int argc, char** argv)
 	
 	EVENT::TrackerHit* hit = hitMap[ surf->id() ] ;
 	
-	streamlog_out(DEBUG2) << "intersection - current pointLabel : " << pointLabel  
+	streamlog_out(DEBUG4) << "intersection - current pointLabel : " << pointLabel  
 			      << ":  at s = " << it->first <<  " surface id : " 
 			      << cellIDString( surf->id()  ) << std::endl ; 
 

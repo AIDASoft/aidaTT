@@ -615,6 +615,13 @@ namespace aidaTT
 	return false ;
     }
     
+    streamlog_out( DEBUG  ) << " --- intersectWithZPlane - found intersection - s : " << s
+			     << " at : " << xx  << std::endl
+			     << " [ inside bounds : " << surf->insideBounds( xx ) << "] "
+			     << " distance : " << surf->distance( xx ) << std::endl 
+			     << " surf : " << *surf
+			     << std::endl ;
+
     return  ( checkBounds ? surf->insideBounds(xx) : true ) ;
 
   }
@@ -666,8 +673,8 @@ namespace aidaTT
     } else {
 
       if( count++ < 3 ) 
-	std::cout << " WARNING intersectWithSurface: intersection with surface this type of surface not yet implemented ! : " 
-		  << *surf <<  " (message will be suppressed after 3 times ) " << std::endl ;
+	streamlog_out( WARNING )  << "  intersectWithSurface: intersection with surface this type of surface not yet implemented ! : " 
+				  << *surf <<  " (message will be suppressed after 3 times ) " << std::endl ;
     }
 
     return false ;
@@ -682,7 +689,7 @@ namespace aidaTT
     if( !intersects )
       return false ;
 
-    streamlog_out( DEBUG4  ) << " --- intersectWithZCone - found intersection with cylinder : s : " << s
+    streamlog_out( DEBUG  ) << " --- intersectWithZCone - found intersection with cylinder : s : " << s
 			     << " at : " << xx << std::endl ;
 
     return intersectWithSurfaceNewton(  surf, hp, rp, s, xx, mode, checkBounds  ) ;
@@ -714,7 +721,7 @@ namespace aidaTT
     
     double radius  = calculateRadius( hp )  ;
 
-    streamlog_out( DEBUG4  ) << " --- intersectWithSurfaceNewton(): surface " << *surf << std::endl ; 
+    streamlog_out( DEBUG  ) << " --- intersectWithSurfaceNewton(): surface " << *surf << std::endl ; 
 
    while (1) {
       
