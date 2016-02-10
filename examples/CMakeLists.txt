@@ -29,6 +29,7 @@ IF(LCIO_FOUND)
 ENDIF(LCIO_FOUND)
 
 ADD_AIDATT_EXAMPLE_WITH_ROOT ( check_materials  material_effects/check_materials.cpp )
+ADD_AIDATT_EXAMPLE_WITH_ROOT ( material_ntuples material_effects/material_ntuples.cpp )
 
 ENDIF(DD4HEP_FOUND)
 
