@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
       aidaTT::Vector3D dirVec( 1. , phi , theta,  aidaTT::Vector3D::spherical ) ;
       
       // create an (almost) straight track in that direction
-      double omega = 1.e-12 ;
+      double omega = 1.e-6 ;
       double tanl  = tan( 0.5*M_PI - theta ) ;
       double phi0  = phi ;
       double d0    = 0. ;
