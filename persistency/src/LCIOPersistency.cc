@@ -147,7 +147,7 @@ namespace aidaTT
         tsi->setCovMatrix(covm);
 
         /// set reference point
-        float rp[3] = { refPoint.x() / dd4hep::mm, refPoint.y() / dd4hep::mm, refPoint.z() / dd4hep::mm};
+        float rp[3] = { float(refPoint.x() / dd4hep::mm) , float(refPoint.y() / dd4hep::mm) , float( refPoint.z() / dd4hep::mm ) } ;
         tsi->setReferencePoint(rp);
 
         return tsi;

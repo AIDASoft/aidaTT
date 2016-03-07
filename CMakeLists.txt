@@ -15,7 +15,7 @@ include(MacroAddSharedLibrary)
 include(library_versioning)
 
 # require proper c++
-ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
+#ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
 
 #------------- set the default installation directory to be the source directory
 
