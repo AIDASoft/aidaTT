@@ -17,20 +17,20 @@ namespace aidaTT {
 
   trajectory::trajectory(const trackParameters& tp, IFittingAlgorithm* fa, 
 			 IPropagation* pm, const IGeometry* geom) :
-    _referenceParameters(tp) , _fittingAlgorithm(fa) ,  _propagation(pm), _geometry(geom) {
+    _referenceParameters(tp) , _fittingAlgorithm(fa) ,  _propagation(pm), _geometry(geom), _mass( pionMass )  {
   }
   
 
 
   trajectory::trajectory(const trackParameters& tp, const IGeometry* geom) : 
-    _referenceParameters(tp), _fittingAlgorithm(NULL), _propagation(NULL), _geometry(geom) {
+    _referenceParameters(tp), _fittingAlgorithm(NULL), _propagation(NULL), _geometry(geom) , _mass( pionMass ) {
   }
 
 
 
   trajectory::trajectory(const trajectory& traj) : _referenceParameters(traj._referenceParameters),
 						   _fittingAlgorithm(traj._fittingAlgorithm), 
-						   _propagation(traj._propagation), _geometry(traj._geometry){
+						   _propagation(traj._propagation), _geometry(traj._geometry), _mass( pionMass ) {
   }
 
 
@@ -189,7 +189,7 @@ namespace aidaTT {
     // ********************************************
     // apply the energy loss from this surface
     double energy, beta ;
-    double deltaE = aidaTT::computeEnergyLoss( &surface, measuredUV , mom , energy, beta ) ; // mass
+    double deltaE = aidaTT::computeEnergyLoss( &surface, measuredUV , mom , energy, beta , _mass ) ; 
     trkParam->parameters()( OMEGA ) /= ( 1. - deltaE/energy ) ;
     // ********************************************
 
@@ -216,7 +216,7 @@ namespace aidaTT {
     if( isScatterer ){ // also  add a scattering to the trajectory element
       
       
-      double qms = aidaTT::computeQMS( &surface, referenceUV , mom  ) ; // mass
+      double qms = aidaTT::computeQMS( &surface, referenceUV , mom , _mass ) ; 
       
       // projection of track onto surface vectors
       const Vector3D& up = mom.unit() ;
@@ -276,7 +276,7 @@ namespace aidaTT {
     // ********************************************
     // apply the energy loss from this surface
     double energy, beta ;
-    double deltaE = aidaTT::computeEnergyLoss( &surface, referenceUV , mom , energy, beta ) ; // mass
+    double deltaE = aidaTT::computeEnergyLoss( &surface, referenceUV , mom , energy, beta , _mass ) ; 
     trkParam->parameters()( OMEGA ) /= ( 1. - deltaE/energy ) ;
     // ********************************************
 
@@ -288,7 +288,7 @@ namespace aidaTT {
     measDir->push_back( surface.u( xx ) );
     measDir->push_back( surface.v( xx ) );
 
-    double qms = aidaTT::computeQMS( &surface, referenceUV , mom  ) ; // mass
+    double qms = aidaTT::computeQMS( &surface, referenceUV , mom , _mass ) ; 
       
     // projection of track onto surface vectors
     const Vector3D& up = mom.unit() ;
@@ -369,7 +369,7 @@ namespace aidaTT {
 
 	  // check new eloss:
 	  double e,b ;
-	  double deltaE = aidaTT::computeEnergyLoss( &surf, trkParam , e, b ) ;
+	  double deltaE = aidaTT::computeEnergyLoss( &surf, trkParam , e, b, _mass ) ;
 	  NrjLoss = (2.0*deltaE) / ((b*b)*e);
 
 	  //	  std::cout << " NrjLoss : " << NrjLoss << " - NrjLossNew: " << NrjLossNew << std::endl ;

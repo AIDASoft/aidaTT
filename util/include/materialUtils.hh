@@ -23,7 +23,7 @@ namespace aidaTT {
    *  based on original version by K.Fujii in KalTest
    */
   double computeQMS( const ISurface* surf, const Vector2D& crossingPoint, 
-		     const Vector3D& mom, double mass=pionMass ) ;
+		     const Vector3D& mom, double mass) ; //=pionMass ) ;
   
   
   
@@ -36,7 +36,7 @@ namespace aidaTT {
    *  @author F.Gaede, Y.Voutsinas, DESY
    *  based on original version by K.Fujii in KalTest
    */
-  double computeQMS( const ISurface* surf, const Vector5& hp, const Vector3D& rp, double mass=pionMass ) ;
+  double computeQMS( const ISurface* surf, const Vector5& hp, const Vector3D& rp, double mass ) ; //=pionMass ) ;
   
 
   /** Compute the Bethe-Bloch energy loss (per unit density and path length) 
@@ -45,7 +45,7 @@ namespace aidaTT {
    *  @author F.Gaede, Y.Voutsinas, DESY
    *  based on original version by K.Fujii in KalTest
    */
-  double computeBetheBloch( const IMaterial &mat, double mom, double mass=pionMass );
+  double computeBetheBloch( const IMaterial &mat, double mom, double mass ) ; //=pionMass );
 
 
   /** Compute the expected energy loss [GeV] for the particle traversing the surface
@@ -56,7 +56,7 @@ namespace aidaTT {
    */
   double computeEnergyLoss( const ISurface* surf, const Vector2D& crossingPoint, 
 			    const Vector3D& mom, double& energy, double& beta,
-			    double mass=pionMass  ) ;
+			    double mass ) ; //=pionMass  ) ;
 
 
   /** Compute the expected energy loss [GeV] for the particle traversing the surface.
@@ -66,7 +66,7 @@ namespace aidaTT {
    */
   double computeEnergyLoss( const ISurface* surf, const trackParameters& param , 
 			    double& energy, double& beta,
-			    double mass=pionMass  ) ;
+			    double mass ) ; //=pionMass  ) ;
 
   
   

@@ -43,8 +43,14 @@ namespace aidaTT
     /// could be used for intersection calculations
     trajectory(const trackParameters& tP, const IGeometry* geom=&IGeometry::instance() );
 
-   ///d'tor
+    ///d'tor
     ~trajectory();
+
+    /// set mass used for fitting (material effects) 
+    void setMass( double mass ) { _mass = mass ; } 
+
+    /// get the mass used for fitting 
+    double getMass() { return _mass ; }
 
     /// the intial track parameters given at construction
     const trackParameters& initialTrackParameters() const {   return _referenceParameters; };
@@ -126,6 +132,8 @@ namespace aidaTT
     
     std::vector<trajectoryElement*>  _initialTrajectoryElements;
     std::vector<std::pair<double, const ISurface*> > _intersectionsList;
+
+    double _mass ;
     //==============================================================
     
     
