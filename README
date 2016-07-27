@@ -14,6 +14,19 @@
 
 
   --------
+ | v00-04 | 
+  --------
+
+F. Gaede
+   - added set/getMass() methods to trajectory
+   - removed default pion mass in
+   - computeQMS()
+   - computeEnergyLoss() mass has to be explicetly provided as argument
+   - made compatible with c++11
+   - removed -ansi -pedantic -Wno-long-long
+   - fixed narrowing in initializer lists
+
+  --------
  | v00-03 | 
   --------
  
