@@ -1,21 +1,30 @@
-#########################################################################
-#
-#   aidaTT - tracking toolkit developed in the AIDA project
-#
-#
-#  C.Rosemann, Y. Voutsinas, DESY 
-#  June, 2015
-#
-#########################################################################
+# aidaTT 
+# tracking toolkit developed in the AIDA project
+
+C.Rosemann, Y. Voutsinas, F .Gaede, DESY, June, 2015
+
+----------------------------------------------
+
+A brief introduction can be found in ./doc/description/description.pdf
+( after running:  cd ./doc/description ;  make ).
 
 
-  A brief introduction can be found in ./doc/description/description.pdf
-  ( after running:  cd ./doc/description ;  make ).
+----------------------------------------------
+## Release notes
 
 
-  --------
- | v00-04 | 
-  --------
+### v00-05 
+  
+F. Gaede
+- replaced GSL with Eigen for Vector5 and fiveByfiveMatrix
+  - needs Eigen Headers to be installed
+  - removed simpleFitter for now (depends on GSL and is used nowehre)
+
+
+----------------------------------------------
+  
+###  v00-04
+  
 
 F. Gaede
    - added set/getMass() methods to trajectory
@@ -26,9 +35,10 @@ F. Gaede
    - removed -ansi -pedantic -Wno-long-long
    - fixed narrowing in initializer lists
 
-  --------
- | v00-03 | 
-  --------
+----------------------------------------------
+  
+###  v00-03
+  
  
  - many changes, fixes and updates (for details, see svn -v log )
  
@@ -46,12 +56,12 @@ F.Gaede
    using a newtonian method
 
   - added optional use of streamlog
-  -  adapted lcio_tracks.cpp to (re)fit
+  -  adapted lcio\_tracks.cpp to (re)fit
     tracks including material effects
    - fixed some compiler warnings
   - fixed geometry initialization for examples
    ( added  IGeometry& instance(const std::string& initString ) )
-  - added example material_effects/check_materials.cpp
+  - added example material\_effects/check_materials.cpp
 
   - cleaned up trajectory class ( documentation, code,...)
     - fixed issue w/ energy loss for jacobian
@@ -136,27 +146,30 @@ Y.Voutsinas
   - adding test of covariance matrix in initial track parameters test
   - test for comparing the trajectory cov. mat with the one that is written out to lcio track
 
+----------------------------------------------
 
-  --------
- | v00-02 | 
-  --------
-    -F.Gaede:
-      - fixed major memory leak in Vector5 and fiveByFiveMatrix 
-        ( unneeded alloc in assignment operator)
+  
+###  v00-02
+  
+F.Gaede:
+ - fixed major memory leak in Vector5 and fiveByFiveMatrix 
+   ( unneeded alloc in assignment operator)
 
-      - made c'tors and accessors in Vector5 and fiveByFiveMatrix 
-        more efficient by removing unneeded range checks and
-        initializations
+ - made c'tors and accessors in Vector5 and fiveByFiveMatrix 
+   more efficient by removing unneeded range checks and
+   initializations
 
-    -Y.Voutsinas:
-      -  adding test for functions calculateCurvature & calculateLambda
-      -  correcting transformation from perigee to L3
+Y.Voutsinas:
+ -  adding test for functions calculateCurvature & calculateLambda
+ -  correcting transformation from perigee to L3
 
+----------------------------------------------
 
-  --------
- | v00-01 | 
-  --------
-   - first release:
-      - implementation of GBL fitting using a DD4hep model that provides DDRec::Surfaces
-      - implementation of multiple scattering still under validation.
+  
+###  v00-01 
+
+C. Rosemann:
+- first release:
+   - implementation of GBL fitting using a DD4hep model that provides DDRec::Surfaces
+   - implementation of multiple scattering still under validation.
 
