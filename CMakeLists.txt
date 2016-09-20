@@ -57,7 +57,7 @@ FOREACH( pkg  GBL DD4hep LCIO streamlog )
 ENDFOREACH()
 
 #Eigen is header only:
-SET( EIGEN3_INCLUDE_DIR "${EIGEN_DIR}" )
+SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN_DIR}" )
 IF( NOT EIGEN3_INCLUDE_DIR )
     MESSAGE( FATAL_ERROR "Please set EIGEN_DIR to the include directory of your Eigen3 installation.")
 ENDIF()
