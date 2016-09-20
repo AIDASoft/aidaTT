@@ -28,6 +28,8 @@ FIND_PATH( aidaTT_INCLUDE_DIRS
 	NO_DEFAULT_PATH
 )
 
+SET( aidaTT_INCLUDE_DIRS ${aidaTT_INCLUDE_DIRS} @EIGEN3_INCLUDE_DIR@ )
+
 # ---------- default build type  --------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set (CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
