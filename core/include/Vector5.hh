@@ -2,70 +2,93 @@
 #define VECTOR5_HH
 
 #include <ostream>
-#include <gsl/gsl_vector.h>
 #include <vector>
+
+#include <Eigen/Core>
 
 namespace aidaTT
 {
 
-    /** \page v5 Vector5
-     * This is a simple abstraction of a five-element vector that will work with the matrix class
-     *
-     * It is implemented as a straightforward encapsulation of the gsl vector class with fixed size.
-     *
-     */
+  typedef Eigen::Matrix<double, 5, 1 > Vector5d;
 
 
-    /// a five element vector that abstracts the gsl vector
-    class Vector5
-    {
-            friend class fiveByFiveMatrix;
-        public:
-            /** the default construction, it initializes all entries to zero **/
-            Vector5();
+  /** This is a simple abstraction of a five-element vector that will work with the matrix class
+   *  implemented using Eigen
+   *
+   */
+  class Vector5 {
 
-            /** copy constructor **/
-            Vector5(const Vector5&);
+    friend class fiveByFiveMatrix;
 
-            /** the construction with a vector
-             **/
-            Vector5(const std::vector<double>&);
+  public:
+    /** the default construction, it initializes all entries to zero **/
+    Vector5(){  _v.Zero() ; }
 
-            /** the construction with an array
-             **/
-            Vector5(const double*);
+    /** copy constructor **/
+    Vector5(const Vector5& o) : _v( o._v ) {}
 
-            /** the construction from five doubles
-             **/
-            Vector5(double, double, double, double, double);
+    /** the construction with a vector
+     **/
+    Vector5(const std::vector<double>& o) : _v( &o[0]) {}
 
-            /** the destructor **/
-            ~Vector5();
+    /** the construction with an array
+     **/
+    Vector5(const double* o) : _v(o) {}
 
-            /** assignment operator **/
-            Vector5& operator=(const Vector5&);
-
-            /** addition operator **/
-            Vector5& operator+(const Vector5&);
-
-            Vector5 operator+(const Vector5&) const ;
-           
-
-            /** direct read access to the individual elements by index**/
-            double operator()(unsigned int index) const;
-
-            /** direct write access to the individual elements by index**/
-            double& operator()(unsigned int index);
-
-        private:
-            gsl_vector* _vector;
-    };
-
-
-    inline std::ostream & operator << (std::ostream & os, const Vector5& v)
-    {
-        os << " {" << v(0) << " , " << v(1) << " , " << v(2) << " , " << v(3) << " , " << v(4)  << "} "  ;
-        return os ;
+    /** the construction from five doubles
+     **/
+    Vector5(double v0, double v1, double v2, double v3, double v4){
+      _v << v0,v1,v2,v3,v4 ;
     }
+
+    /** the destructor **/
+    ~Vector5(){}
+
+    /** assignment operator **/
+    Vector5& operator=(const Vector5& o){
+      if( this != &o ) {
+	_v = o._v ;
+      }
+      return *this ;
+    }
+
+    // addition operator  - in place !?
+    Vector5& operator+=(const Vector5& o){ 
+      _v += o._v ;
+      return *this ;
+    }
+
+    // addition w/ copy
+    Vector5 operator+(const Vector5& o) const{
+      Vector5 newVec( *this ) ;
+      return  newVec + o ;
+    } 
+
+
+    /** Direct read access to the individual elements by index**/
+    double operator()(unsigned int i) const{
+      return _v(i) ;
+    }
+
+    /** direct write access to the individual elements by index**/
+    double& operator()(unsigned int i){
+      return _v(i) ;
+    }
+
+  protected:
+
+    // conversion c'tor from Eigen's vector 
+    Vector5(const Vector5d & o) : _v( o ) {}
+
+  private:
+    Vector5d _v ;
+  };
+
+
+  inline std::ostream & operator << (std::ostream & os, const Vector5& v)
+  {
+    os << " {" << v(0) << " , " << v(1) << " , " << v(2) << " , " << v(3) << " , " << v(4)  << "} "  ;
+    return os ;
+  }
 }
 #endif // VECTOR5_HH
