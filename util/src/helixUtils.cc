@@ -68,26 +68,29 @@ namespace aidaTT
 
   double  calculateSfromXY(double x, double y, const Vector5& hp, const Vector3D& rp) {
 
-    // x0 and y0: p.c.a. coordinates w.r.t reference point
-    const double x0   = calculateX0(hp,rp) ;
-    const double y0   = calculateY0(hp,rp) ;
-    const double phi0 = calculatePhi0(hp);
+    const double phi0      = calculatePhi0(hp)  ;
+    const double d0        = calculateD0(hp)  ;
+    const double curvature = calculateCurvature(hp);
+    
+    const double sinPhi0 =  sin( phi0 ) ;
+    const double cosPhi0 =  cos( phi0 ) ;
+    
+    const double x0  = rp.x() - sinPhi0 * d0 ;
+    const double y0  = rp.y() + cosPhi0 * d0 ;
 
-    double phi = calculatePhifromXY(x, y, hp, rp );
+    const double dx =  (x - x0) ;
+    const double dy =  (y - y0) ;
+
+    double phi = atan2(  sinPhi0 - curvature * dx, 
+			 cosPhi0 + curvature * dy  );
+
     double dphi = phi - phi0;
 
-    if( dphi < -M_PI ) dphi += 2.*M_PI ;
-    if( dphi >  M_PI ) dphi -= 2.*M_PI ;
+    if ( dphi < -M_PI ) dphi += 2.*M_PI ;
+    else 
+      if( dphi >  M_PI ) dphi -= 2.*M_PI ;
 
-    if(dphi != 0.)
-      {
-
-	double s = ((x - x0) * cos(phi0) + (y - y0) * sin(phi0)) / (sin(dphi) / dphi) ;
-	return s ;
-      }
-    else
-      return 0.;
-
+    return ( dphi != 0. ?  ( dx * cosPhi0  + dy * sinPhi0 ) / (sin(dphi) / dphi)  : 0  ) ;
   }
 
 
