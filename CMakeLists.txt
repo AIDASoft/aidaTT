@@ -15,7 +15,7 @@ include(MacroAddSharedLibrary)
 include(library_versioning)
 
 # require proper c++
-#ADD_DEFINITIONS( "-Wall -g -ansi -pedantic -Wno-long-long" )
+include(aidaTT_default_cxx_flags)
 
 #------------- set the default installation directory to be the source directory
 
@@ -61,7 +61,7 @@ SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN_DIR}" )
 IF( NOT EIGEN3_INCLUDE_DIR )
     MESSAGE( FATAL_ERROR "Please set EIGEN_DIR to the include directory of your Eigen3 installation.")
 ENDIF()
-INCLUDE_DIRECTORIES ( "${EIGEN3_INCLUDE_DIR}" )
+INCLUDE_DIRECTORIES ( SYSTEM "${EIGEN3_INCLUDE_DIR}" )
 
 
 
