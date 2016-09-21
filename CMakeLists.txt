@@ -50,7 +50,7 @@ FIND_PACKAGE( streamlog )
 
 FOREACH( pkg  GBL DD4hep LCIO streamlog )  
     IF( ${pkg}_FOUND )
-        INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
+        INCLUDE_DIRECTORIES( SYSTEM ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
         ADD_DEFINITIONS( ${${pkg}_DEFINITIONS} )
     ENDIF()
@@ -61,7 +61,7 @@ SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN_DIR}" )
 IF( NOT EIGEN3_INCLUDE_DIR )
     MESSAGE( FATAL_ERROR "Please set EIGEN_DIR to the include directory of your Eigen3 installation.")
 ENDIF()
-INCLUDE_DIRECTORIES ( "${EIGEN3_INCLUDE_DIR}" )
+INCLUDE_DIRECTORIES ( SYSTEM "${EIGEN3_INCLUDE_DIR}" )
 
 
 
