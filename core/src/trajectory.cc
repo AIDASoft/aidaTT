@@ -219,9 +219,9 @@ namespace aidaTT {
       double qms = aidaTT::computeQMS( &surface, referenceUV , mom , _mass ) ; 
       
       // projection of track onto surface vectors
-      const Vector3D& up = mom.unit() ;
-      double c1 = up * surface.u( xx );
-      double c2 = up * surface.v( xx );
+      // const Vector3D& up = mom.unit() ;
+      // double c1 = up * surface.u( xx );
+      // double c2 = up * surface.v( xx );
       
       new_prec.push_back(  qms*qms  ) ;
       // new_prec.push_back(  c1  ) ;
@@ -291,9 +291,9 @@ namespace aidaTT {
     double qms = aidaTT::computeQMS( &surface, referenceUV , mom , _mass ) ; 
       
     // projection of track onto surface vectors
-    const Vector3D& up = mom.unit() ;
-    double c1 = up * (*measDir)[0] ; //surface.u( xx );
-    double c2 = up * (*measDir)[1] ; //surface.v( xx );
+    // const Vector3D& up = mom.unit() ;
+    // double c1 = up * (*measDir)[0] ; //surface.u( xx );
+    // double c2 = up * (*measDir)[1] ; //surface.v( xx );
 
     //fg: c1,c2 are scalar products of offset directions with track direction
     //    and are by construction 0. in curvilinear !

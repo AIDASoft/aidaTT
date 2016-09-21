@@ -24,7 +24,7 @@ namespace aidaTT
     /// \param [input] Vector3D BField -- needed to evaluate expressions
     fiveByFiveMatrix curvilinearToPerigeeJacobian(const trackParameters& tP, const Vector3D& bfield)
     {
-        const double qop    = calculateQoverP(tP, bfield.z());
+      //        const double qop    = calculateQoverP(tP, bfield.z());
         const double lambda = calculateLambda(tP);
         const double phi0   = calculatePhi0(tP);
 	const double omega_test = calculateCurvature(tP);

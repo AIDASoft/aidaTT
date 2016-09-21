@@ -24,9 +24,9 @@ namespace aidaTT
     /// the measurement directions, resolution and residuals plus the local curvilinear system and some identification
   trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, const ISurface& surface, std::vector<Vector3D>* measDir, const std::vector<double>& precisions,
                                          const std::vector<double>& residuals, std::pair<Vector3D, Vector3D>* lCLS, void* id, bool isScatterer, bool hasMeasurement )
-      : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(&surface), 
+    : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(&surface), _measurement(hasMeasurement),
 	_measDirections(measDir), _precisions(precisions), _residuals(residuals), _localCurvilinearSystem(lCLS), 
-	 _trkParam(trkParam), _scatterer( isScatterer ), _thick(false), _id(id), _measurement(hasMeasurement)
+	_trkParam(trkParam), _scatterer( isScatterer ), _thick(false), _id(id)
     {
         _calculateLocalToMeasurementProjectionMatrix();
 
@@ -38,7 +38,9 @@ namespace aidaTT
   
 
     ///~ constructor B: only the arc length is given and some identification
-  trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _localCurvilinearSystem(NULL), _localToMeasurementProjection(NULL), _measDirections(NULL), _measurement(false),  _trkParam(trkParam), _scatterer(false), _id(id)
+  trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _measurement(false), 
+												_measDirections(NULL), _localCurvilinearSystem(NULL) , _localToMeasurementProjection(NULL),
+												_trkParam(trkParam), _scatterer(false), _id(id)
     {}
 
 

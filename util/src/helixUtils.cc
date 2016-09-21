@@ -722,7 +722,7 @@ namespace aidaTT
     
     double dist = 0 ;
     
-    double radius  = calculateRadius( hp )  ;
+    //    double radius  = calculateRadius( hp )  ;
 
     streamlog_out( DEBUG  ) << " --- intersectWithSurfaceNewton(): surface " << *surf << std::endl ; 
 
