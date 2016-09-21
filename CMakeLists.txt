@@ -50,7 +50,7 @@ FIND_PACKAGE( streamlog )
 
 FOREACH( pkg  GBL DD4hep LCIO streamlog )  
     IF( ${pkg}_FOUND )
-        INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
+        INCLUDE_DIRECTORIES( SYSTEM ${${pkg}_INCLUDE_DIRS} )
         TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${${pkg}_LIBRARIES} )
         ADD_DEFINITIONS( ${${pkg}_DEFINITIONS} )
     ENDIF()
