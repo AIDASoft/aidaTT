@@ -56,14 +56,11 @@ FOREACH( pkg  GBL DD4hep LCIO streamlog )
     ENDIF()
 ENDFOREACH()
 
-#Eigen is header only:
-SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN_DIR}" )
-IF( NOT EIGEN3_INCLUDE_DIR )
-    MESSAGE( FATAL_ERROR "Please set EIGEN_DIR to the include directory of your Eigen3 installation.")
-ENDIF()
-INCLUDE_DIRECTORIES ( SYSTEM "${EIGEN3_INCLUDE_DIR}" )
+# Find Eigen3
+FIND_PACKAGE(Eigen3 REQUIRED)
 
-
+# Set up the top-level include directories
+INCLUDE_DIRECTORIES(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 TARGET_LINK_LIBRARIES( ${PROJECT_NAME} ${DD4hep_COMPONENT_LIBRARIES} )
 
