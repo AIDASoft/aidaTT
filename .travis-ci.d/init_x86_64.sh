@@ -26,27 +26,6 @@ CLICREPO=/cvmfs/clicdp.cern.ch
 BUILD_FLAVOUR=x86_64-${OS}-gcc${GCC_VER}-${BUILD_TYPE}
 
 #--------------------------------------------------------------------------------
-#     GCC
-#--------------------------------------------------------------------------------
-
-source ${CLICREPO}/compilers/gcc/${GCC_VERSION}/x86_64-${OS}/setup.sh
-
-#--------------------------------------------------------------------------------
-#     CMake
-#--------------------------------------------------------------------------------
-
-export CMAKE_HOME=${CLICREPO}/software/CMake/3.5.2/${BUILD_FLAVOUR}
-export PATH=${CMAKE_HOME}/bin:$PATH
-
-#--------------------------------------------------------------------------------
-#     Python
-#--------------------------------------------------------------------------------
-
-export PYTHONDIR=${CLICREPO}/software/Python/2.7.12/${BUILD_FLAVOUR}
-export PATH=$PYTHONDIR/bin:$PATH
-export LD_LIBRARY_PATH=$PYTHONDIR/lib:$LD_LIBRARY_PATH
-
-#--------------------------------------------------------------------------------
 #     Ninja
 #--------------------------------------------------------------------------------
 
@@ -62,7 +41,7 @@ export PATH="$Ninja_HOME:$PATH"
 #     ILCSOFT
 #--------------------------------------------------------------------------------
 
-ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/2016-09-27/x86_64-slc6-gcc48-opt
+ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/current/x86_64-slc6-gcc48-opt
 
 source $ILCSOFT/init_ilcsoft.sh
 
