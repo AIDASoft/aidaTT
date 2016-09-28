@@ -56,7 +56,7 @@ export PATH="$Ninja_HOME:$PATH"
 #--------------------------------------------------------------------------------
 #     Eigen
 #--------------------------------------------------------------------------------
-export EIGEN_DIR="/cvmfs/clicdp.cern.ch/software/Eigen/3.2.9/x86_64-slc6-gcc48-opt/"
+#export EIGEN_DIR="/cvmfs/clicdp.cern.ch/software/Eigen/3.2.9/x86_64-slc6-gcc48-opt/"
 
 #--------------------------------------------------------------------------------
 #     ILCSOFT
