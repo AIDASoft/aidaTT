@@ -1,9 +1,8 @@
 #!/bin/bash
 
-export GCC_VERSION="4.8.5"
-export BUILD_TYPE="opt"
 
-source /aidaTT/.travis-ci.d/init_x86_64.sh
+ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/current/CI_gcc
+source $ILCSOFT/init_ilcsoft.sh
 
 cd /aidaTT
 mkdir build
