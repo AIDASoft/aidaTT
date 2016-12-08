@@ -1,6 +1,8 @@
 # aidaTT 
 # tracking toolkit developed in the AIDA project
 
+[![Build Status](https://travis-ci.org/AIDASoft/aidaTT.svg?branch=master)](https://travis-ci.org/AIDASoft/aidaTT)
+
 C.Rosemann, Y. Voutsinas, F .Gaede, DESY, June, 2015
 
 ----------------------------------------------
