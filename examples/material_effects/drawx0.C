@@ -1,8 +1,35 @@
+#include "TROOT.h"
+#include "TStyle.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TCanvas.h"
+#include "TAxis.h"
+#include "TPad.h"
+#include "TH1F.h"
+#include "TH1D.h"
+#include "TLegend.h"
+#include "TString.h"
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <fstream>
+#include <string>
 #include <sstream>
+
+
+// usage: root -l 'drawx0.C+("material_ntuples.root")'
+
+
+int draw_x0_r(int theta, int phi , const std::string& pdfFile , TTree*& surfTuple, TTree*& matTuple);
+int draw_x0_z(int theta, int phi , const std::string& pdfFile , TTree*& surfTuple, TTree*&  matTuple);
+
 
 int drawx0(char* FILEN){
 
   TFile f( FILEN ) ;
+
+  TTree* surfTuple = dynamic_cast<TTree*>(f.Get("surfTuple"));
+  TTree* matTuple = dynamic_cast<TTree*>(f.Get("matTuple"));
 
   surfTuple->SetMarkerStyle( kOpenCircle ) ;
   surfTuple->SetMarkerColor( kBlue );
@@ -35,16 +62,27 @@ int drawx0(char* FILEN){
 	pdfFile =  std::string( FILEN ) + std::string( ".pdf)" )  ;
 
       if( thetas[i] < 45 )
-	draw_x0_z( thetas[i], phis[j] , pdfFile ) ;
+	draw_x0_z( thetas[i], phis[j] , pdfFile , surfTuple, matTuple ) ;
       else
-	draw_x0_r( thetas[i], phis[j] , pdfFile ) ;
+	draw_x0_r( thetas[i], phis[j] , pdfFile , surfTuple, matTuple) ;
 
     }
   }
 
+  delete ht;
+  delete hp;
+
+  delete surfTuple;
+  delete matTuple;
+
+  return 0;
+
 }
 
-int draw_x0_r(int theta, int phi , const std::string& pdfFile ){
+
+
+
+int draw_x0_r(int theta, int phi , const std::string& pdfFile , TTree*& surfTuple, TTree*&  matTuple){
 
   std::stringstream sCut ;
   sCut << "theta==" << theta << "&&phi==" << phi << "&&x0<.15" ;
@@ -53,7 +91,7 @@ int draw_x0_r(int theta, int phi , const std::string& pdfFile ){
   std::stringstream sTitle ;
   sTitle << "integrated x0 vs. r [theta=" << theta << ",phi=" << phi <<"]" ;
   
-  c1 = new TCanvas("C1", sTitle.str().c_str()  ) ;
+  TCanvas* c1 = new TCanvas("C1", sTitle.str().c_str()  ) ;
   
   c1->SetLogx(1) ;
   c1->SetLogy(0) ;
@@ -69,10 +107,18 @@ int draw_x0_r(int theta, int phi , const std::string& pdfFile ){
 
   std::cout << " writing to file " << pdfFile << " for theta : " << theta << " phi : "<< phi << std::endl ;
   c1->Print( pdfFile.c_str() ) ;
+  
+  delete c1;
+
+  return 0;
+
 }
 
 
-int draw_x0_z(int theta, int phi , const std::string& pdfFile ){
+
+
+
+int draw_x0_z(int theta, int phi , const std::string& pdfFile  , TTree*& surfTuple, TTree*&  matTuple){
 
   std::stringstream sCut ;
   sCut << "theta==" << theta << "&&phi==" << phi << "&&x0<.15" ;
@@ -81,7 +127,7 @@ int draw_x0_z(int theta, int phi , const std::string& pdfFile ){
   std::stringstream sTitle ;
   sTitle << "integrated x0 vs. z [theta=" << theta << ",phi=" << phi <<"]" ;
   
-  c1 = new TCanvas("C1", sTitle.str().c_str()  ) ;
+  TCanvas* c1 = new TCanvas("C1", sTitle.str().c_str()  ) ;
   
   c1->SetLogx(1) ;
   c1->SetLogy(0) ;
@@ -97,4 +143,9 @@ int draw_x0_z(int theta, int phi , const std::string& pdfFile ){
 
   std::cout << " writing to file " << pdfFile << " for theta : " << theta << " phi : "<< phi << std::endl ;
   c1->Print( pdfFile.c_str() ) ;
+
+  delete c1;
+
+  return 0;
+
 }
