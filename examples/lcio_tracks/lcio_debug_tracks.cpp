@@ -9,7 +9,8 @@
 #include "EVENT/TrackerHitPlane.h"
 #include "IMPL/TrackImpl.h"
 #include "IMPL/TrackStateImpl.h"
-#include "UTIL/ILDConf.h"
+#include "UTIL/LCTrackerConf.h"
+#include <UTIL/ILDConf.h>
 #include "UTIL/Operators.h"
 
 #include <IMPL/LCCollectionVec.h>
@@ -70,7 +71,7 @@ int main(int argc, char** argv)
     
   std::string trackCollectionName = "SiTracks";
     
-  UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
+  UTIL::BitField64 idDecoder(LCTrackerCellID::encoding_string()) ;
     
     
   // create the propagation object
@@ -140,16 +141,16 @@ int main(int argc, char** argv)
       long64 hitid = (*thit)->getCellID0() ;
       idDecoder.setValue(hitid) ;
 	
-      // if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD)
+      // if(idDecoder[ lcio::LCTrackerCellID::subdet()] != lcio::ILDDetID::VXD)
       // 	continue;
 	
-      if(idDecoder[ lcio::ILDCellID0::subdet] == lcio::ILDDetID::VXD) {
+      if(idDecoder[ lcio::LCTrackerCellID::subdet()] == lcio::ILDDetID::VXD) {
 
-	idDecoder[lcio::ILDCellID0::side] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
+	idDecoder[lcio::LCTrackerCellID::side()] = ((*thit)->getPosition()[2]  >  0  ?   +1 : -1) ;
 	
-	unsigned layerID = idDecoder[lcio::ILDCellID0::layer] ;
+	unsigned layerID = idDecoder[lcio::LCTrackerCellID::layer()] ;
 
-	idDecoder[lcio::ILDCellID0::layer] = layerID + 1 ;
+	idDecoder[lcio::LCTrackerCellID::layer()] = layerID + 1 ;
 	
 	hitid = idDecoder.lowWord() ;
 

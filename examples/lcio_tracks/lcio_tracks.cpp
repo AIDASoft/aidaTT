@@ -8,7 +8,8 @@
 #include "EVENT/TrackerHitPlane.h"
 #include "EVENT/TrackerHitZCylinder.h"
 #include "EVENT/Track.h"
-#include "UTIL/ILDConf.h"
+#include "UTIL/LCTrackerConf.h"
+#include <UTIL/ILDConf.h>
 
 #include <IMPL/LCCollectionVec.h>
 #include "IMPL/TrackImpl.h"
@@ -71,7 +72,7 @@ SurfMap surfMap ;
 
 
 std::string cellIDString( int detElementID) {
-  lcio::BitField64 bf(  UTIL::ILDCellID0::encoder_string ) ;
+  lcio::BitField64 bf(  UTIL::LCTrackerCellID::encoding_string() ) ;
   bf.setValue( detElementID ) ;
   return bf.valueString() ;
 }
@@ -236,7 +237,7 @@ int main(int argc, char** argv)
 
   LCEvent* evt = 0 ;
 
-  UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
+  UTIL::BitField64 idDecoder(LCTrackerCellID::encoding_string()) ;
 
   // create the propagation object
   aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();

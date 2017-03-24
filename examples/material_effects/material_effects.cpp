@@ -7,8 +7,8 @@
 #include "EVENT/TrackerHit.h"
 #include "EVENT/TrackerHitPlane.h"
 #include "EVENT/Track.h"
-#include "UTIL/ILDConf.h"
-
+#include "UTIL/LCTrackerConf.h"
+#include <UTIL/ILDConf.h>
 #include <IMPL/LCCollectionVec.h>
 #include "IMPL/TrackImpl.h"
 #include "IMPL/TrackStateImpl.h"
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 
     std::string trackCollectionName = "MarlinTrkTracks";
 
-    UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
+    UTIL::BitField64 idDecoder(LCTrackerCellID::encoding_string()) ;
 
     // create the propagation object
     aidaTT::analyticalPropagation* propagation = new aidaTT::analyticalPropagation();
@@ -234,7 +234,7 @@ int main(int argc, char** argv)
 
 	      //long hitid_dt = (*thit)->getCellID0() ;
 	      //idDecoder.setValue(hitid_dt) ;
-	      //if(idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::VXD && idDecoder[ lcio::ILDCellID0::subdet] != lcio::ILDDetID::TPC)
+	      //if(idDecoder[ lcio::LCTrackerCellID::subdet()] != lcio::ILDDetID::VXD && idDecoder[ lcio::LCTrackerCellID::subdet()] != lcio::ILDDetID::TPC)
 	      //continue;
 
 	      if( !BitSet32( (*thit)->getType() )[ UTIL::ILDTrkHitTypeBit::COMPOSITE_SPACEPOINT ]   ){ 
