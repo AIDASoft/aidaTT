@@ -5,7 +5,7 @@
 #include "EVENT/LCEvent.h"
 #include "EVENT/LCCollection.h"
 #include "EVENT/SimTrackerHit.h"
-#include "UTIL/ILDConf.h"
+#include "UTIL/LCTrackerConf.h"
 
 #include "IGeometry.hh"
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
   std::vector< std::string > colNames ;
   colNames.push_back("VXDCollection") ;
 
-  UTIL::BitField64 idDecoder(ILDCellID0::encoder_string) ;
+  UTIL::BitField64 idDecoder(LCTrackerCellID::encoding_string()) ;
 
 
   while((evt = rdr->readNextEvent()) != 0)
