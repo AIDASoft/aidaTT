@@ -49,7 +49,7 @@ script:
     else docker exec -it CI_container /bin/bash -c "./Package/.travis-ci.d/compile_and_test.sh";
     fi
   - if [[ "${TRAVIS_EVENT_TYPE}" == "cron" && "${COMPILER}" == "gcc"  ]];
-    then curl --form token=${COVERITY_SCAN_TOKEN} --form email=frank.gaede@desy.de --form file=@${PKGDIR}/build/myproject.tgz --form version="master" --form description="${description}" https://scan.coverity.com/builds?project=AIDASoft%2FaidaTT ;
+    then curl --form token=${COVERITY_SCAN_TOKEN} --form email=noreply@cern.ch --form file=@${PKGDIR}/build/myproject.tgz --form version="master" --form description="${description}" https://scan.coverity.com/builds?project=AIDASoft%2FaidaTT ;
     fi
 
 # Don't send e-mail notifications
