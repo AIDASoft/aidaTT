@@ -1,5 +1,6 @@
 # aidaTT 
 [![Build Status](https://travis-ci.org/AIDASoft/aidaTT.svg?branch=master)](https://travis-ci.org/AIDASoft/aidaTT)
+[![Build Status](https://scan.coverity.com/projects/12337/badge.svg)](https://scan.coverity.com/projects/aidasoft-aidatt)
 
 tracking toolkit developed in the AIDA project. A brief introduction can be found in ./doc/description/description.pdf( after running:  cd ./doc/description ;  make ).
 
