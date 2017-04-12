@@ -1,3 +1,11 @@
+# v00-06
+
+* 2017-04-03 Emilia Leogrande ([PR#11](https://github.com/AIDASoft/aidaTT/pull/11))
+  -Replace ILDCellID0 with LCTrackerCellID
+
+* 2017-04-12 Shaojun Lu ([PR#12](https://github.com/AIDASoft/aidaTT/pull/12))
+  - Added "-DGBL_EIGEN_SUPPORT_ROOT" to allow  GBLInterface.cc still use ROOT from GBL.
+
 # v00-05 
   
 F. Gaede
