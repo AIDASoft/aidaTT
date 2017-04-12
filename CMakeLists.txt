@@ -86,6 +86,7 @@ ENDIF(DOXYGEN_FOUND)
 
 IF( GBL_FOUND )
         ADD_DEFINITIONS( "-DUSE_GBL" )
+        ADD_DEFINITIONS( "-DGBL_EIGEN_SUPPORT_ROOT" )
 ELSE()
     MESSAGE( STATUS "GBL not found, track fitting with GBL will not be available." )
 ENDIF()
