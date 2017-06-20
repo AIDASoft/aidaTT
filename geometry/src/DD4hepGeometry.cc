@@ -3,7 +3,6 @@
 #include "DD4hepGeometry.hh"
 
 // DD4hep
-#include "DD4hep/LCDD.h"
 #include "DDRec/SurfaceHelper.h"
 #include "DD4hep/DD4hepUnits.h"
 
@@ -48,18 +47,18 @@ namespace aidaTT
   }
   
 
-  DD4hepGeometry::DD4hepGeometry(const DD4hep::Geometry::LCDD& lcdd ) : _lcdd( lcdd )  {
+  DD4hepGeometry::DD4hepGeometry(const dd4hep::Detector& thedetector ) : _thedetector( thedetector )  {
     
-    const DD4hep::Geometry::DetElement& det = lcdd.world() ;
+    const dd4hep::DetElement& det = thedetector.world() ;
     
     // create a list of all surfaces in the detector:
-    DD4hep::DDRec::SurfaceHelper surfMan( det) ;
+    dd4hep::rec::SurfaceHelper surfMan( det) ;
     
-    const DD4hep::DDRec::SurfaceList& sL = surfMan.surfaceList() ;
+    const dd4hep::rec::SurfaceList& sL = surfMan.surfaceList() ;
     
     _surfaceList.reserve( sL.size() ) ;
     
-    for(DD4hep::DDRec::SurfaceList::const_iterator it = sL.begin() ; it != sL.end() ; ++it){
+    for(dd4hep::rec::SurfaceList::const_iterator it = sL.begin() ; it != sL.end() ; ++it){
       _surfaceList.push_back( *it );
     }
     
@@ -75,7 +74,7 @@ namespace aidaTT
 
     Vector3D bfield ;
 
-    _lcdd.field().magneticField( xx.const_array() , bfield.array()  ) ;
+    _thedetector.field().magneticField( xx.const_array() , bfield.array()  ) ;
 
     return (1./dd4hep::tesla) * bfield ;
   }
@@ -94,10 +93,10 @@ namespace aidaTT
     
     if( first ){
       
-      DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-      lcdd.fromCompact( initString );
+      dd4hep::Detector& thedetector = dd4hep::Detector::getInstance();
+      thedetector.fromCompact( initString );
       
-      IGeometry::_geom = new DD4hepGeometry( lcdd ) ;
+      IGeometry::_geom = new DD4hepGeometry( thedetector ) ;
       
       first = false;
     }
@@ -106,10 +105,10 @@ namespace aidaTT
   }
   
 
-  /// return an instance of DD4hepGeometry assuming lcdd has been initialized elsewhere
+  /// return an instance of DD4hepGeometry assuming thedetector has been initialized elsewhere
   const IGeometry& IGeometry::instance() {
     if( _geom == 0 ) 
-      _geom = new DD4hepGeometry(DD4hep::Geometry::LCDD::getInstance() ) ; 
+      _geom = new DD4hepGeometry(dd4hep::Detector::getInstance() );
     return *_geom ;
   }
 }

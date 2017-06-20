@@ -4,7 +4,7 @@
 #define DD4HEPGEOMETRY_HH
 
 #include "IGeometry.hh"
-#include "DD4hep/LCDD.h"
+#include <DD4hep/Detector.h>
 #include <vector>
 
 namespace aidaTT
@@ -13,7 +13,7 @@ namespace aidaTT
   {
   public:
 
-    DD4hepGeometry(const DD4hep::Geometry::LCDD& lcdd ) ;   
+    DD4hepGeometry(const dd4hep::Detector& theDetector );
     
     /// get a list of all surfaces in the tracking geometry 
     /// loosely sorted with radius
@@ -27,7 +27,7 @@ namespace aidaTT
     
 
   private:
-    const DD4hep::Geometry::LCDD& _lcdd ;
+    const dd4hep::Detector& _thedetector ;
 
     std::vector<const ISurface* > _surfaceList;
   };
