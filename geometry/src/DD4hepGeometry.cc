@@ -18,7 +18,7 @@ namespace aidaTT
 
     if( surf->type().isZCylinder() ){
 
-      return dynamic_cast<const DDSurfaces::ICylinder*>(surf)->radius() ;
+      return dynamic_cast<const dd4hep::rec::ICylinder*>(surf)->radius() ;
 
     } else if( surf->type().isZPlane() ){  
 
@@ -30,7 +30,7 @@ namespace aidaTT
 
     } else    if( surf->type().isZCone() ){
 
-      const ICone* c = dynamic_cast<const DDSurfaces::ICone*>(surf) ;
+      const ICone* c = dynamic_cast<const dd4hep::rec::ICone*>(surf) ;
 
       return  std::max( c->radius0() ,  c->radius1() ) ;
 

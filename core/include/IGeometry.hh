@@ -8,18 +8,17 @@
 //
 // Use the Surfaces and material classes (interfaces) from DD4hep 
 //
-#include "DDSurfaces/ISurface.h"
-#include "DDSurfaces/IMaterial.h"
+#include "DDRec/ISurface.h"
+#include "DDRec/IMaterial.h"
 
 namespace aidaTT
 {
-  using DDSurfaces::ISurface ;
-  using DDSurfaces::ICylinder ;
-  using DDSurfaces::ICone ;
-  using DDSurfaces::IMaterial ;
-  using DDSurfaces::Vector2D ;
-  using DDSurfaces::Vector3D ;
-  using namespace DDSurfaces ;
+  using dd4hep::rec::ISurface ;
+  using dd4hep::rec::ICylinder ;
+  using dd4hep::rec::ICone ;
+  using dd4hep::rec::IMaterial ;
+  using dd4hep::rec::Vector2D ;
+  using dd4hep::rec::Vector3D ;
 
 }
 #else

@@ -38,8 +38,8 @@ namespace aidaTT{
 
   double computeQMS( const ISurface* surf, const Vector2D& crossingPoint, const Vector3D& momentum , double mass ) {
     
-    const DDSurfaces::IMaterial& material_inn = surf->innerMaterial();
-    const DDSurfaces::IMaterial& material_out = surf->outerMaterial();
+    const dd4hep::rec::IMaterial& material_inn = surf->innerMaterial();
+    const dd4hep::rec::IMaterial& material_out = surf->outerMaterial();
     
     const double r_i = surf->innerThickness();
     const double r_o = surf->outerThickness();
@@ -145,8 +145,8 @@ namespace aidaTT{
 			    const Vector3D& momentum, double& energy, double& beta,
 			    double mass ){
     
-    const DDSurfaces::IMaterial& material_i = surf->innerMaterial(); // crossingPoint
-    const DDSurfaces::IMaterial& material_o = surf->outerMaterial(); // crossingPoint
+    const dd4hep::rec::IMaterial& material_i = surf->innerMaterial(); // crossingPoint
+    const dd4hep::rec::IMaterial& material_o = surf->outerMaterial(); // crossingPoint
     
     double path_i = surf->innerThickness();
     double path_o = surf->outerThickness();
