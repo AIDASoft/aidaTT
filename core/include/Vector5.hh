@@ -60,8 +60,7 @@ namespace aidaTT
 
     // addition w/ copy
     Vector5 operator+(const Vector5& o) const{
-      Vector5 newVec( *this ) ;
-      return  newVec + o ;
+      return Vector5( _v + o._v ) ;
     } 
 
 
