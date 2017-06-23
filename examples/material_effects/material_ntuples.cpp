@@ -123,8 +123,8 @@ int main(int argc, char** argv) {
 							 s, xx, 0 , true ) ; 
 	
 	//----------------- get X0 --------------------------------------------
-	const DDSurfaces::IMaterial& material_inn = surf->innerMaterial();
-	const DDSurfaces::IMaterial& material_out = surf->outerMaterial();
+	const dd4hep::rec::IMaterial& material_inn = surf->innerMaterial();
+	const dd4hep::rec::IMaterial& material_out = surf->outerMaterial();
 	
 	const double r_i = surf->innerThickness();
 	const double r_o = surf->outerThickness();
