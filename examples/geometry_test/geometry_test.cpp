@@ -6,7 +6,7 @@
 #include "IGeometry.hh"
 
 // DD4hep
-#include "DD4hep/LCDD.h"
+#include "DD4hep/Detector.h"
 #include "DDRec/SurfaceHelper.h"
 
 int main(int argc, char** argv)
@@ -20,17 +20,17 @@ int main(int argc, char** argv)
 
     std::string inFile =  argv[1] ;
 
-    DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
-    lcdd.fromCompact(inFile);
+    dd4hep::Detector& theDet = dd4hep::Detector::getInstance();
+    theDet.fromCompact(inFile);
 
-    DD4hep::Geometry::DetElement world = lcdd.world() ;
+    dd4hep::DetElement world = theDet.world() ;
 
     // create a list of all surfaces in the detector:
-    DD4hep::DDRec::SurfaceHelper surfMan(world) ;
+    dd4hep::rec::SurfaceHelper surfMan(world) ;
 
-    const DD4hep::DDRec::SurfaceList& sL = surfMan.surfaceList() ;
+    const dd4hep::rec::SurfaceList& sL = surfMan.surfaceList() ;
 
-    for(DD4hep::DDRec::SurfaceList::const_iterator it = sL.begin() ; it != sL.end() ; ++it)
+    for(dd4hep::rec::SurfaceList::const_iterator it = sL.begin() ; it != sL.end() ; ++it)
         {
 
             aidaTT::ISurface* surf =  *it ;

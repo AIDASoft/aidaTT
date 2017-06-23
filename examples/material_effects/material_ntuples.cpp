@@ -7,7 +7,7 @@
 #include "IGeometry.hh"
 #include "trackParameters.hh"
 
-#include "DD4hep/LCDD.h"
+#include "DD4hep/Detector.h"
 #include "DDRec/MaterialManager.h"
 
 // ROOT
@@ -21,8 +21,8 @@
 using namespace std ;
 //using namespace aidaTT ;
 
-using namespace DD4hep ;
-using namespace DD4hep::DDRec ;
+using namespace dd4hep ;
+using namespace dd4hep::rec ;
 
 
 
