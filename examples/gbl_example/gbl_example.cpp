@@ -23,7 +23,7 @@
 
 // DD4hep
 #include "DD4hepGeometry.hh"
-#include "DD4hep/LCDD.h"
+#include "DD4hep/Detector.h"
 #include "DD4hep/DD4hepUnits.h"
 #include "DDRec/SurfaceHelper.h"
 
@@ -52,10 +52,10 @@ int main(int argc, char** argv)
     std::string inFile =  argv[1] ;
 
     /// preamble: load the geo info, get all surfaces => entry point for intersection calculation
-    DD4hep::Geometry::LCDD& lcdd = DD4hep::Geometry::LCDD::getInstance();
+    dd4hep::Detector& theDet = dd4hep::LCDD::getInstance();
     lcdd.fromCompact(inFile);
 
-    DD4hep::Geometry::DetElement world = lcdd.world() ;
+    dd4hep::DetElement world = theDet.world() ;
 
     aidaTT::DD4hepGeometry geom(world);
 
