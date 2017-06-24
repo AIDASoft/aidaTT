@@ -40,7 +40,7 @@ namespace aidaTT
     ///~ constructor B: only the arc length is given and some identification
   trajectoryElement::trajectoryElement(double arclength, trackParameters* trkParam, void* id) : _arclength(arclength), _jacobianFromPrevious(NULL), _surface(NULL), _measurement(false), 
 												_measDirections(NULL), _localCurvilinearSystem(NULL) , _localToMeasurementProjection(NULL),
-												_trkParam(trkParam), _scatterer(false), _id(id)
+												_trkParam(trkParam), _scatterer(false), _thick(false), _id(id)
     {}
 
 
