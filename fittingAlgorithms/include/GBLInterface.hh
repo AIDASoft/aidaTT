@@ -64,40 +64,40 @@ namespace aidaTT
     GBLInterface& operator=(const GBLInterface&);
 
     ///< GBL trajectory
-    gbl::GblTrajectory* _trajectory;
+    gbl::GblTrajectory* _trajectory{};
     ///< flag for curved track (helix, else straight line)
-    bool _curvature;
+    bool _curvature{};
 
     ///< correction vector from GBL fit (for track parameters)
-    Vector5* _correctionVector;
+    Vector5* _correctionVector{};
 
     ///< covariance matrix from GBL
-    fullCovariance* _covarianceMatrix;
+    fullCovariance* _covarianceMatrix{};
 
     ///< number of degrees of freedom in GBL fit
-    int _ndf;
+    int _ndf{};
 
     ///< chi2 from GBL fit
-    double _chisquare;
+    double _chisquare{};
 
     ///< weight lost by down-weighting, not used for now!
-    double _lostweight;
+    double _lostweight{};
 
     ///< arc-length of reference point
-    double _refPointS;
+    double _refPointS{};
 
     ///< label of reference point
-    unsigned int _refPointIndex;
+    unsigned int _refPointIndex{};
 
     const fitResults* _fillResults(const trajectory&, int label=0) const ;
 
     void _clear() ;
 
-    const trajectory* _fittedTraj ;
+    const trajectory* _fittedTraj {};
     
-    mutable ResMap _theResults;
+    mutable ResMap _theResults{};
 
-    gbl::MilleBinary* _milleBinary ;
+    gbl::MilleBinary* _milleBinary {};
 
   };
 
