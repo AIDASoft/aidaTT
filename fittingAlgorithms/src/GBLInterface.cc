@@ -16,8 +16,6 @@ namespace aidaTT
 
   GBLInterface::~GBLInterface()
   {
-    if(_trajectory != NULL)
-      delete _trajectory;
     
     delete _milleBinary ;
 
