@@ -1,3 +1,19 @@
+# v00-07
+
+* 2017-06-23 Frank Gaede ([PR#15](https://github.com/AIDASoft/aidaTT/pull/15))
+  -  adapt examples to recent namespace change in DD4hep
+  - replace DDSurfaces with dd4hep::rec
+  - fix -Winfinite-recursion in Vector5 (operator+)
+
+* 2017-06-20 Andre Sailer ([PR#14](https://github.com/AIDASoft/aidaTT/pull/14))
+  - Adapt to changes in namespaces and LCDD -->  Detector
+
+* 2017-06-26 Frank Gaede ([PR#16](https://github.com/AIDASoft/aidaTT/pull/16))
+  - fix some Coverity issues
+
+* 2017-05-08 Andre Sailer ([PR#13](https://github.com/AIDASoft/aidaTT/pull/13))
+  - CMake: Instead of using GENERATE_PACKAGE_CONFIG_FILES call configure_file and install directly. Macro was used from DD4hep before (and is no longer available there).
+
 # v00-06
 
 * 2017-04-03 Emilia Leogrande ([PR#11](https://github.com/AIDASoft/aidaTT/pull/11))
