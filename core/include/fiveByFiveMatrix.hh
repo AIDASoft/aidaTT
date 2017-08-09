@@ -24,7 +24,7 @@ namespace aidaTT
 
   public:
     /** the default construction, it initializes all entries to zero **/
-    fiveByFiveMatrix(){ _m.Zero() ; }
+    fiveByFiveMatrix():_m(Matrix5x5d::Zero()) {}
 
     /** copy construction **/
     fiveByFiveMatrix(const fiveByFiveMatrix& o) : _m(o._m) {} 
