@@ -22,7 +22,7 @@ namespace aidaTT
 
   public:
     /** the default construction, it initializes all entries to zero **/
-    Vector5(){  _v.Zero() ; }
+    Vector5():_v( Vector5d::Zero() ) {}
 
     /** copy constructor **/
     Vector5(const Vector5& o) : _v( o._v ) {}
