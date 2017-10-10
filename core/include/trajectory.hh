@@ -70,8 +70,9 @@ namespace aidaTT
 
     /** add a trajectoryElement with a measurement/hit to the trajectory - identified by:
      *  a position, the precision, the surface and a user defined id/pointer
+     *  if this measurement has been successfully added, return true, otherwise return false.
      */
-    void addMeasurement(const Vector3D& position, const std::vector<double>& precision, 
+    bool addMeasurement(const Vector3D& position, const std::vector<double>& precision,
 			const ISurface& surface, void* id, bool isScatterer=false ) ;
     
     

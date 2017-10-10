@@ -141,7 +141,7 @@ namespace aidaTT {
 
 
 
-  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision, 
+  bool trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& precision,
 				  const ISurface& surface, void* id, bool isScatterer)
   {
     
@@ -166,7 +166,7 @@ namespace aidaTT {
 		<< "  does not intersect with surface : " <<  surface
 		<< "  hit will be ignored ! " << std::endl ;
       
-      return ;
+      return false;
     }
     
     //    std::cout << " prevS : " << prevS << " - s to next intersection: " << s << std::endl ;
@@ -235,6 +235,8 @@ namespace aidaTT {
 
     // note: need to get the curvilinear system at s==0. as this is where the local track state is defined
     _initialTrajectoryElements.push_back(new trajectoryElement(s, trkParam, surface, measDir, new_prec, residuals, calculateLocalCurvilinearSystem(0., *trkParam), id , isScatterer ));
+
+    return true;
   }
 
   void trajectory::addScatterer( const ISurface& surface ){
