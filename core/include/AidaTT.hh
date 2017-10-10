@@ -31,7 +31,7 @@
  * where the chosen implementations of the abstract classes are also passed as arguments.
  *
  * Measurements are then added by
- *  void trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id),
+ *  bool trajectory::addMeasurement(const Vector3D& position, const std::vector<double>& resolution, const ISurface& surface, void* id),
  * other points or elements like scattering material or points of interest (nominal starting point, calorimeter face,...) are added with either
  *    void trajectory::addElement(const Vector3D& position, void* id);
  *    void trajectory::addElement(const Vector3D& position, const ISurface& surface, void* id);
