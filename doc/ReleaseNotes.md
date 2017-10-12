@@ -1,3 +1,13 @@
+# v00-08
+
+* 2017-08-21 Andre Sailer ([PR#17](https://github.com/AIDASoft/aidaTT/pull/17))
+  - fixeByFiveMatrix/Vector5d: fix initialisation: Zero is a static function, previously nothing was initialised to 0. At least this fixes display of trackParameters where the covariance matrix was shown the random values from uninitialised values nstead of zeros.
+
+* 2017-10-12 Shaojun Lu ([PR#18](https://github.com/AIDASoft/aidaTT/pull/18))
+  -  Update trajectory::addMeasurement from void to bool for adding successfully.
+      - the success information could be used by "MarlinTrk/src/MarlinAidaTTTrack.cc".
+      - Both DDKalTest and AidaTT(GBL) may be used by  "RefitProcessor" and "FullLDCTracking_MarlinTrk" for track fitting.
+
 # v00-07
 
 * 2017-06-23 Frank Gaede ([PR#15](https://github.com/AIDASoft/aidaTT/pull/15))
