@@ -95,10 +95,9 @@ namespace aidaTT
     class intersections
     {
         public:
-            intersections()
-            {
-                _points.clear();
-            };
+            intersections() {}
+            intersections(double x1, double y1):_points{std::make_pair(x1, y1)} {}
+            intersections(double x1, double y1,double x2, double y2):_points{std::make_pair(x1, y1), std::make_pair(x2, y2)} {}
             unsigned int number() const
             {
                 return _points.size();
@@ -112,7 +111,7 @@ namespace aidaTT
                 return _points.at(i);
             }
         private:
-            std::vector<std::pair<double, double> > _points;
+            std::vector<std::pair<double, double> > _points{};
     };
 
     intersections intersectCircleCircle(const circle&, const circle&);
