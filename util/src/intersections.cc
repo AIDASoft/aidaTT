@@ -66,19 +66,17 @@ namespace aidaTT
         const double d = sL.distance();
         const double DISC = sqrt(discriminant);
 
-        const double x1 = x0  + (nx * d + ny * DISC) / sL.normalSquare();
-        const double y1 = y0  + (ny * d - nx * DISC) / sL.normalSquare();
+        const double normSquareInv = 1.0 / sL.normalSquare();
 
-        intersections retType;
-        retType.add(x1, y1);
+        const double x1 = x0  + (nx * d + ny * DISC) * normSquareInv;
+        const double y1 = y0  + (ny * d - nx * DISC) * normSquareInv;
 
         /// return only a single solution, if both are very close
         if(fabs(discriminant) <= 1e-9)
-            return retType;
-        const double x2 = x0  + (nx * d - ny * DISC) / sL.normalSquare();
-        const double y2 = y0  + (ny * d + nx * DISC) / sL.normalSquare();
-        retType.add(x2, y2);
-        return retType;
+          return intersections(x1, y1);
+        const double x2 = x0  + (nx * d - ny * DISC) * normSquareInv;
+        const double y2 = y0  + (ny * d + nx * DISC) * normSquareInv;
+        return intersections(x1, y1, x2, y2);
     }
 
 
