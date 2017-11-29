@@ -534,7 +534,7 @@ namespace aidaTT
     const double ny = surf->normal().y();
 
     // calculate distance from origin
-    const double dist = fabs(surf->distance(Vector3D()));
+    const double dist = fabs(surf->origin()*surf->normal());
 
     // define straight line from this
     straightLine line(nx, ny, dist);
