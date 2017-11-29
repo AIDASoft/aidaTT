@@ -90,7 +90,7 @@ namespace aidaTT
     else 
       if( dphi >  M_PI ) dphi -= 2.*M_PI ;
 
-    return ( dphi != 0. ?  ( dx * cosPhi0  + dy * sinPhi0 ) / (sin(dphi) / dphi)  : 0  ) ;
+    return ( dphi != 0. ?  ( dx * cosPhi0  + dy * sinPhi0 ) * dphi / sin(dphi)  : 0  ) ;
   }
 
 
