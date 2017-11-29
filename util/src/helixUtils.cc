@@ -544,7 +544,7 @@ namespace aidaTT
     const double ycenter = calculateYCenter( hp, rp );
     circle circ(xcenter, ycenter, radius);
 
-    intersections candidates = intersectCircleStraightLine(circ, line);
+    intersections const& candidates = intersectCircleStraightLine(circ, line);
 
     if(candidates.number() < 1)
       return false;
