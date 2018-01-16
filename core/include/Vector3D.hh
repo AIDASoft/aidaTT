@@ -246,7 +246,7 @@ namespace aidaTT
     }
 
   protected:
-    double _x, _y, _z ;
+    double _x{}, _y{}, _z{} ;
 
     // helper classes and function to allow
     // different c'tors selected at compile time

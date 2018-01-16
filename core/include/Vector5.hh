@@ -80,7 +80,7 @@ namespace aidaTT
     Vector5(const Vector5d & o) : _v( o ) {}
 
   private:
-    Vector5d _v ;
+    Vector5d _v{} ;
   };
 
 

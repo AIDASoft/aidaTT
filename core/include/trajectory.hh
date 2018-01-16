@@ -126,15 +126,15 @@ namespace aidaTT
     trajectory operator=(const trajectory&);
 
     // =========== members =========================================
-    trackParameters     _referenceParameters;
-    IFittingAlgorithm*  _fittingAlgorithm;
-    IPropagation*       _propagation;
-    const IGeometry* const _geometry;
+    trackParameters     _referenceParameters{};
+    IFittingAlgorithm*  _fittingAlgorithm{};
+    IPropagation*       _propagation{};
+    const IGeometry* const _geometry{};
     
-    std::vector<trajectoryElement*>  _initialTrajectoryElements;
-    std::vector<std::pair<double, const ISurface*> > _intersectionsList;
+    std::vector<trajectoryElement*>  _initialTrajectoryElements{};
+    std::vector<std::pair<double, const ISurface*> > _intersectionsList{};
 
-    double _mass ;
+    double _mass {};
     //==============================================================
     
     

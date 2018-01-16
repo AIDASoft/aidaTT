@@ -165,31 +165,31 @@ namespace aidaTT
     void _calculateLocalToMeasurementProjectionMatrix();
 
     ///~
-    double _arclength;
+    double _arclength{};
 
-    fiveByFiveMatrix* _jacobianFromPrevious;
-    const ISurface*   _surface;
+    fiveByFiveMatrix* _jacobianFromPrevious{};
+    const ISurface*   _surface{};
 
     ///~ measurement variables:
-    bool _measurement;
-    std::vector<Vector3D>* _measDirections;
-    std::vector<double> _precisions;
-    //TMatrixDSym _precisions;
-    std::vector<double> _residuals;
+    bool _measurement{};
+    std::vector<Vector3D>* _measDirections{};
+    std::vector<double> _precisions{};
+    //TMatrixDSym _precisions{};
+    std::vector<double> _residuals{};
 
     ///~ local curvilinear system
-    std::pair<Vector3D, Vector3D>* _localCurvilinearSystem;
+    std::pair<Vector3D, Vector3D>* _localCurvilinearSystem{};
 
     /// 2x2 matrix for 2D measurements, projection from local cl to measurement system
-    std::vector<double>* _localToMeasurementProjection;
+    std::vector<double>* _localToMeasurementProjection{};
 
-    trackParameters* _trkParam ;
+    trackParameters* _trkParam {};
     
     ///~ scattering info
-    bool _scatterer;
-    bool _thick;
+    bool _scatterer{};
+    bool _thick{};
 
-    const void* const _id; // just store
+    const void* const _id{}; // just store
   };
 
 

@@ -49,12 +49,12 @@ namespace aidaTT
 
     };
   private:
-    bool _valid;
-    double _chisquare;
-    unsigned int _ndf;
-    double _lostweight;
+    bool _valid{};
+    double _chisquare{};
+    unsigned int _ndf{};
+    double _lostweight{};
 
-    trackParameters _estParams;
+    trackParameters _estParams{};
   };
 
   inline std::ostream & operator << (std::ostream & os, const fitResults& fR)

@@ -14,7 +14,7 @@ finalTrackTest::finalTrackTest() : UnitTest("FinalTrackTest", __FILE__)
 void finalTrackTest::_test()
 {
 
-  IMPL::TrackImpl* finalTrack = new IMPL::TrackImpl() ;
+  //  IMPL::TrackImpl* finalTrack = new IMPL::TrackImpl() ;
 
   IMPL::TrackStateImpl* trkState = new IMPL::TrackStateImpl() ;
 
