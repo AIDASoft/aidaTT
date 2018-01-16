@@ -30,7 +30,7 @@ void addSimpleTests(UnitTestSuite& _test)
 
 
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
     UnitTestSuite _test("aidaTT unit testing suite.");
 
