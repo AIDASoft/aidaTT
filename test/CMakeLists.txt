@@ -17,4 +17,4 @@ ADD_EXECUTABLE (aidaTT-unitTests aidaTT-unitTests.cpp ${_sources})
 
 TARGET_LINK_LIBRARIES (aidaTT-unitTests ${PROJECT_NAME}) 
 
-ADD_DEPENDENCIES(tests aidaTT-unitTests ${_sources})
+ADD_DEPENDENCIES(tests aidaTT-unitTests)
