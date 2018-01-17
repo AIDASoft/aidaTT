@@ -129,7 +129,7 @@ namespace aidaTT
     trackParameters     _referenceParameters{};
     IFittingAlgorithm*  _fittingAlgorithm{};
     IPropagation*       _propagation{};
-    const IGeometry* const _geometry{};
+    const IGeometry* const _geometry ;
     
     std::vector<trajectoryElement*>  _initialTrajectoryElements{};
     std::vector<std::pair<double, const ISurface*> > _intersectionsList{};

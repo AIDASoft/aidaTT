@@ -189,7 +189,7 @@ namespace aidaTT
     bool _scatterer{};
     bool _thick{};
 
-    const void* const _id{}; // just store
+    const void* const _id ; // just store
   };
 
 
