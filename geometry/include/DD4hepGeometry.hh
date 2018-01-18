@@ -27,7 +27,7 @@ namespace aidaTT
     
 
   private:
-    const dd4hep::Detector& _thedetector{} ;
+    const dd4hep::Detector& _thedetector ;
 
     std::vector<const ISurface* > _surfaceList{};
   };
