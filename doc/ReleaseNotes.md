@@ -1,3 +1,19 @@
+# v00-09
+
+* 2018-01-18 Frank Gaede ([PR#21](https://github.com/AIDASoft/aidaTT/pull/21))
+  - fix default initialization of reference to abstract (osx-llvm)
+
+* 2018-01-17 Frank Gaede ([PR#20](https://github.com/AIDASoft/aidaTT/pull/20))
+  -fix all warnings (gcc54-ub1604)
+
+* 2018-03-28 Marko Petric ([PR#22](https://github.com/AIDASoft/aidaTT/pull/22))
+  - Fix for the removal of DDSurfaces which have been merged into DDRec 
+    -  includes from `DDSurfaces` -> `DDRec`
+    - namespace `DDSurfaces` -> `dd4hep::rec`
+
+* 2017-11-30 Andre Sailer ([PR#19](https://github.com/AIDASoft/aidaTT/pull/19))
+  - Performance optimisation from running profiler (Intel VTune Amplifier)
+
 # v00-08
 
 * 2017-08-21 Andre Sailer ([PR#17](https://github.com/AIDASoft/aidaTT/pull/17))
