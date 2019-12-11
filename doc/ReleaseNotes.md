@@ -1,3 +1,9 @@
+# v00-10
+
+* 2019-02-04 Frank Gaede ([PR#23](https://github.com/AIDAsoft/aidaTT/pull/23))
+  - make example material_ntuples.cpp work w/ current DD4hep 
+          - c'tor of  MaterialManager() now takes a volume ...
+
 # v00-09
 
 * 2018-01-18 Frank Gaede ([PR#21](https://github.com/AIDASoft/aidaTT/pull/21))
