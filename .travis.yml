@@ -30,6 +30,8 @@ before_install:
   - sudo mount -t cvmfs geant4.cern.ch /cvmfs/geant4.cern.ch
   - sudo mount -t cvmfs sft.cern.ch /cvmfs/sft.cern.ch
   - ls /cvmfs/clicdp.cern.ch
+  - ls /cvmfs/geant4.cern.ch
+  - ls /cvmfs/sft.cern.ch/lcg
 
 # command to install dependencies
 install:
