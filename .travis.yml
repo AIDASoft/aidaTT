@@ -48,7 +48,7 @@ install:
 
 # command to run tests
 script:
-  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=$COMPILER -v /cvmfs/clicdp.cern.ch:/cvmfs/clicdp.cern.ch -d clicdp/cc7-lcg /bin/bash
+  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=$COMPILER -v /cvmfs:/cvmfs -d clicdp/cc7-lcg /bin/bash
   - if [[ "${TRAVIS_EVENT_TYPE}" == "cron" && "${COMPILER}" == "gcc"  ]];
     then docker exec -it CI_container /bin/bash -c "./Package/.travis-ci.d/coverity_scan.sh";
     elif [[ "${TRAVIS_EVENT_TYPE}" == "cron" && "${COMPILER}" == "llvm"  ]];
