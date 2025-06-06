@@ -2,7 +2,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.2 )
 
 # declare the project name
-PROJECT(aidaTT)
+PROJECT(aidaTT LANGUAGES CXX)
 
 # project version
 SET( ${PROJECT_NAME}_VERSION_MAJOR 0 )
