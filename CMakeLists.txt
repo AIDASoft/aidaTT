@@ -1,5 +1,5 @@
 # #require a certain version
-CMAKE_MINIMUM_REQUIRED( VERSION 3.5 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.10 )
 
 # declare the project name
 PROJECT(aidaTT)
