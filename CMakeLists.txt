@@ -132,5 +132,5 @@ install(TARGETS ${PROJECT_NAME}
 
 # generate and install following configuration files
 CONFIGURE_FILE( ${PROJECT_SOURCE_DIR}/cmake/aidaTTConfig.cmake.in aidaTTConfig.cmake @ONLY )
-INSTALL( FILES ${PROJECT_BINARY_DIR}/aidaTTConfig.cmake DESTINATION . )
+INSTALL( FILES ${PROJECT_BINARY_DIR}/aidaTTConfig.cmake DESTINATION lib/cmake/${PROJECT_NAME} )
 
