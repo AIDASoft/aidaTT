@@ -1,3 +1,14 @@
+# v00-11
+
+* 2026-03-26 Juan Miguel Carceller ([PR#27](https://github.com/aidasoft/aidatt/pull/27))
+  - Install cmake files to lib/cmake/${PROJECT_NAME}. Similar to what was done in iLCSoft/iLCUtil#36 and iLCSoft/iLCUtil#41. This is needed to make this package work with views in LCGCMake.
+
+* 2026-03-26 jmcarcell ([PR#26](https://github.com/aidasoft/aidatt/pull/26))
+  - Update the minimum cmake to v3.5 to be able to compile with v4, and then to 3.10 since 3.5 is already deprecated.
+
+* 2026-03-26 jmcarcell ([PR#25](https://github.com/aidasoft/aidatt/pull/25))
+  - Add LANGUAGES CXX not to check for a C compiler
+
 # v00-10
 
 * 2019-02-04 Frank Gaede ([PR#23](https://github.com/AIDAsoft/aidaTT/pull/23))
