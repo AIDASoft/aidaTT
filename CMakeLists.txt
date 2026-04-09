@@ -44,7 +44,7 @@ AUX_SOURCE_DIRECTORY( ./geometry/src  library_sources )
 ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
 
 FIND_PACKAGE( GBL )
-FIND_PACKAGE( Mille )
+FIND_PACKAGE( Mille ) # Provided by GBL
 FIND_PACKAGE( DD4hep REQUIRED COMPONENTS DDRec )
 FIND_PACKAGE( LCIO )
 FIND_PACKAGE( streamlog )
