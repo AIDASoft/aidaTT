@@ -1,7 +1,9 @@
 #ifdef USE_GBL
 #include "GBLInterface.hh"
 #include "utilities.hh"
-//#include "MilleBinary.h"
+#ifdef GBL_V04
+#include "Mille/MilleRecordC.h"
+#endif
 #include "streamlog/streamlog.h"
 
 
@@ -9,7 +11,11 @@ namespace aidaTT
 {
   GBLInterface::GBLInterface() : _trajectory(NULL), _correctionVector(NULL), _covarianceMatrix(NULL)
   {
+#ifdef GBL_V04
+    _milleBinary = new Mille::MilleRecordC() ;
+#else
     _milleBinary = new gbl::MilleBinary() ;
+#endif
   }
 
 
@@ -210,7 +216,11 @@ namespace aidaTT
 
 
 
+#ifdef GBL_V04
+     _trajectory->milleOut ( _milleBinary ) ;
+#else
      _trajectory->milleOut ( *_milleBinary ) ;
+#endif
 
     //_trajectory->printTrajectory(100) ;
     //_trajectory->printPoints(100) ;
