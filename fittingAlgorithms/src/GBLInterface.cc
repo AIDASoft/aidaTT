@@ -1,9 +1,6 @@
 #ifdef USE_GBL
 #include "GBLInterface.hh"
 #include "utilities.hh"
-#ifdef GBL_V04
-#include "Mille/MilleRecordC.h"
-#endif
 #include "streamlog/streamlog.h"
 
 
