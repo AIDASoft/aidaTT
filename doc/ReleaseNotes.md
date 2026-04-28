@@ -1,3 +1,8 @@
+# v00-12
+
+* 2026-04-28 Juan Miguel Carceller ([PR#29](https://github.com/aidasoft/aidatt/pull/29))
+  - Make compilation with GBL v04 possible. Headers have been moved and `MilleBinary` doesn't exist anymore. These changes keep compilation working for GBL v02 (what we are using right now).
+
 # v00-11
 
 * 2026-03-26 Juan Miguel Carceller ([PR#27](https://github.com/aidasoft/aidatt/pull/27))
